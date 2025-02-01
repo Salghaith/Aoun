@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import i18n from '../i18n';
-
 import LoginButton from '../components/LoginButton';
 import LanguageSwitch from '../components/LanguageSwitch';
 
