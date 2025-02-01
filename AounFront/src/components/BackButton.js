@@ -1,6 +1,6 @@
 import React from 'react';
 import {TouchableOpacity, StyleSheet} from 'react-native';
-import Icon from 'react-native-vector-icons/Entypo'; // Use FontAwesome instead
+import Icon from 'react-native-vector-icons/Entypo';
 
 const BackButton = ({onPress}) => {
   return (
