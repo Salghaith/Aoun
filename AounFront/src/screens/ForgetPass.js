@@ -1,16 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
 import LoginButton from '../components/LoginButton';
 
-const ForgetPassScreen = ({ navigation }) => {
-  const { t } = useTranslation();
+const ForgetPassScreen = ({navigation}) => {
+  const {t} = useTranslation();
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.backButton}>
+      <View>
         <BackButton onPress={() => navigation.goBack()} />
       </View>
       <Text style={styles.title}>{t('Reset Your Password')}</Text>
@@ -18,14 +18,18 @@ const ForgetPassScreen = ({ navigation }) => {
         <InputField title={t('Enter Your Email')} icon="mail" />
       </View>
       <View style={styles.buttonContainer}>
-        <LoginButton title={t('Send Reset Link')} onPress={() => {}} />
+        <LoginButton
+          title={t('Send Reset Link')}
+          onPress={() => {}}
+          style={{marginTop: 30}}
+        />
       </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: '#1C2128', flex: 1 },
+  container: {backgroundColor: '#1C2128', flex: 1},
   backButton: {
     marginLeft: 34,
     marginTop: 14,

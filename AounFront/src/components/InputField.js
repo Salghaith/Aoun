@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import IDcard from 'react-native-vector-icons/AntDesign';
 
 const InputField = ({title, icon, type, style}) => {
-  const [secureText, setSecureText] = useState(true);
+  const [secureText, setSecureText] = useState(type === 'password');
 
   return (
     <View style={[styles.container, style]}>
@@ -17,9 +17,12 @@ const InputField = ({title, icon, type, style}) => {
         style={styles.textInput}
         autoCapitalize="none"
         autoCorrect={false}
+        numberOfLines={1}
+        scrollEnabled
         placeholder={title}
         placeholderTextColor="#817D7D"
         secureTextEntry={secureText}
+        maxLength={45}  //must be maintained when validation.
       />
       {type === 'password' && ( //If the input is password, add the eye.
         <TouchableOpacity
@@ -44,6 +47,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    overflow: 'scroll',
   },
   icon: {
     marginLeft: 23,
@@ -52,6 +56,7 @@ const styles = StyleSheet.create({
   textInput: {
     fontSize: 16,
     fontWeight: 500,
+    width: '100%',
   },
   eyeIcon: {
     position: 'absolute', //This aproach because of RTL problem, when RTL work, this should be maintained.

@@ -5,20 +5,28 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
 import {useTranslation} from 'react-i18next';
 import LoginButton from '../components/LoginButton';
+
 const SignupScreen = ({navigation}) => {
   const {t} = useTranslation();
   const [KSUStudent, setKSUStudent] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
       <BackButton onPress={() => navigation.navigate('Home')} />
-
-      <Text style={styles.title}>{t('Create Your Account')}</Text>
-
+      <View style={{flexDirection: 'row'}}>
+        <Text style={styles.title}>{t('Create Your Account')}</Text>
+        {KSUStudent && (
+          <Image
+            source={require('../assets/images/ksu-logo.png')}
+            style={{width: 25, height: 40, marginTop: 80, marginLeft: 70}}
+          />
+        )}
+      </View>
       <View style={styles.formContainer}>
         <InputField
           type="username"
