@@ -7,7 +7,7 @@ import SplashScreen from '../screens/SplashScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import ForgetPass from '../screens/ForgetPass';
-
+import ProfileScreen from '../screens/Profile';
 
 
 const Stack = createStackNavigator();
@@ -23,6 +23,7 @@ const AppNavigator = () => {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="ForgetPass" component={ForgetPass} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
