@@ -1,22 +1,37 @@
-import React from 'react';
-import {View, Text, StyleSheet, TextInput} from 'react-native';
-import {useTranslation} from 'react-i18next';
+import React, {useState} from 'react';
+import {View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-const InputField = ({title, icon ,secureTextEntry }) => {
-  const {t} = useTranslation();
+import IDcard from 'react-native-vector-icons/AntDesign';
+
+const InputField = ({title, icon, type, style}) => {
+  const [secureText, setSecureText] = useState(true);
+
   return (
-    <View style={styles.container}>
-      <View style={styles.icon}>
-        <Icon name={icon} size={25} color="#817D7D" />
-      </View>
+    <View style={[styles.container, style]}>
+      {type === 'id' ? ( //If type is KSU ID, show id card, otherwise show {icon}
+        <IDcard name="idcard" size={25} color="#817D7D" style={styles.icon} />
+      ) : (
+        <Icon name={icon} size={25} color="#817D7D" style={styles.icon} />
+      )}
       <TextInput
         style={styles.textInput}
         autoCapitalize="none"
         autoCorrect={false}
         placeholder={title}
         placeholderTextColor="#817D7D"
-        secureTextEntry= {secureTextEntry}
+        secureTextEntry={secureText}
       />
+      {type === 'password' && ( //If the input is password, add the eye.
+        <TouchableOpacity
+          style={styles.eyeIcon}
+          onPress={() => setSecureText(!secureText)}>
+          <Icon
+            name={secureText ? 'eye-off' : 'eye'}
+            size={24}
+            color="#817D7D"
+          />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -29,7 +44,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    marginBottom: 30, //Should be removed
   },
   icon: {
     marginLeft: 23,
@@ -38,6 +52,10 @@ const styles = StyleSheet.create({
   textInput: {
     fontSize: 16,
     fontWeight: 500,
+  },
+  eyeIcon: {
+    position: 'absolute', //This aproach because of RTL problem, when RTL work, this should be maintained.
+    right: 30,
   },
 });
 export default InputField;

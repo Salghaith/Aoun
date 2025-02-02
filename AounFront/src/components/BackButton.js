@@ -18,6 +18,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#131417',
     alignItems: 'center',
     justifyContent: 'center',
+    marginLeft: 34,
+    marginTop: 14,
   },
 });
 

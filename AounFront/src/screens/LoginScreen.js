@@ -1,56 +1,74 @@
-/* eslint-disable react-native/no-inline-styles */
-import React , { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView , TouchableOpacity} from 'react-native';
-import { useTranslation } from 'react-i18next';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
 import LoginButton from '../components/LoginButton';
-import Icon from 'react-native-vector-icons/Feather';
 
-const LoginScreen = ({ navigation }) => {
-  const { t } = useTranslation();
-  const [secureText, setSecureText] = useState(true);
+const LoginScreen = ({navigation}) => {
+  const {t} = useTranslation();
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.backButton}>
-        <BackButton onPress={() => navigation.goBack()} />
-      </View>
+      <BackButton onPress={() => navigation.navigate('Home')} />
+
       <Text style={styles.title}>{t('Login Your Account')}</Text>
-      <View style={{alignSelf: 'center', marginTop: 50}}>
-        <InputField title={t('Enter Your Email')} icon="mail"  />
-      </View>
-      <View style={{alignSelf: 'center'}}>
+
+      <View style={styles.formContainer}>
         <InputField
+          type="email"
+          title={t('Enter Your Email')}
+          icon="mail"
+          style={styles.InputField}
+        />
+
+        <InputField
+          type="password"
           title={t('Enter Your Password')}
           icon="lock"
-          secureTextEntry={secureText}
         />
+
         <TouchableOpacity
-          style={styles.eyeIcon}
-          onPress={() => setSecureText(!secureText)}
-        >
-          <Icon name={secureText ? 'eye-off' : 'eye'} size={24} color="#817D7D" />
+          onPress={() => navigation.navigate('ForgetPass')}
+          style={styles.forgotPassword}>
+          <Text style={styles.forgotPasswordText}>{t('Forgot Password?')}</Text>
+        </TouchableOpacity>
+
+        <LoginButton
+          title={t('Login')}
+          onPress={() => {}}
+          style={styles.loginButton}
+        />
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Signup')}
+          style={styles.signupContainer}>
+          <Text style={styles.signupText}>
+            <Text style={styles.signupTextDim}>
+              {t('Create New Account?')}{' '}
+            </Text>
+            <Text style={styles.signupLink}>{t('Sign up')}</Text>
+          </Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={() => navigation.navigate('ForgetPass')} style={styles.forgotPassword}>
-        <Text style={styles.forgotPasswordText}>{t('Forgot Password?')}</Text>
-      </TouchableOpacity>
-      <View style={styles.registerButtonContainer}>
-        <LoginButton title={t('Register')} onPress={() => {}} />
-      </View>
-      <TouchableOpacity onPress={() => navigation.navigate('Signup')} style={styles.signupContainer}>
-        <Text style={styles.signupText}><Text style={styles.signupTextDim}>{t('Create New Account?')} </Text><Text style={styles.signupLink}>{t('Sign up')}</Text></Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: '#1C2128', flex: 1 },
-  backButton: {
-    marginLeft: 34,
-    marginTop: 14,
+  container: {backgroundColor: '#1C2128', flex: 1},
+  formContainer: {
+    alignItems: 'center',
+    paddingTop: 50,
+  },
+  InputField: {
+    marginBottom: 30,
   },
   title: {
     fontSize: 38,
@@ -60,28 +78,20 @@ const styles = StyleSheet.create({
     marginTop: 53,
     width: 190,
   },
-  eyeIcon: {
-    position: 'absolute',
-    right: 15,
-    marginTop: 21,
-    marginRight: 8,
-  },
   forgotPassword: {
     alignSelf: 'flex-end',
     marginRight: 34,
-    marginTop: -18,
+    marginTop: 12,
   },
   forgotPasswordText: {
     color: 'white',
     opacity: 0.7,
     fontSize: 14,
   },
-  registerButtonContainer: {
-    alignSelf: 'center',
+  loginButton: {
     marginTop: 40,
   },
   signupContainer: {
-    alignSelf: 'center',
     marginTop: 10,
   },
   signupText: {
