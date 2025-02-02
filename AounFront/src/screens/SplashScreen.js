@@ -5,9 +5,9 @@ import {View, Text, ActivityIndicator, StyleSheet, Image} from 'react-native';
 const SplashScreen = ({navigation}) => {
   useEffect(() => {
     setTimeout(() => {
-      navigation.replace('Home'); // Replace to prevent back button going to splash
-    }, 2000); // 2 seconds delay
-  }, );
+      navigation.replace('Home'); // to prevent back button going to splash
+    }, 2000); // 2 sec delay
+  });
 
   return (
     <View style={styles.container}>
