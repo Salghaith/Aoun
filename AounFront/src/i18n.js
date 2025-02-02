@@ -32,7 +32,16 @@ const resources = {
       'Log in': 'تسجيل الدخول',
       'Sign up': 'تسجيل',
       'Continue as Guest': 'المتابعة كزائر',
-    },
+      'Login Your Account': 'سجل الدخول لحسابك',
+      'Enter Your Email': 'ادخل بريدك الالكتروني',
+      'Enter Your Password': 'ادخل كلمة المرور',
+      'Forgot Password?': 'هل نسيت كلمة المرور؟',
+      'Register': 'تسجيل دخول',
+      'Create New Account?': 'إنشاء حساب جديد؟',
+      'Send Reset Link': 'إرسال رابط إعادة التعيين',
+      'Reset Your Password': 'إعادة تعيين كلمة المرور',
+}
+
   },
 };
 

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import * as RNLocalize from 'react-native-localize';
 import {
   SafeAreaView,
   StatusBar,
@@ -8,6 +9,7 @@ import {
   View,
   Image,
   TouchableOpacity,
+  I18nManager,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import i18n from '../i18n';
@@ -78,12 +80,14 @@ const styles = StyleSheet.create({
   },
   buttonsSection: {
     height: 197,
-    marginTop: 140,
+    marginTop: 100,
+
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   guestButton: {
-    color: '#ACADB9',
+    color: 'white',
+    opacity: 0.7,
     fontSize: 16,
     fontWeight: '500',
   },

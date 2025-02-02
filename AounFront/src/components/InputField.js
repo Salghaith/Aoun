@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, StyleSheet, TextInput} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/Feather';
-const InputField = ({title, icon}) => {
+const InputField = ({title, icon ,secureTextEntry }) => {
   const {t} = useTranslation();
   return (
     <View style={styles.container}>
@@ -15,6 +15,7 @@ const InputField = ({title, icon}) => {
         autoCorrect={false}
         placeholder={title}
         placeholderTextColor="#817D7D"
+        secureTextEntry= {secureTextEntry}
       />
     </View>
   );
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   textInput: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 500,
   },
 });

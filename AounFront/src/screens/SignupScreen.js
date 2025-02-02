@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
 import BackButton from '../components/BackButton';
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
   container: {backgroundColor: '#1C2128', flex: 1},
   backButton: {
     marginLeft: 34,
-    marginTop: 4,
+    marginTop: 14,
   },
 });
 export default SignupScreen;

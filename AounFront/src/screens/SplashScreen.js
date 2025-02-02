@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect} from 'react';
 import {View, Text, ActivityIndicator, StyleSheet, Image} from 'react-native';
 
@@ -6,7 +7,7 @@ const SplashScreen = ({navigation}) => {
     setTimeout(() => {
       navigation.replace('Home'); // Replace to prevent back button going to splash
     }, 2000); // 2 seconds delay
-  }, []);
+  }, );
 
   return (
     <View style={styles.container}>
