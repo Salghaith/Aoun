@@ -36,11 +36,23 @@ const resources = {
       'Enter Your Email': 'ادخل بريدك الالكتروني',
       'Enter Your Password': 'ادخل كلمة المرور',
       'Forgot Password?': 'هل نسيت كلمة المرور؟',
-      'Register': 'تسجيل دخول',
+      'Login': 'تسجيل',
       'Create New Account?': 'إنشاء حساب جديد؟',
       'Send Reset Link': 'إرسال رابط إعادة التعيين',
       'Reset Your Password': 'إعادة تعيين كلمة المرور',
-}
+      'Profile': 'حسابي',
+      'Language': 'اللغة',
+      'Edit Information': 'تعديل المعلومات',
+      'Full Name': 'الاسم الكامل',
+      'Password': 'كلمة المرور',
+      'Save': 'حفظ',
+      'Edit': 'تعديل',
+      'Notifications': 'الإشعارات',
+      'Success': 'نجاح',
+      'Your information has been successfully saved.': 'تم حفظ معلوماتك بنجاح.',
+      'Logout': 'تسجيل خروج',
+    }
+    
 
   },
 };

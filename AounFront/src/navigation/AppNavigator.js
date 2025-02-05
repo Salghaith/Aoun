@@ -8,6 +8,7 @@ import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import ForgetPass from '../screens/ForgetPass';
 import ProfileScreen from '../screens/Profile';
+import EditProfile from '../screens/EditProfile';
 
 
 const Stack = createStackNavigator();
@@ -24,6 +25,7 @@ const AppNavigator = () => {
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="ForgetPass" component={ForgetPass} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
       </Stack.Navigator>
     </NavigationContainer>
   );
