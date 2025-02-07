@@ -14,6 +14,10 @@ import LoginButton from '../components/LoginButton';
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
 
+  const [email, setEmail] = useState(''); //Need to check, if it the Input is just number=>KSU ID add "@student...."
+
+  const [password, setPassword] = useState('');
+
   return (
     <SafeAreaView style={styles.container}>
       <BackButton onPress={() => navigation.navigate('Home')} />
@@ -23,15 +27,17 @@ const LoginScreen = ({navigation}) => {
       <View style={styles.formContainer}>
         <InputField
           type="email"
-          title={t('Enter Your Email')}
+          title={t('Enter Your Email or KSU ID')}
           icon="mail"
           style={styles.InputField}
+          onChangeText={setEmail}
         />
 
         <InputField
           type="password"
           title={t('Enter Your Password')}
           icon="lock"
+          onChangeText={setPassword}
         />
 
         <TouchableOpacity

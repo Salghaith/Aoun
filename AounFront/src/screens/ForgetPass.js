@@ -8,6 +8,10 @@ import LoginButton from '../components/LoginButton';
 const ForgetPassScreen = ({navigation}) => {
   const {t} = useTranslation();
 
+  const [email, setEmail] = useState('');
+
+  const [password, setPassword] = useState('');
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -15,7 +19,11 @@ const ForgetPassScreen = ({navigation}) => {
       </View>
       <Text style={styles.title}>{t('Reset Your Password')}</Text>
       <View style={styles.inputContainer}>
-        <InputField title={t('Enter Your Email')} icon="mail" />
+        <InputField
+          title={t('Enter Your Email')}
+          icon="mail"
+          onChangeText={setEmail}
+        />
       </View>
       <View style={styles.buttonContainer}>
         <LoginButton

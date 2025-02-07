@@ -15,6 +15,10 @@ import LoginButton from '../components/LoginButton';
 const SignupScreen = ({navigation}) => {
   const {t} = useTranslation();
   const [KSUStudent, setKSUStudent] = useState(false);
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [KSUID, setKSUID] = useState('');
   return (
     <SafeAreaView style={styles.container}>
       <BackButton onPress={() => navigation.navigate('Home')} />
@@ -33,6 +37,7 @@ const SignupScreen = ({navigation}) => {
           title={t('Full Name')}
           icon="user"
           style={styles.InputField}
+          onChangeText={setUsername}
         />
         {KSUStudent ? (
           <InputField
@@ -40,6 +45,7 @@ const SignupScreen = ({navigation}) => {
             title={t('Enter Your KSU ID')}
             icon="idcard"
             style={styles.InputField}
+            onChangeText={setKSUID}
           />
         ) : (
           <InputField
@@ -47,9 +53,15 @@ const SignupScreen = ({navigation}) => {
             title={t('Enter Your Email')}
             icon="mail"
             style={styles.InputField}
+            onChangeText={setEmail}
           />
         )}
-        <InputField type="password" title={t('Password')} icon="lock" />
+        <InputField
+          type="password"
+          title={t('Password')}
+          icon="lock"
+          onChangeText={setPassword}
+        />
 
         <LoginButton
           title={t('Register')}
