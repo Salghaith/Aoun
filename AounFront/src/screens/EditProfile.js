@@ -1,5 +1,13 @@
-import React, {useState, useContext} from 'react';
-import {View, Text, StyleSheet, SafeAreaView, Image, Alert} from 'react-native';
+import React, {useState, useContext, useEffect} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  Image,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
 import LoginButton from '../components/LoginButton';
@@ -22,7 +30,6 @@ const EditProfileScreen = ({navigation}) => {
     }
     setIsEditable(!isEditable);
   };
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
@@ -41,7 +48,7 @@ const EditProfileScreen = ({navigation}) => {
         <InputField
           type="text"
           title={t('Full Name')}
-          placeholder={newUsername}
+          placeholder={username}
           value={isEditable ? newUsername : ''}
           editable={isEditable}
           onChangeText={setNewUsername}
@@ -58,13 +65,16 @@ const EditProfileScreen = ({navigation}) => {
           icon="mail"
           style={styles.inputField}
         />
-
-        <LoginButton
-          title={isEditable ? t('Save') : t('Edit')}
-          onPress={handleEditSave}
-          style={styles.loginButton}
-          disabled={loading}
-        />
+        <View style={styles.loginButton}>
+          {loading ? (
+            <ActivityIndicator size="large" color={'white'} />
+          ) : (
+            <LoginButton
+              title={isEditable ? t('Save') : t('Edit')}
+              onPress={handleEditSave}
+            />
+          )}
+        </View>
       </View>
     </SafeAreaView>
   );

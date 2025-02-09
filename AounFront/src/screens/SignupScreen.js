@@ -68,18 +68,18 @@ const SignupScreen = ({navigation}) => {
           icon="lock"
           onChangeText={setPassword}
         />
-
-        {loading ? (
-          <ActivityIndicator size="large" color={'white'} />
-        ) : (
-          <LoginButton
-            title={t('Register')}
-            onPress={() => {
-              handleSignup(username, email, password, rememberMe);
-            }}
-            style={styles.registerButton}
-          />
-        )}
+        <View style={styles.registerButton}>
+          {loading ? (
+            <ActivityIndicator size="large" color={'white'} />
+          ) : (
+            <LoginButton
+              title={t('Register')}
+              onPress={() => {
+                handleSignup(username, email, password, rememberMe);
+              }}
+            />
+          )}
+        </View>
 
         <TouchableOpacity
           onPress={() => navigation.navigate('Login')}

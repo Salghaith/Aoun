@@ -49,18 +49,18 @@ const LoginScreen = ({navigation}) => {
           style={styles.forgotPassword}>
           <Text style={styles.forgotPasswordText}>{t('Forgot Password?')}</Text>
         </TouchableOpacity>
-
-        {loading ? (
-          <ActivityIndicator size="large" color={'white'} />
-        ) : (
-          <LoginButton
-            title={t('Login')}
-            onPress={() => {
-              handleLogin(email, password, rememberMe);
-            }}
-            style={styles.loginButton}
-          />
-        )}
+        <View style={styles.loginButton}>
+          {loading ? (
+            <ActivityIndicator size="large" color={'white'} />
+          ) : (
+            <LoginButton
+              title={t('Login')}
+              onPress={() => {
+                handleLogin(email, password, rememberMe);
+              }}
+            />
+          )}
+        </View>
 
         <TouchableOpacity
           onPress={() => navigation.navigate('Signup')}
