@@ -1,8 +1,8 @@
 import React from 'react';
 import {TouchableOpacity, View, Text, StyleSheet} from 'react-native';
-const LoginButton = ({title, onPress, style, fontSize = 18}) => {
+const LoginButton = ({title, onPress, style, fontSize = 18, disabled}) => {
   return (
-    <TouchableOpacity onPress={onPress} style={style}>
+    <TouchableOpacity onPress={onPress} style={style} disabled={disabled}>
       <View style={styles.button}>
         <Text style={{color: 'white', fontSize, fontWeight: 'bold'}}>
           {title}

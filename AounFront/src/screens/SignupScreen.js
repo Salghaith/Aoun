@@ -6,19 +6,25 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
 import {useTranslation} from 'react-i18next';
 import LoginButton from '../components/LoginButton';
+import {useSignup} from '../hooks/useSignup';
 
 const SignupScreen = ({navigation}) => {
   const {t} = useTranslation();
+
+  const {handleSignup, loading} = useSignup();
+
   const [KSUStudent, setKSUStudent] = useState(false);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [KSUID, setKSUID] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
       <BackButton onPress={() => navigation.navigate('Home')} />
@@ -63,11 +69,17 @@ const SignupScreen = ({navigation}) => {
           onChangeText={setPassword}
         />
 
-        <LoginButton
-          title={t('Register')}
-          onPress={() => {}}
-          style={styles.registerButton}
-        />
+        {loading ? (
+          <ActivityIndicator size="large" color={'white'} />
+        ) : (
+          <LoginButton
+            title={t('Register')}
+            onPress={() => {
+              handleSignup(username, email, password, rememberMe);
+            }}
+            style={styles.registerButton}
+          />
+        )}
 
         <TouchableOpacity
           onPress={() => navigation.navigate('Login')}

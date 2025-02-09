@@ -49,7 +49,7 @@ const HomeScreen = ({navigation}) => {
           title={t('Sign up')}
           onPress={() => navigation.navigate('Signup')}
         />
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.guestButton}>{t('Continue as Guest')}</Text>
         </TouchableOpacity>
       </View>

@@ -1,15 +1,28 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity ,Switch} from 'react-native';
+import React, {useState, useContext} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  Image,
+  TouchableOpacity,
+  Switch,
+} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import Icon from 'react-native-vector-icons/Feather';
 import LanguageSwitch from '../components/LanguageSwitch';
 import i18n from '../i18n';
+import {useLogout} from '../hooks/useLogout';
+import {AuthContext} from '../context/AuthContext';
+import {use} from 'i18next';
 
 const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
+  const {handleLogout} = useLogout();
   const [language, setLanguage] = useState(i18n.language);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const {username, email} = useContext(AuthContext);
 
   const changeLanguage = lang => {
     setLanguage(lang);
@@ -36,22 +49,30 @@ const ProfileScreen = ({navigation}) => {
         <TouchableOpacity
           style={styles.usernameContainer}
           onPress={() => navigation.navigate('EditProfile')}>
-          <Text style={styles.username}>Khaled Alharbi</Text>
-          <Icon name="chevron-right" size={24} color="white" style={styles.arrowIcon} />
+          <Text style={styles.username}>{username}</Text>
+          <Icon
+            name="chevron-right"
+            size={24}
+            color="white"
+            style={styles.arrowIcon}
+          />
         </TouchableOpacity>
 
-        <Text style={styles.email}>johndoe@example.com</Text>
-
+        <Text style={styles.email}>{email}</Text>
 
         <View style={styles.languageContainer}>
-          <Icon name="globe" size={28} color="white" style={styles.languageIcon} />
+          <Icon
+            name="globe"
+            size={28}
+            color="white"
+            style={styles.languageIcon}
+          />
           <Text style={styles.languageText}>{t('Language')}</Text>
           <LanguageSwitch
-          onPress={() => changeLanguage(language === 'en' ? 'ar' : 'en')}
-          language={language}
-        />
+            onPress={() => changeLanguage(language === 'en' ? 'ar' : 'en')}
+            language={language}
+          />
         </View>
-
 
         <View style={styles.notificationsContainer}>
           <Text style={styles.notificationsText}>{t('Notifications')}</Text>
@@ -66,11 +87,18 @@ const ProfileScreen = ({navigation}) => {
 
         <View style={styles.logoutContainer}>
           <Text style={styles.logoutText}>{t('Logout')}</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-            <Icon name="log-out" size={28} color="white" style={styles.logoutIcon} />
+          <TouchableOpacity
+            onPress={() => {
+              handleLogout();
+            }}>
+            <Icon
+              name="log-out"
+              size={28}
+              color="white"
+              style={styles.logoutIcon}
+            />
           </TouchableOpacity>
         </View>
-
       </View>
     </SafeAreaView>
   );
@@ -173,7 +201,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#4CAF50',
     borderRadius: 16,
-    transform: [{ scaleX: 1.4 }, { scaleY: 1.4 }],
+    transform: [{scaleX: 1.4}, {scaleY: 1.4}],
   },
 
   logoutContainer: {

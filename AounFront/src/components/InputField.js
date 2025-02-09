@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
   textInput: {
     fontSize: 16,
     fontWeight: '500',
+    height: "100%",
     width: '100%',
     color: '#000', // Default text color
   },

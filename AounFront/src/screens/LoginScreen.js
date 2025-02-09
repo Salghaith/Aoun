@@ -5,18 +5,22 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
 import LoginButton from '../components/LoginButton';
+import {useLogin} from '../hooks/useLogin';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
 
-  const [email, setEmail] = useState(''); //Need to check, if it the Input is just number=>KSU ID add "@student...."
+  const {handleLogin, loading} = useLogin();
 
+  const [email, setEmail] = useState(''); //Need to check, if it the Input is just number=>KSU ID add "@student...."
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -46,11 +50,17 @@ const LoginScreen = ({navigation}) => {
           <Text style={styles.forgotPasswordText}>{t('Forgot Password?')}</Text>
         </TouchableOpacity>
 
-        <LoginButton
-          title={t('Login')}
-          onPress={() => {}}
-          style={styles.loginButton}
-        />
+        {loading ? (
+          <ActivityIndicator size="large" color={'white'} />
+        ) : (
+          <LoginButton
+            title={t('Login')}
+            onPress={() => {
+              handleLogin(email, password, rememberMe);
+            }}
+            style={styles.loginButton}
+          />
+        )}
 
         <TouchableOpacity
           onPress={() => navigation.navigate('Signup')}

@@ -1,13 +1,40 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect} from 'react';
 import {View, Text, ActivityIndicator, StyleSheet, Image} from 'react-native';
+import {getData, storeData, clearStorage} from '../utils/storageUtils';
+import {auth} from '../config/firebaseConfig';
 
 const SplashScreen = ({navigation}) => {
   useEffect(() => {
-    setTimeout(() => {
-      navigation.replace('Home'); // to prevent back button going to splash
-    }, 2000); // 2 sec delay
-  });
+    const checkUserSession = async () => {
+      const rememberMe = await getData('rememberMe');
+
+      if (rememberMe) {
+        auth.onAuthStateChanged(async user => {
+          if (user) {
+            try {
+              //Refresh token before it expires
+              const newToken = await user.getIdToken(true);
+              await storeData('userToken', newToken);
+
+              navigation.navigate('Profile');
+            } catch (error) {
+              console.error('Error refreshing token:', error);
+              await clearStorage();
+              navigation.replace('Home');
+            }
+          } else {
+            await clearStorage();
+            navigation.navigate('Home');
+          }
+        });
+      } else {
+        await clearStorage();
+        navigation.navigate('Home');
+      }
+    };
+
+    checkUserSession();
+  }, []);
 
   return (
     <View style={styles.container}>
