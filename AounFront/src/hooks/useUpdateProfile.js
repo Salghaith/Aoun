@@ -1,5 +1,5 @@
 import {useState, useContext} from 'react';
-import {Alert} from 'react-native';
+import {Alert, Platform} from 'react-native';
 import {AuthContext} from '../context/AuthContext';
 import axios from 'axios';
 import {validateInputs} from '../utils/validationUtils';
@@ -15,12 +15,13 @@ export const useUpdateProfile = () => {
     if (!validateInputs({newUsername, newEmail})) return;
 
     setLoading(true);
+    const baseURL = Platform.OS == "ios" ? "http://localhost:3000" : "http://10.0.2.2:3000"
 
     try {
       const userId = await getData('userId');
       if (!userId) return Alert.alert('Error', 'Failed fetching the user ID');
       const response = await axios.put(
-        'http://localhost:3000/api/update-profile',
+        `${baseURL}/api/update-profile`,
         {
           userId,
           newUsername,
