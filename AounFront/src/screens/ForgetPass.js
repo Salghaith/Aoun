@@ -1,16 +1,30 @@
-import React from 'react';
-import {View, Text, StyleSheet, SafeAreaView} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, SafeAreaView, Alert} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
 import LoginButton from '../components/LoginButton';
+import {auth} from '../config/firebaseConfig';
+import {sendPasswordResetEmail} from 'firebase/auth';
+import {validateInputs} from '../utils/validationUtils';
 
 const ForgetPassScreen = ({navigation}) => {
   const {t} = useTranslation();
-
   const [email, setEmail] = useState('');
 
-  const [password, setPassword] = useState('');
+  const handlePasswordReset = () => {
+    if (!validateInputs({email})) return;
+
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        Alert.alert('Password reset email sent!', 'Please check your inbox.');
+        navigation.goBack();
+      })
+      .catch(error => {
+        console.error('Password reset error: ', error);
+        Alert.alert('Error', error.message);
+      });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -28,7 +42,7 @@ const ForgetPassScreen = ({navigation}) => {
       <View style={styles.buttonContainer}>
         <LoginButton
           title={t('Send Reset Link')}
-          onPress={() => {}}
+          onPress={() => handlePasswordReset()}
           style={{marginTop: 30}}
         />
       </View>

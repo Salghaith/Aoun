@@ -41,7 +41,7 @@ export const useSignup = () => {
         await storeData('rememberMe', true);
       }
 
-      updateUserData(username, userEmail);
+      updateUserData(username, email);
       Alert.alert('Success', 'Account created successfully!'); //Remove after testing
       navigation.navigate('Profile');
     } catch (error) {
