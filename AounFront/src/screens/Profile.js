@@ -12,26 +12,15 @@ import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import Icon from 'react-native-vector-icons/Feather';
 import LanguageSwitch from '../components/LanguageSwitch';
-import i18n from '../i18n';
+import i18n, {switchLanguage} from '../i18n';
 import {useLogout} from '../hooks/useLogout';
 import {AuthContext} from '../context/AuthContext';
-import {use} from 'i18next';
 
 const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
   const {handleLogout} = useLogout();
-  const [language, setLanguage] = useState(i18n.language);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const {username, email} = useContext(AuthContext);
-
-  const changeLanguage = lang => {
-    setLanguage(lang);
-    i18n.changeLanguage(lang);
-  };
-
-  const toggleNotifications = () => {
-    setNotificationsEnabled(previousState => !previousState);
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -69,8 +58,8 @@ const ProfileScreen = ({navigation}) => {
           />
           <Text style={styles.languageText}>{t('Language')}</Text>
           <LanguageSwitch
-            onPress={() => changeLanguage(language === 'en' ? 'ar' : 'en')}
-            language={language}
+            onPress={() => switchLanguage()}
+            language={i18n.language}
           />
         </View>
 
@@ -78,7 +67,9 @@ const ProfileScreen = ({navigation}) => {
           <Text style={styles.notificationsText}>{t('Notifications')}</Text>
           <Switch
             value={notificationsEnabled}
-            onValueChange={toggleNotifications}
+            onValueChange={() =>
+              setNotificationsEnabled(previousState => !previousState)
+            }
             trackColor={{false: '#767577', true: '#007BFF'}}
             thumbColor={notificationsEnabled ? '#f4f3f4' : '#f4f3f4'}
             style={styles.switch}
@@ -198,8 +189,8 @@ const styles = StyleSheet.create({
   },
 
   switch: {
-    borderWidth: 1,
-    borderColor: '#4CAF50',
+    // borderWidth: 1,        I got a better switcher in the iPhone like this.
+    // borderColor: '#4CAF50',
     borderRadius: 16,
     transform: [{scaleX: 1.4}, {scaleY: 1.4}],
   },

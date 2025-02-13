@@ -12,6 +12,7 @@ import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
 import LoginButton from '../components/LoginButton';
 import {useLogin} from '../hooks/useLogin';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
@@ -43,12 +44,25 @@ const LoginScreen = ({navigation}) => {
           icon="lock"
           onChangeText={setPassword}
         />
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate('ForgetPass')}
-          style={styles.forgotPassword}>
-          <Text style={styles.forgotPasswordText}>{t('Forgot Password?')}</Text>
-        </TouchableOpacity>
+        <View style={styles.rememberSection}>
+          <TouchableOpacity
+            onPress={() => setRememberMe(!rememberMe)}
+            style={{flexDirection: 'row', alignItems: 'center', padding: 10}}>
+            <Text style={styles.rememberText}>{t("Remember me")}</Text>
+            <Icon
+              name={rememberMe ? 'check-box' : 'check-box-outline-blank'}
+              size={20}
+              color="white"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ForgetPass')}
+            style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>
+              {t('Forgot Password?')}
+            </Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.loginButton}>
           {loading ? (
             <ActivityIndicator size="large" color={'white'} />
@@ -94,9 +108,17 @@ const styles = StyleSheet.create({
     marginTop: 53,
     width: 190,
   },
+  rememberSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: 334,
+  },
+  rememberText: {
+    marginRight: 3,
+    color: 'white',
+    fontSize: 14,
+  },
   forgotPassword: {
-    alignSelf: 'flex-end',
-    marginRight: 34,
     marginTop: 12,
   },
   forgotPasswordText: {

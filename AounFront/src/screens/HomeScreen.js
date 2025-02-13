@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-
 import {
   SafeAreaView,
   StatusBar,
@@ -9,30 +8,23 @@ import {
   View,
   Image,
   TouchableOpacity,
-  I18nManager,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
-import i18n from '../i18n';
+import i18n, {switchLanguage} from '../i18n';
 import LoginButton from '../components/LoginButton';
 import LanguageSwitch from '../components/LanguageSwitch';
 
 const HomeScreen = ({navigation}) => {
   const isDarkMode = useColorScheme() === 'dark';
   const {t} = useTranslation();
-  const [language, setLanguage] = useState(i18n.language);
-
-  const changeLanguage = lang => {
-    setLanguage(lang);
-    i18n.changeLanguage(lang);
-  };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <View style={styles.switcher}>
         <LanguageSwitch
-          onPress={() => changeLanguage(language === 'en' ? 'ar' : 'en')}
-          language={language}
+          onPress={() => switchLanguage()}
+          language={i18n.language}
         />
       </View>
       <Image
