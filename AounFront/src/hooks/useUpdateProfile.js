@@ -15,22 +15,20 @@ export const useUpdateProfile = () => {
     if (!validateInputs({newUsername, newEmail})) return;
 
     setLoading(true);
-    const baseURL = Platform.OS == "ios" ? "http://localhost:3000" : "http://10.0.2.2:3000"
+    const baseURL =
+      Platform.OS == 'ios' ? 'http://localhost:3000' : 'http://10.0.2.2:3000';
 
     try {
-      const userId = await getData('userId');
-      if (!userId) return Alert.alert('Error', 'Failed fetching the user ID');
-      const response = await axios.put(
-        `${baseURL}/api/update-profile`,
-        {
-          userId,
-          newUsername,
-          newEmail,
-        },
-      );
+      const user = await getData('userData');
+      if (!user.userId) return Alert.alert('Error', 'Failed fetching the user ID');
+      const response = await axios.put(`${baseURL}/api/update-profile`, {
+        userId: user.userId,
+        newUsername,
+        newEmail,
+      });
 
       if (response.data.success) {
-        updateUserData(newUsername, newEmail);
+        await updateUserData({username: newUsername, email: newEmail});
         Alert.alert('Success', 'Profile updated successfully!');
       } else {
         throw new Error(response.data.message);

@@ -3,7 +3,6 @@ import {Alert} from 'react-native';
 import {auth, db} from '../config/firebaseConfig';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import {doc, getDoc} from 'firebase/firestore';
-import {storeData} from '../utils/storageUtils';
 import {validateInputs} from '../utils/validationUtils';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
@@ -30,16 +29,15 @@ export const useLogin = () => {
       const username = userDoc.exists() ? userDoc.data().username : 'Unknown';
       const userEmail = userDoc.exists() ? userDoc.data().email : email;
 
-      //Store User Data Locally
-      await storeData('userId', user.uid);
-      await storeData('username', username);
-      await storeData('email', userEmail);
-      await storeData('userToken', await user.getIdToken());
-      if (rememberMe) {
-        await storeData('rememberMe', true);
-      }
+      const userObject = {
+        userId: user.uid,
+        username,
+        email: userEmail,
+        userToken: await user.getIdToken(),
+        rememberMe,
+      };
 
-      updateUserData(username, userEmail);
+      await updateUserData(userObject);
 
       Alert.alert('Success', 'Login successful!'); //Remove after testing
       navigation.navigate('Profile');

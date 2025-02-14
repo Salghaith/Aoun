@@ -20,7 +20,7 @@ const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
   const {handleLogout} = useLogout();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const {username, email} = useContext(AuthContext);
+  const {userData} = useContext(AuthContext);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -38,7 +38,7 @@ const ProfileScreen = ({navigation}) => {
         <TouchableOpacity
           style={styles.usernameContainer}
           onPress={() => navigation.navigate('EditProfile')}>
-          <Text style={styles.username}>{username}</Text>
+          <Text style={styles.username}>{userData.username}</Text>
           <Icon
             name="chevron-right"
             size={24}
@@ -47,7 +47,7 @@ const ProfileScreen = ({navigation}) => {
           />
         </TouchableOpacity>
 
-        <Text style={styles.email}>{email}</Text>
+        <Text style={styles.email}>{userData.email}</Text>
 
         <View style={styles.languageContainer}>
           <Icon

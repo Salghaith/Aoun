@@ -1,11 +1,10 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   SafeAreaView,
   Image,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import BackButton from '../components/BackButton';
@@ -13,15 +12,14 @@ import InputField from '../components/InputField';
 import LoginButton from '../components/LoginButton';
 import {useTranslation} from 'react-i18next';
 import {AuthContext} from '../context/AuthContext';
-import {use} from 'i18next';
 import {useUpdateProfile} from '../hooks/useUpdateProfile';
 
 const EditProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
   const [isEditable, setIsEditable] = useState(false);
-  const {username, email} = useContext(AuthContext);
-  const [newUsername, setNewUsername] = useState(username);
-  const [newEmail, setNewEmail] = useState(email);
+  const {userData} = useContext(AuthContext);
+  const [newUsername, setNewUsername] = useState(userData.username);
+  const [newEmail, setNewEmail] = useState(userData.email);
   const {updateUserProfile, loading} = useUpdateProfile();
 
   const handleEditSave = () => {
@@ -48,7 +46,7 @@ const EditProfileScreen = ({navigation}) => {
         <InputField
           type="text"
           title={t('Full Name')}
-          placeholder={username}
+          placeholder={newUsername}
           value={isEditable ? newUsername : ''}
           editable={isEditable}
           onChangeText={setNewUsername}

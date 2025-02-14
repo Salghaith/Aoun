@@ -1,39 +1,38 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useContext} from 'react';
 import {View, Text, ActivityIndicator, StyleSheet, Image} from 'react-native';
-import {getData, storeData, clearStorage} from '../utils/storageUtils';
+import {getData, removeData} from '../utils/storageUtils';
 import {auth} from '../config/firebaseConfig';
 import i18n from '../i18n';
+import {AuthContext} from '../context/AuthContext';
 
 const SplashScreen = ({navigation}) => {
+  const {updateUserData} = useContext(AuthContext);
   useEffect(() => {
     const initializeApp = async () => {
       const savedLang = await getData('userLanguage');
       if (savedLang) await i18n.changeLanguage(savedLang);
 
-      const rememberMe = await getData('rememberMe');
+      const userData = await getData('userData');
 
-      if (rememberMe) {
+      if (userData && userData.rememberMe) {
         auth.onAuthStateChanged(async user => {
           if (user) {
             try {
-              const newToken = await user.getIdToken(true);
-              await storeData('userToken', newToken);
+              userData.userToken = await user.getIdToken(true);
+              await updateUserData(userData);
               navigation.navigate('Profile');
             } catch (error) {
               console.error('❌ Error refreshing token:', error);
-              await clearStorage();
-              await storeData('userLanguage', savedLang);
+              await removeData('userData');
               navigation.replace('Home');
             }
           } else {
-            await clearStorage();
-            await storeData('userLanguage', savedLang);
+            await removeData('userData');
             navigation.navigate('Home');
           }
         });
       } else {
-        await clearStorage();
-        await storeData('userLanguage', savedLang);
+        await removeData('userData');
         navigation.navigate('Home');
       }
     };
