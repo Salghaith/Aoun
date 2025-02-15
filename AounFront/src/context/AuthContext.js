@@ -18,7 +18,6 @@ export const AuthProvider = ({children}) => {
     const newUserData = {...userData, ...updatedUser};
     setUserData(newUserData);
     await storeData('userData', newUserData);
-    console.log(newUserData.username);
   };
 
   return (
