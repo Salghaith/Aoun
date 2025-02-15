@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -10,17 +10,19 @@ import {
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
 import LoginButton from '../components/LoginButton';
-import {useTranslation} from 'react-i18next';
-import {AuthContext} from '../context/AuthContext';
-import {useUpdateProfile} from '../hooks/useUpdateProfile';
+import { useTranslation } from 'react-i18next';
+import { AuthContext } from '../context/AuthContext';
+import { useUpdateProfile } from '../hooks/useUpdateProfile';
+import { ThemeContext } from '../context/ThemeContext'; // Import Theme Context
 
-const EditProfileScreen = ({navigation}) => {
-  const {t} = useTranslation();
+const EditProfileScreen = ({ navigation }) => {
+  const { t } = useTranslation();
   const [isEditable, setIsEditable] = useState(false);
-  const {userData} = useContext(AuthContext);
+  const { userData } = useContext(AuthContext);
+  const { isDarkMode } = useContext(ThemeContext); // Get theme state
   const [newUsername, setNewUsername] = useState(userData.username);
   const [newEmail, setNewEmail] = useState(userData.email);
-  const {updateUserProfile, loading} = useUpdateProfile();
+  const { updateUserProfile, loading } = useUpdateProfile();
 
   const handleEditSave = () => {
     if (isEditable) {
@@ -28,11 +30,24 @@ const EditProfileScreen = ({navigation}) => {
     }
     setIsEditable(!isEditable);
   };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5' }, // Light mode update only
+      ]}
+    >
       <View style={styles.headerContainer}>
         <BackButton onPress={() => navigation.goBack()} />
-        <Text style={styles.title}>{t('Edit Information')}</Text>
+        <Text
+          style={[
+            styles.title,
+            { color: isDarkMode ? '#F9FAFB' : '#1C2128' }, // Light mode text color update
+          ]}
+        >
+          {t('Edit Information')}
+        </Text>
       </View>
 
       <View style={styles.ProfileContainer}>
@@ -51,7 +66,12 @@ const EditProfileScreen = ({navigation}) => {
           editable={isEditable}
           onChangeText={setNewUsername}
           icon="user"
-          style={styles.inputField}
+          style={[
+            styles.inputField,
+            isDarkMode
+              ? null
+              : { backgroundColor: '#F0F0F0', borderColor: '#C0C0C0', color: '#1C2128' }, // Brighter field in Light Mode
+          ]}
         />
         <InputField
           type="email"
@@ -61,7 +81,12 @@ const EditProfileScreen = ({navigation}) => {
           editable={isEditable}
           onChangeText={setNewEmail}
           icon="mail"
-          style={styles.inputField}
+          style={[
+            styles.inputField,
+            isDarkMode
+              ? null
+              : { backgroundColor: '#F0F0F0', borderColor: '#C0C0C0', color: '#1C2128' }, // Brighter field in Light Mode
+          ]}
         />
         <View style={styles.loginButton}>
           {loading ? (
@@ -80,7 +105,6 @@ const EditProfileScreen = ({navigation}) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1C2128',
     flex: 1,
   },
 
@@ -92,7 +116,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '600',
-    color: 'white',
     marginLeft: 32,
     marginTop: 18,
   },
@@ -116,11 +139,14 @@ const styles = StyleSheet.create({
   },
 
   inputField: {
-    marginBottom: 25, // Added space between inputs
+    marginBottom: 25, // Space between inputs
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1, // Ensure visibility
   },
 
   loginButton: {
-    marginTop: 30, // Added space above the login button
+    marginTop: 30, // Space above the login button
   },
 });
 

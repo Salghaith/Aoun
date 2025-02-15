@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     height: "100%",
-    width: '100%',
+    width: '75%',
     color: '#000', // Default text color
   },
   readOnlyTextInput: {

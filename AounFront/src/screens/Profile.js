@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -8,25 +8,28 @@ import {
   TouchableOpacity,
   Switch,
 } from 'react-native';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import BackButton from '../components/BackButton';
 import Icon from 'react-native-vector-icons/Feather';
 import LanguageSwitch from '../components/LanguageSwitch';
-import i18n, {switchLanguage} from '../i18n';
-import {useLogout} from '../hooks/useLogout';
-import {AuthContext} from '../context/AuthContext';
+import i18n, { switchLanguage } from '../i18n';
+import { useLogout } from '../hooks/useLogout';
+import { AuthContext } from '../context/AuthContext';
+import { ThemeContext } from '../context/ThemeContext'; // Import Theme Context
+import DarkModeSwitcher from '../components/DarkModeSwitch';
 
-const ProfileScreen = ({navigation}) => {
-  const {t} = useTranslation();
-  const {handleLogout} = useLogout();
+const ProfileScreen = ({ navigation }) => {
+  const { t } = useTranslation();
+  const { handleLogout } = useLogout();
+  const { userData } = useContext(AuthContext);
+  const { isDarkMode, toggleTheme } = useContext(ThemeContext); // Dark Mode Context
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const {userData} = useContext(AuthContext);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5' }]}>
       <View style={styles.headerContainer}>
         <BackButton onPress={() => navigation.goBack()} />
-        <Text style={styles.title}>{t('Profile')}</Text>
+        <Text style={[styles.title, { color: isDarkMode ? '#F9FAFB' : '#1C2128' }]}>{t('Profile')}</Text>
       </View>
 
       <View style={styles.ProfileContainer}>
@@ -38,58 +41,56 @@ const ProfileScreen = ({navigation}) => {
         <TouchableOpacity
           style={styles.usernameContainer}
           onPress={() => navigation.navigate('EditProfile')}>
-          <Text style={styles.username}>{userData.username}</Text>
+          <Text style={[styles.username, { color: isDarkMode ? '#F9FAFB' : '#1C2128' }]}>{userData.username}</Text>
           <Icon
             name="chevron-right"
             size={24}
-            color="white"
+            color={isDarkMode ? '#B0B0B0' : '#4A4F55'}
             style={styles.arrowIcon}
           />
         </TouchableOpacity>
 
-        <Text style={styles.email}>{userData.email}</Text>
+        <Text style={[styles.email, { color: isDarkMode ? '#B1B1B1' : '#4A4F55' }]}>{userData.email}</Text>
 
-        <View style={styles.languageContainer}>
-          <Icon
-            name="globe"
-            size={28}
-            color="white"
-            style={styles.languageIcon}
-          />
-          <Text style={styles.languageText}>{t('Language')}</Text>
-          <LanguageSwitch
-            onPress={() => switchLanguage()}
-            language={i18n.language}
-          />
+        <View style={[styles.switchContainer, { backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0' }]}>
+          <Icon name="globe" size={24} color={isDarkMode ? '#B0B0B0' : '#4A4F55'} style={styles.sectionIcon} />
+          <Text style={[styles.sectionText, { color: isDarkMode ? '#F9FAFB' : '#1C2128' }]}>{t('Language')}</Text>
+          <View style={styles.languageSwitcherWrapper}>
+            <LanguageSwitch
+              onPress={() => switchLanguage()}
+              language={i18n.language}
+            />
+          </View>
         </View>
 
-        <View style={styles.notificationsContainer}>
-          <Text style={styles.notificationsText}>{t('Notifications')}</Text>
+        <View style={[styles.switchContainer, { backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0' }]}>
+          <Icon name="bell" size={24} color={isDarkMode ? '#B0B0B0' : '#4A4F55'} style={styles.sectionIcon} />
+          <Text style={[styles.sectionText, { color: isDarkMode ? '#F9FAFB' : '#1C2128' }]}>{t('Notifications')}</Text>
           <Switch
             value={notificationsEnabled}
-            onValueChange={() =>
-              setNotificationsEnabled(previousState => !previousState)
-            }
-            trackColor={{false: '#767577', true: '#007BFF'}}
-            thumbColor={notificationsEnabled ? '#f4f3f4' : '#f4f3f4'}
+            onValueChange={() => setNotificationsEnabled(prev => !prev)}
+            trackColor={{ false: '#B0B0B0', true: '#0084FF' }}
+            thumbColor={notificationsEnabled ? '#FFFFFF' : '#B0B0B0'}
             style={styles.switch}
           />
         </View>
 
-        <View style={styles.logoutContainer}>
-          <Text style={styles.logoutText}>{t('Logout')}</Text>
-          <TouchableOpacity
-            onPress={() => {
-              handleLogout();
-            }}>
-            <Icon
-              name="log-out"
-              size={28}
-              color="white"
-              style={styles.logoutIcon}
-            />
-          </TouchableOpacity>
+        {/* Dark Mode Toggle */}
+        <View style={[styles.switchContainer, { backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0' }]}>
+          <Icon name="moon" size={24} color={isDarkMode ? '#B0B0B0' : '#4A4F55'} style={styles.sectionIcon} />
+          <Text style={[styles.sectionText, { color: isDarkMode ? '#F9FAFB' : '#1C2128' }]}>{t('Dark Mode')}</Text>
+          <Switch
+            value={isDarkMode}
+            onValueChange={toggleTheme}
+            trackColor={{ false: '#B0B0B0', true: '#0084FF' }}
+            thumbColor={isDarkMode ? '#FFFFFF' : '#B0B0B0'}
+            style={styles.switch}
+          />
         </View>
+
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>{t('Logout')}</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -97,19 +98,17 @@ const ProfileScreen = ({navigation}) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1C2128',
     flex: 1,
   },
 
   headerContainer: {
     flexDirection: 'row',
-    alignContent: 'center',
+    alignItems: 'center',
   },
 
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: '600',
-    color: 'white',
     marginLeft: 80,
     marginTop: 18,
   },
@@ -124,7 +123,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 105,
     height: 105,
-    borderRadius: 52.5, // Circular image
   },
 
   usernameContainer: {
@@ -132,84 +130,63 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,
-    marginLeft: 20,
   },
 
   username: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: 'bold',
-    color: 'white',
   },
 
   arrowIcon: {
     marginLeft: 10,
-    marginTop: 5,
   },
 
   email: {
-    fontSize: 18,
-    color: 'white',
-    opacity: 0.5,
+    fontSize: 20,
     marginTop: 5,
   },
 
-  languageContainer: {
+  switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 37,
-    width: '80%',
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 14,
+    marginTop: 22,
+    width: '85%',
   },
 
-  languageIcon: {
-    marginRight: 10,
-    marginTop: 17,
+  sectionIcon: {
+    marginRight: 14,
   },
 
-  languageText: {
-    fontSize: 26,
-    color: 'white',
+  sectionText: {
+    fontSize: 20,
+    fontWeight: '500',
     flex: 1,
-    marginTop: 15,
-    fontWeight: '500',
-  },
-
-  notificationsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 37,
-    width: '80%',
-  },
-
-  notificationsText: {
-    fontSize: 26,
-    color: 'white',
-    fontWeight: '500',
   },
 
   switch: {
-    // borderWidth: 1,        I got a better switcher in the iPhone like this.
-    // borderColor: '#4CAF50',
-    borderRadius: 16,
-    transform: [{scaleX: 1.4}, {scaleY: 1.4}],
+    transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }],
+    marginRight: 7,
   },
 
-  logoutContainer: {
-    flexDirection: 'row',
+  logoutButton: {
+    backgroundColor: '#B02626',
+    width: '85%',
+    paddingVertical: 16,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 37,
-    width: '80%',
+    borderRadius: 14,
+    marginTop: 30,
+
   },
 
   logoutText: {
-    fontSize: 26,
-    color: 'white',
-    fontWeight: '500',
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '600',
   },
-
-  logoutIcon: {},
 });
 
 export default ProfileScreen;
