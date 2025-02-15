@@ -6,14 +6,17 @@ import {doc, getDoc} from 'firebase/firestore';
 import {validateInputs} from '../utils/validationUtils';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
+import {loginErrorHandler} from '../utils/errorHandler';
 
 export const useLogin = () => {
   const navigation = useNavigation();
   const {updateUserData} = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleLogin = async (email, password, rememberMe) => {
-    if (!validateInputs({email, password})) return;
+    const validate = validateInputs({email, password});
+    if (validate) return setError(loginErrorHandler(validate));
 
     setLoading(true);
 
@@ -42,12 +45,11 @@ export const useLogin = () => {
       Alert.alert('Success', 'Login successful!'); //Remove after testing
       navigation.navigate('Profile');
     } catch (error) {
-      Alert.alert('Error', 'Invalid email or password.');
-      console.log(error);
+      setError(loginErrorHandler(error.code));
     } finally {
       setLoading(false);
     }
   };
 
-  return {handleLogin, loading};
+  return {handleLogin, loading, error};
 };

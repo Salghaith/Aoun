@@ -6,14 +6,17 @@ import {setDoc, doc} from 'firebase/firestore';
 import {validateInputs} from '../utils/validationUtils';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
+import {SignupErrorHandler} from '../utils/errorHandler';
 
 export const useSignup = () => {
   const navigation = useNavigation();
   const {updateUserData} = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSignup = async (username, email, password, rememberMe) => {
-    if (!validateInputs({username, email, password})) return;
+    const validate = validateInputs({username, email, password});
+    if (validate) return setError(SignupErrorHandler(validate));
 
     setLoading(true);
 
@@ -40,14 +43,13 @@ export const useSignup = () => {
       };
 
       await updateUserData(userObject);
-      Alert.alert('Success', 'Account created successfully!'); //Remove after testing
       navigation.navigate('Profile');
     } catch (error) {
-      Alert.alert('Error', error.message);
+      setError(SignupErrorHandler(error.code));
     } finally {
       setLoading(false);
     }
   };
 
-  return {handleSignup, loading};
+  return {handleSignup, loading, error};
 };

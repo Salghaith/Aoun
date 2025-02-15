@@ -13,11 +13,12 @@ import InputField from '../components/InputField';
 import LoginButton from '../components/LoginButton';
 import {useLogin} from '../hooks/useLogin';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AlertCard from '../components/AlertCard';
 
 const LoginScreen = ({navigation}) => {
   const {t} = useTranslation();
 
-  const {handleLogin, loading} = useLogin();
+  const {handleLogin, loading, error} = useLogin();
 
   const [email, setEmail] = useState(''); //Need to check, if it the Input is just number=>KSU ID add "@student...."
   const [password, setPassword] = useState('');
@@ -28,7 +29,11 @@ const LoginScreen = ({navigation}) => {
       <BackButton onPress={() => navigation.navigate('Home')} />
 
       <Text style={styles.title}>{t('Login Your Account')}</Text>
-
+      <View style={styles.errorMessage}>
+        {error && (
+          <AlertCard type="error" message={error} />
+        )}
+      </View>
       <View style={styles.formContainer}>
         <InputField
           type="email"
@@ -48,7 +53,7 @@ const LoginScreen = ({navigation}) => {
           <TouchableOpacity
             onPress={() => setRememberMe(!rememberMe)}
             style={{flexDirection: 'row', alignItems: 'center', padding: 10}}>
-            <Text style={styles.rememberText}>{t("Remember me")}</Text>
+            <Text style={styles.rememberText}>{t('Remember me')}</Text>
             <Icon
               name={rememberMe ? 'check-box' : 'check-box-outline-blank'}
               size={20}
@@ -95,7 +100,14 @@ const styles = StyleSheet.create({
   container: {backgroundColor: '#1C2128', flex: 1},
   formContainer: {
     alignItems: 'center',
-    paddingTop: 50,
+    // paddingTop: 50,
+  },
+  errorMessage: {
+    height: 50,
+    width: 334,
+    marginTop: 20,
+    marginBottom: 10,
+    alignSelf: 'center',
   },
   InputField: {
     marginBottom: 30,

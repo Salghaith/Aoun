@@ -13,11 +13,12 @@ import InputField from '../components/InputField';
 import {useTranslation} from 'react-i18next';
 import LoginButton from '../components/LoginButton';
 import {useSignup} from '../hooks/useSignup';
+import AlertCard from '../components/AlertCard';
 
 const SignupScreen = ({navigation}) => {
   const {t} = useTranslation();
 
-  const {handleSignup, loading} = useSignup();
+  const {handleSignup, loading, error} = useSignup();
 
   const [KSUStudent, setKSUStudent] = useState(false);
   const [email, setEmail] = useState('');
@@ -37,6 +38,10 @@ const SignupScreen = ({navigation}) => {
           />
         )}
       </View>
+      <View style={styles.errorMessage}>
+        {error && <AlertCard type="error" message={error} />}
+      </View>
+
       <View style={styles.formContainer}>
         <InputField
           type="username"
@@ -116,7 +121,17 @@ const styles = StyleSheet.create({
     marginTop: 53,
     width: 220,
   },
-  formContainer: {alignItems: 'center', paddingTop: 50},
+  errorMessage: {
+    height: 50,
+    width: 334,
+    marginTop: 20,
+    marginBottom: 10,
+    alignSelf: 'center',
+  },
+  formContainer: {
+    alignItems: 'center',
+    // paddingTop: 50,
+  },
   InputField: {marginBottom: 20},
   registerButton: {
     marginTop: 25,
