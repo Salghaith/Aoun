@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  I18nManager,
 } from 'react-native';
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
@@ -24,7 +25,6 @@ const SignupScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [KSUID, setKSUID] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
@@ -56,7 +56,7 @@ const SignupScreen = ({navigation}) => {
             title={t('Enter Your KSU ID')}
             icon="idcard"
             style={styles.InputField}
-            onChangeText={setKSUID}
+            onChangeText={setEmail}
           />
         ) : (
           <InputField
@@ -80,7 +80,7 @@ const SignupScreen = ({navigation}) => {
             <LoginButton
               title={t('Register')}
               onPress={() => {
-                handleSignup(username, email, password, rememberMe);
+                handleSignup(username, email, password, rememberMe, KSUStudent);
               }}
             />
           )}
@@ -112,17 +112,22 @@ const SignupScreen = ({navigation}) => {
   );
 };
 const styles = StyleSheet.create({
-  container: {backgroundColor: '#1C2128', flex: 1},
+  container: {
+    backgroundColor: '#1C2128',
+    flex: 1,
+    direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+  },
   title: {
     fontSize: 38,
     fontWeight: '600',
     color: 'white',
-    marginLeft: 34,
+    marginHorizontal: 34,
     marginTop: 53,
     width: 220,
+    textAlign: I18nManager.isRTL ? 'left' : '',
   },
   errorMessage: {
-    height: 50,
+    minHeight: 50,
     width: 334,
     marginTop: 20,
     marginBottom: 10,

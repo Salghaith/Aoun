@@ -22,7 +22,7 @@ const SplashScreen = ({navigation}) => {
               await updateUserData(userData);
               navigation.navigate('Profile');
             } catch (error) {
-              console.error('❌ Error refreshing token:', error);
+              console.log('❌ Error refreshing token:', error);
               await removeData('userData');
               navigation.replace('Home');
             }

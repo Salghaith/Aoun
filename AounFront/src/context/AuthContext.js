@@ -6,12 +6,12 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
   const [userData, setUserData] = useState();
 
-  useEffect(() => {
-    const loadUserData = async () => {
-      setUserData(await getData('userData'));
-    };
-    loadUserData();
-  }, []);
+  // useEffect(() => {
+  //   const loadUserData = async () => {
+  //     setUserData(await getData('userData'));
+  //   };
+  //   loadUserData();
+  // }, []);
 
   //Function to update user data globally
   const updateUserData = async updatedUser => {

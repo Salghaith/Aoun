@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ActivityIndicator,
+  I18nManager,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
@@ -30,9 +31,7 @@ const LoginScreen = ({navigation}) => {
 
       <Text style={styles.title}>{t('Login Your Account')}</Text>
       <View style={styles.errorMessage}>
-        {error && (
-          <AlertCard type="error" message={error} />
-        )}
+        {error && <AlertCard type="error" message={error} />}
       </View>
       <View style={styles.formContainer}>
         <InputField
@@ -97,13 +96,17 @@ const LoginScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {backgroundColor: '#1C2128', flex: 1},
+  container: {
+    backgroundColor: '#1C2128',
+    flex: 1,
+    direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+  },
   formContainer: {
     alignItems: 'center',
     // paddingTop: 50,
   },
   errorMessage: {
-    height: 50,
+    minHeight: 50,
     width: 334,
     marginTop: 20,
     marginBottom: 10,
@@ -116,9 +119,10 @@ const styles = StyleSheet.create({
     fontSize: 38,
     fontWeight: '600',
     color: 'white',
-    marginLeft: 34,
+    marginHorizontal: 34,
     marginTop: 53,
     width: 190,
+    textAlign: I18nManager.isRTL ? 'left' : '',
   },
   rememberSection: {
     flexDirection: 'row',

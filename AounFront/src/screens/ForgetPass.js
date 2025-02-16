@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, SafeAreaView, Alert} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  Alert,
+  I18nManager,
+} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
@@ -51,7 +58,11 @@ const ForgetPassScreen = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {backgroundColor: '#1C2128', flex: 1},
+  container: {
+    backgroundColor: '#1C2128',
+    flex: 1,
+    direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+  },
   backButton: {
     marginLeft: 34,
     marginTop: 14,
@@ -60,9 +71,10 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: '600',
     color: 'white',
-    marginLeft: 34,
+    marginHorizontal: 34,
     marginTop: 53,
     width: 250,
+    textAlign: I18nManager.isRTL ? 'left' : '',
   },
   inputContainer: {
     alignSelf: 'center',

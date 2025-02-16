@@ -1,10 +1,38 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  I18nManager,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import IDcard from 'react-native-vector-icons/AntDesign';
 
-const InputField = ({title, icon, type, style, value, placeholder, editable = true, onChangeText}) => {
+const InputField = ({
+  title,
+  icon,
+  type,
+  style,
+  value,
+  placeholder,
+  editable = true,
+  onChangeText,
+}) => {
   const [secureText, setSecureText] = useState(type === 'password');
+  const inputProps = {
+    email: {
+      keyboardType: 'email-address',
+      maxLength: 30,
+    },
+    password: {
+      maxLength: 20,
+    },
+    id: {
+      keyboardType: 'numeric',
+      maxLength: 9,
+    },
+  };
 
   return (
     <View style={[styles.container, style]}>
@@ -22,22 +50,24 @@ const InputField = ({title, icon, type, style, value, placeholder, editable = tr
         placeholder={placeholder || title} // Use placeholder or title
         placeholderTextColor="#817D7D"
         secureTextEntry={secureText}
-        maxLength={45}  //must be maintained when validation.
+        maxLength={45} //must be maintained when validation.
         value={value}
         editable={editable} // Make text input editable or read-only
         onChangeText={onChangeText} // Handle text change
+        {...inputProps[type]}
       />
-      {type === 'password' && editable && ( // Show eye icon only when editable
-        <TouchableOpacity
-          style={styles.eyeIcon}
-          onPress={() => setSecureText(!secureText)}>
-          <Icon
-            name={secureText ? 'eye-off' : 'eye'}
-            size={24}
-            color="#817D7D"
-          />
-        </TouchableOpacity>
-      )}
+      {type === 'password' &&
+        editable && ( // Show eye icon only when editable
+          <TouchableOpacity
+            style={styles.eyeIcon}
+            onPress={() => setSecureText(!secureText)}>
+            <Icon
+              name={secureText ? 'eye-off' : 'eye'}
+              size={24}
+              color="#817D7D"
+            />
+          </TouchableOpacity>
+        )}
     </View>
   );
 };
@@ -60,16 +90,16 @@ const styles = StyleSheet.create({
   textInput: {
     fontSize: 16,
     fontWeight: '500',
-    height: "100%",
-    width: '75%',
+    height: '100%',
+    width: '77%',
     color: '#000', // Default text color
+    textAlign: I18nManager.isRTL ? 'right' : 'left',
   },
   readOnlyTextInput: {
     color: '#817D7D', // Text color for read-only state
   },
   eyeIcon: {
-    position: 'absolute', //This approach because of RTL problem, when RTL work, this should be maintained.
-    right: 30,
+    marginHorizontal: -35,
   },
 });
 

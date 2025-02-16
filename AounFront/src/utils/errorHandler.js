@@ -73,3 +73,28 @@ export const SignupErrorHandler = error => {
   }
   return errorMessage;
 };
+
+export const UpdateProfileErrorHandler = error => {
+  let errorMessage = 'An unknown error occurred.';
+  switch (error) {
+    case 'auth/email-already-in-use':
+      errorMessage = 'This email is already in use.';
+      break;
+    case 'Missing fields':
+      errorMessage = 'Missing fields';
+      break;
+    case 'auth/invalid-email':
+      errorMessage = 'Invalid email format. Please try again.';
+      break;
+    case 'Username is required.':
+      errorMessage = 'Username is required.';
+      break;
+    case 'Email is required.':
+      errorMessage = 'Email is required.';
+      break;
+    case 'Password must be at least 6 characters.':
+      errorMessage = 'Password must be at least 6 characters.';
+      break;
+  }
+  return errorMessage;
+};

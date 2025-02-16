@@ -14,7 +14,6 @@ export const useLogout = () => {
       await removeData('userData');
       await auth.signOut();
       await updateUserData(null);
-      Alert.alert('Success', 'Logged out successfully!'); //Remove after testing
       navigation.navigate('Home');
     } catch (error) {
       console.error('Logout Error:', error);

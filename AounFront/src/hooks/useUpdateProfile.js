@@ -1,18 +1,23 @@
 import {useState, useContext} from 'react';
-import {Alert, Platform} from 'react-native';
+import {Platform} from 'react-native';
 import {AuthContext} from '../context/AuthContext';
 import axios from 'axios';
 import {validateInputs} from '../utils/validationUtils';
 import {getData} from '../utils/storageUtils';
-import {useNavigation} from '@react-navigation/native';
+import {UpdateProfileErrorHandler} from '../utils/errorHandler';
 
 export const useUpdateProfile = () => {
-  const navigation = useNavigation();
   const {updateUserData} = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const updateUserProfile = async (newUsername, newEmail) => {
-    if (!validateInputs({newUsername, newEmail})) return;
+    const validate = validateInputs({username: newUsername, email: newEmail});
+    if (validate) {
+      setError(UpdateProfileErrorHandler(validate));
+      return; //IDK this doesn't work
+    }
 
     setLoading(true);
     const baseURL =
@@ -20,7 +25,7 @@ export const useUpdateProfile = () => {
 
     try {
       const user = await getData('userData');
-      if (!user.userId) return Alert.alert('Error', 'Failed fetching the user ID');
+      if (!user.userId) return setError('Failed fetching the user ID');
       const response = await axios.put(`${baseURL}/api/update-profile`, {
         userId: user.userId,
         newUsername,
@@ -29,20 +34,20 @@ export const useUpdateProfile = () => {
 
       if (response.data.success) {
         await updateUserData({username: newUsername, email: newEmail});
-        Alert.alert('Success', 'Profile updated successfully!');
+        setError('');
+        setSuccess('Profile updated successfully!');
       } else {
         throw new Error(response.data.message);
       }
     } catch (error) {
-      Alert.alert(
-        'Error',
+      setError(
         error.response?.data?.message || 'An unexpected error occurred.',
       );
     } finally {
       setLoading(false);
-      navigation.replace('EditProfile');
+      // navigation.replace('EditProfile');
     }
   };
 
-  return {updateUserProfile, loading};
+  return {updateUserProfile, loading, error, success};
 };

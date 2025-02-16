@@ -1,9 +1,8 @@
 import {useState, useContext} from 'react';
-import {Alert} from 'react-native';
 import {auth, db} from '../config/firebaseConfig';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {setDoc, doc} from 'firebase/firestore';
-import {validateInputs} from '../utils/validationUtils';
+import {isValidKSU, validateInputs} from '../utils/validationUtils';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
 import {SignupErrorHandler} from '../utils/errorHandler';
@@ -14,7 +13,17 @@ export const useSignup = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSignup = async (username, email, password, rememberMe) => {
+  const handleSignup = async (
+    username,
+    email,
+    password,
+    rememberMe,
+    KSUStudent,
+  ) => {
+    if (KSUStudent) {
+      const KSU_Email = isValidKSU(email);
+      if (KSU_Email) email = KSU_Email;
+    }
     const validate = validateInputs({username, email, password});
     if (validate) return setError(SignupErrorHandler(validate));
 
@@ -32,6 +41,7 @@ export const useSignup = () => {
         username,
         email: email.toLowerCase().trim(),
         createdAt: new Date(),
+        isKSU: KSUStudent,
       });
 
       const userObject = {
@@ -40,6 +50,7 @@ export const useSignup = () => {
         email,
         userToken: await user.getIdToken(),
         rememberMe,
+        isKSU: KSUStudent,
       };
 
       await updateUserData(userObject);

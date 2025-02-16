@@ -1,9 +1,8 @@
 import {useState, useContext} from 'react';
-import {Alert} from 'react-native';
 import {auth, db} from '../config/firebaseConfig';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import {doc, getDoc} from 'firebase/firestore';
-import {validateInputs} from '../utils/validationUtils';
+import {isValidKSU, validateInputs} from '../utils/validationUtils';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
 import {loginErrorHandler} from '../utils/errorHandler';
@@ -15,6 +14,9 @@ export const useLogin = () => {
   const [error, setError] = useState('');
 
   const handleLogin = async (email, password, rememberMe) => {
+    const KSU_Email = isValidKSU(email);
+    if (KSU_Email) email = KSU_Email;
+
     const validate = validateInputs({email, password});
     if (validate) return setError(loginErrorHandler(validate));
 
@@ -31,6 +33,7 @@ export const useLogin = () => {
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       const username = userDoc.exists() ? userDoc.data().username : 'Unknown';
       const userEmail = userDoc.exists() ? userDoc.data().email : email;
+      const isKSU = userDoc.exists() ? userDoc.data().isKSU : false;
 
       const userObject = {
         userId: user.uid,
@@ -38,11 +41,11 @@ export const useLogin = () => {
         email: userEmail,
         userToken: await user.getIdToken(),
         rememberMe,
+        isKSU,
       };
 
       await updateUserData(userObject);
 
-      Alert.alert('Success', 'Login successful!'); //Remove after testing
       navigation.navigate('Profile');
     } catch (error) {
       setError(loginErrorHandler(error.code));

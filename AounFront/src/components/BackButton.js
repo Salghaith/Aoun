@@ -1,11 +1,15 @@
 import React from 'react';
-import {TouchableOpacity, StyleSheet} from 'react-native';
+import {TouchableOpacity, StyleSheet, I18nManager} from 'react-native';
 import Icon from 'react-native-vector-icons/Entypo';
 
 const BackButton = ({onPress}) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Icon name="chevron-small-left" size={35} color="white" />
+      <Icon
+        name={I18nManager.isRTL ? 'chevron-small-right' : 'chevron-small-left'}
+        size={35}
+        color="white"
+      />
     </TouchableOpacity>
   );
 };
@@ -18,7 +22,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#131417',
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 34,
+    marginLeft: I18nManager.isRTL ? 0 : 34,
+    marginRight: I18nManager.isRTL ? 34 : 0,
     marginTop: 14,
   },
 });

@@ -17,7 +17,7 @@ export const updateUserProfile = async (req, res) => {
     if (existingUser && existingUser.uid !== userId) {
       return res
         .status(400)
-        .json({ success: false, message: "This email is already in use." });
+        .json({ success: false, message: "auth/email-already-in-use" });
     }
 
     await admin.auth().updateUser(userId, {
@@ -32,7 +32,6 @@ export const updateUserProfile = async (req, res) => {
 
     res.json({ success: true, message: "Profile updated successfully" });
   } catch (error) {
-    console.error("Error updating profile:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Text,
@@ -7,29 +7,37 @@ import {
   Image,
   TouchableOpacity,
   Switch,
+  I18nManager,
 } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import Icon from 'react-native-vector-icons/Feather';
 import LanguageSwitch from '../components/LanguageSwitch';
-import i18n, { switchLanguage } from '../i18n';
-import { useLogout } from '../hooks/useLogout';
-import { AuthContext } from '../context/AuthContext';
-import { ThemeContext } from '../context/ThemeContext'; // Import Theme Context
+import i18n, {switchLanguage} from '../i18n';
+import {useLogout} from '../hooks/useLogout';
+import {AuthContext} from '../context/AuthContext';
+import {ThemeContext} from '../context/ThemeContext'; // Import Theme Context
 import DarkModeSwitcher from '../components/DarkModeSwitch';
 
-const ProfileScreen = ({ navigation }) => {
-  const { t } = useTranslation();
-  const { handleLogout } = useLogout();
-  const { userData } = useContext(AuthContext);
-  const { isDarkMode, toggleTheme } = useContext(ThemeContext); // Dark Mode Context
+const ProfileScreen = ({navigation}) => {
+  const {t} = useTranslation();
+  const {handleLogout} = useLogout();
+  const {userData} = useContext(AuthContext);
+  const {isDarkMode, toggleTheme} = useContext(ThemeContext); // Dark Mode Context
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5' }]}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        {backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5'},
+      ]}>
       <View style={styles.headerContainer}>
-        <BackButton onPress={() => navigation.goBack()} />
-        <Text style={[styles.title, { color: isDarkMode ? '#F9FAFB' : '#1C2128' }]}>{t('Profile')}</Text>
+        <BackButton onPress={() => {}} />
+        <Text
+          style={[styles.title, {color: isDarkMode ? '#F9FAFB' : '#1C2128'}]}>
+          {t('Profile')}
+        </Text>
       </View>
 
       <View style={styles.ProfileContainer}>
@@ -41,48 +49,102 @@ const ProfileScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.usernameContainer}
           onPress={() => navigation.navigate('EditProfile')}>
-          <Text style={[styles.username, { color: isDarkMode ? '#F9FAFB' : '#1C2128' }]}>{userData.username}</Text>
+          <Text
+            style={[
+              styles.username,
+              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
+            ]}>
+            {userData.username}
+          </Text>
           <Icon
-            name="chevron-right"
+            name={I18nManager.isRTL ? 'chevron-left' : 'chevron-right'}
             size={24}
             color={isDarkMode ? '#B0B0B0' : '#4A4F55'}
             style={styles.arrowIcon}
           />
         </TouchableOpacity>
 
-        <Text style={[styles.email, { color: isDarkMode ? '#B1B1B1' : '#4A4F55' }]}>{userData.email}</Text>
+        <Text
+          style={[styles.email, {color: isDarkMode ? '#B1B1B1' : '#4A4F55'}]}>
+          {userData.email}
+        </Text>
 
-        <View style={[styles.switchContainer, { backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0' }]}>
-          <Icon name="globe" size={24} color={isDarkMode ? '#B0B0B0' : '#4A4F55'} style={styles.sectionIcon} />
-          <Text style={[styles.sectionText, { color: isDarkMode ? '#F9FAFB' : '#1C2128' }]}>{t('Language')}</Text>
+        <View
+          style={[
+            styles.switchContainer,
+            {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
+          ]}>
+          <Icon
+            name="globe"
+            size={24}
+            color={isDarkMode ? '#B0B0B0' : '#4A4F55'}
+            style={styles.sectionIcon}
+          />
+          <Text
+            style={[
+              styles.sectionText,
+              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
+            ]}>
+            {t('Language')}
+          </Text>
           <View style={styles.languageSwitcherWrapper}>
             <LanguageSwitch
-              onPress={() => switchLanguage()}
+              onPress={() => switchLanguage(navigation)}
               language={i18n.language}
             />
           </View>
         </View>
 
-        <View style={[styles.switchContainer, { backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0' }]}>
-          <Icon name="bell" size={24} color={isDarkMode ? '#B0B0B0' : '#4A4F55'} style={styles.sectionIcon} />
-          <Text style={[styles.sectionText, { color: isDarkMode ? '#F9FAFB' : '#1C2128' }]}>{t('Notifications')}</Text>
+        <View
+          style={[
+            styles.switchContainer,
+            {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
+          ]}>
+          <Icon
+            name="bell"
+            size={24}
+            color={isDarkMode ? '#B0B0B0' : '#4A4F55'}
+            style={styles.sectionIcon}
+          />
+          <Text
+            style={[
+              styles.sectionText,
+              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
+            ]}>
+            {t('Notifications')}
+          </Text>
           <Switch
             value={notificationsEnabled}
             onValueChange={() => setNotificationsEnabled(prev => !prev)}
-            trackColor={{ false: '#B0B0B0', true: '#0084FF' }}
+            trackColor={{false: '#B0B0B0', true: '#0084FF'}}
             thumbColor={notificationsEnabled ? '#FFFFFF' : '#B0B0B0'}
             style={styles.switch}
           />
         </View>
 
         {/* Dark Mode Toggle */}
-        <View style={[styles.switchContainer, { backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0' }]}>
-          <Icon name="moon" size={24} color={isDarkMode ? '#B0B0B0' : '#4A4F55'} style={styles.sectionIcon} />
-          <Text style={[styles.sectionText, { color: isDarkMode ? '#F9FAFB' : '#1C2128' }]}>{t('Dark Mode')}</Text>
+        <View
+          style={[
+            styles.switchContainer,
+            {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
+          ]}>
+          <Icon
+            name="moon"
+            size={24}
+            color={isDarkMode ? '#B0B0B0' : '#4A4F55'}
+            style={styles.sectionIcon}
+          />
+          <Text
+            style={[
+              styles.sectionText,
+              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
+            ]}>
+            {t('Dark Mode')}
+          </Text>
           <Switch
             value={isDarkMode}
             onValueChange={toggleTheme}
-            trackColor={{ false: '#B0B0B0', true: '#0084FF' }}
+            trackColor={{false: '#B0B0B0', true: '#0084FF'}}
             thumbColor={isDarkMode ? '#FFFFFF' : '#B0B0B0'}
             style={styles.switch}
           />
@@ -99,6 +161,7 @@ const ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    direction: I18nManager.isRTL ? 'rtl' : 'ltr',
   },
 
   headerContainer: {
@@ -109,7 +172,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '600',
-    marginLeft: 80,
+    marginLeft: I18nManager.isRTL ? 0 : 80,
+    marginRight: I18nManager.isRTL ? 80 : 0,
     marginTop: 18,
   },
 
@@ -138,7 +202,8 @@ const styles = StyleSheet.create({
   },
 
   arrowIcon: {
-    marginLeft: 10,
+    marginLeft: I18nManager.isRTL ? 0 : 10,
+    marginRight: I18nManager.isRTL ? 10 : 0,
   },
 
   email: {
@@ -158,17 +223,19 @@ const styles = StyleSheet.create({
   },
 
   sectionIcon: {
-    marginRight: 14,
+    marginLeft: I18nManager.isRTL ? 14 : 0,
+    marginRight: I18nManager.isRTL ? 0 : 14,
   },
 
   sectionText: {
     fontSize: 20,
     fontWeight: '500',
     flex: 1,
+    textAlign: I18nManager.isRTL ? 'left' : '',
   },
 
   switch: {
-    transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }],
+    transform: [{scaleX: 1.3}, {scaleY: 1.3}],
     marginRight: 7,
   },
 
@@ -179,7 +246,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 14,
     marginTop: 30,
-
   },
 
   logoutText: {
