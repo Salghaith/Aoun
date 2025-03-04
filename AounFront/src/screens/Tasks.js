@@ -1,118 +1,314 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   SafeAreaView,
   View,
   Text,
   StyleSheet,
   ScrollView,
-  TouchableOpacity
+  LogBox,
+  Pressable,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import { useTranslation } from 'react-i18next';
+
 import { ThemeContext } from '../context/ThemeContext';
 import BottomNav from '../components/BottomNav';
 import SearchBar from '../components/SearchBar';
 import CalendarComponent from '../components/CalendarComponent';
 import TaskItem from '../components/TaskItem';
+import EditTask from '../components/EditTask';
 
-const Tasks = ({ navigation }) => {
+LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+
+const Tasks = ({ navigation, route }) => {
+  // 1) i18n + theme
+  const { t } = useTranslation();
   const { isDarkMode } = useContext(ThemeContext);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // Default to today
+
+  // 2) State
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [completedTasks, setCompletedTasks] = useState({});
+  const [searchTerm, setSearchTerm] = useState('');
+  const [editTask, setEditTask] = useState(null);
 
-  const today = new Date().toISOString().split('T')[0];
+  // 3) Sample tasks
+  const [tasks, setTasks] = useState([
+    {
+      id: 1,
+      title: 'AI Research Paper Submission',
+      description: '',
+      date: '2025-03-03',
+      priority: 'high',
+      startTime: '10:00',
+      endTime: '11:00',
+    },
+    {
+      id: 2,
+      title: 'React Native Debugging',
+      description: '',
+      date: '2025-03-03',
+      priority: 'medium',
+      startTime: '14:00',
+      endTime: '15:30',
+    },
+    {
+      id: 3,
+      title: 'Consulting Interview Prep',
+      description: '',
+      date: '2025-03-04',
+      priority: 'low',
+      startTime: '09:00',
+      endTime: '10:00',
+    },
+    {
+      id: 4,
+      title: 'Sprint Review Meeting',
+      description: '',
+      date: '2025-03-04',
+      priority: 'high',
+      startTime: '11:00',
+      endTime: '12:00',
+    },
+    {
+      id: 5,
+      title: 'Database Optimization',
+      description: '',
+      date: '2025-03-04',
+      priority: 'medium',
+      startTime: '13:45',
+      endTime: '15:00',
+    },
+    {
+      id: 6,
+      title: 'Project Kickoff Meeting',
+      description: 'Discuss project scope and milestones',
+      date: '2025-03-05',
+      priority: 'high',
+      startTime: '10:00',
+      endTime: '11:00',
+    },
+    {
+      id: 7,
+      title: 'UX Design Review',
+      description: 'Review wireframes with the design team',
+      date: '2025-03-05',
+      priority: 'medium',
+      startTime: '14:00',
+      endTime: '15:30',
+    },
+    {
+      id: 8,
+      title: 'Doctor’s Appointment',
+      description: 'Routine check-up',
+      date: '2025-03-07',
+      priority: 'low',
+      startTime: '09:00',
+      endTime: '09:30',
+    },
+    {
+      id: 9,
+      title: 'Team Stand-Up',
+      description: 'Daily progress update',
+      date: '2025-03-08',
+      priority: 'medium',
+      startTime: '09:30',
+      endTime: '09:45',
+    },
+    {
+      id: 10,
+      title: 'Grocery Shopping',
+      description: 'Buy fruits, veggies, and snacks for the week',
+      date: '2025-03-10',
+      priority: 'low',
+      startTime: '18:00',
+      endTime: '18:45',
+    },
+    {
+      id: 11,
+      title: 'Sprint Planning',
+      description: 'Plan tasks for the upcoming sprint',
+      date: '2025-03-10',
+      priority: 'high',
+      startTime: '11:00',
+      endTime: '12:30',
+    },
+    {
+      id: 12,
+      title: 'Gym Session',
+      description: 'Leg day workout',
+      date: '2025-03-02',
+      priority: 'medium',
+      startTime: '17:30',
+      endTime: '18:30',
+    },
+    {
+      id: 13,
+      title: 'Family Video Call',
+      description: 'Catch up with family',
+      date: '2025-03-11',
+      priority: 'low',
+      startTime: '16:00',
+      endTime: '16:30',
+    },
+  ]);
 
-  const tasks = [
-    { id: 1, title: 'AI Research Paper Submission', date: '2025-02-15', priority: 'high' },
-    { id: 2, title: 'React Native Debugging', date: '2025-02-15', priority: 'medium' },
-    { id: 3, title: 'Consulting Interview Prep', date: '2025-02-16', priority: 'low' },
-    { id: 4, title: 'Sprint Review Meeting', date: '2025-02-16', priority: 'high' },
-    { id: 5, title: 'Database Optimization', date: '2025-02-17', priority: 'medium' },
-    { id: 6, title: 'Cloud Deployment Workshop', date: '2025-02-17', priority: 'low' },
-    { id: 7, title: 'User Testing Session', date: '2025-02-17', priority: 'high' },
-    { id: 8, title: 'Final Project Report', date: '2025-02-18', priority: 'medium' },
-    { id: 9, title: 'Backend Refactoring', date: '2025-02-19', priority: 'low' },
-    { id: 10, title: 'Machine Learning Model Training', date: '2025-02-20', priority: 'high' },
-    { id: 11, title: 'Frontend UI Updates', date: '2025-02-22', priority: 'medium' },
-    { id: 12, title: 'Thesis Presentation', date: '2025-02-21', priority: 'high' },
-    { id: 13, title: 'Software Architecture Review', date: '2025-02-21', priority: 'low' },
-    { id: 14, title: 'Coding Challenge', date: '2025-02-23', priority: 'medium' },
-    { id: 15, title: 'Tech Talk Preparation', date: '2025-02-25', priority: 'high' },
-  ];
+  // 4) On mount: check for newTask from CreateTask
+  useEffect(() => {
+    if (route.params?.newTask) {
+      const incomingTask = route.params.newTask;
+      const newId = Date.now();
+      setTasks((prevTasks) => [...prevTasks, { id: newId, ...incomingTask }]);
+      navigation.setParams({ newTask: undefined });
+    }
+  }, [route.params?.newTask, navigation, route.params]);
 
-  const filteredTasks = tasks.filter(task => task.date === selectedDate);
+  // 5) Filter tasks by selected date
+  const filteredTasks = tasks.filter((task) => task.date === selectedDate);
 
+  // 6) Searching
+  const searchResults = tasks.filter(
+    (task) =>
+      searchTerm &&
+      (
+        (task.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (task.description?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (task.date || '').includes(searchTerm)
+      )
+  );
+
+  // 7) Handlers
   const toggleTaskCompletion = (taskId) => {
-    setCompletedTasks(prevState => ({
-      ...prevState,
-      [taskId]: !prevState[taskId]
+    setCompletedTasks((prev) => ({
+      ...prev,
+      [taskId]: !prev[taskId],
     }));
   };
 
+  const handleTaskEdit = (task) => {
+    setEditTask(task);
+  };
+
+  const handleSaveTask = (updatedTask) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((t) => (t.id === updatedTask.id ? { ...t, ...updatedTask } : t))
+    );
+    setEditTask(null);
+  };
+
+  const handleDeleteTask = (taskId) => {
+    setTasks((prevTasks) => prevTasks.filter((t) => t.id !== taskId));
+    setEditTask(null);
+  };
+
+  const backgroundColor = isDarkMode ? '#1C2128' : '#F5F5F5';
+  const textColor       = isDarkMode ? '#FFFFFF' : '#1C2128';
+
+  const tasksCountText = t('You have got {{count}} tasks today to complete', {
+    count: filteredTasks.length,
+  });
+
+  const isToday = selectedDate === new Date().toISOString().split('T')[0];
+  const tasksHeaderLabel = isToday
+    ? t("Today's Tasks")
+    : `${selectedDate} ${t('Tasks')}`;
+
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        { backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5' },
-      ]}
-    >
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-        
-        {/* Title Section */}
+
+        {/* Title line */}
         <View style={styles.titleContainer}>
-          <Text
-            style={[
-              styles.titleText,
-              { color: isDarkMode ? '#FFFFFF' : '#1C2128' },
-            ]}
-          >
-            You have got {filteredTasks.length} tasks{'\n'}
-            today to complete {' '}
-            <Feather
-              name="edit-2"
-              size={22}  
-              color="#FFA500"
-            />
+          <Text style={[styles.titleText, { color: textColor }]}>
+            {tasksCountText}
           </Text>
+          {/* Example icon; no onPress */}
+          <Feather name="edit-2" size={22} color="#FFA500" />
         </View>
 
-        {/* Search Bar */}
-        <SearchBar />
+        {/* Search */}
+        <SearchBar value={searchTerm} onChangeText={setSearchTerm} />
 
-        {/* Calendar Component */}
+        {/* If searching, show searchResults */}
+        {searchTerm !== '' && (
+          <View style={styles.searchResultsContainer}>
+            {searchResults.map((item) => (
+              <Pressable
+                key={item.id}
+                style={({ pressed }) => [
+                  styles.searchResultItem,
+                  pressed && { transform: [{ scale: 0.95 }] },
+                ]}
+                onPress={() => handleTaskEdit(item)}
+              >
+                <Text style={styles.searchResultText}>{item.title}</Text>
+              </Pressable>
+            ))}
+          </View>
+        )}
+
+        {/* Calendar */}
         <CalendarComponent onDateSelect={(date) => setSelectedDate(date)} />
 
-        {/* Tasks Header (Under Calendar) */}
+        {/* Tasks Header */}
         <View style={styles.tasksHeader}>
-          <Text style={styles.sectionTitle}>
-            {selectedDate === today ? "Today's Tasks" : `${selectedDate} Tasks`}
+          <Text style={[styles.sectionTitle, { color: textColor }]}>
+            {tasksHeaderLabel}
           </Text>
 
-          {/* Add Task Button */}
-          <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('CreateTask')}>
-            <Feather name="plus" size={28} color="#FFFFFF" />
-          </TouchableOpacity>
+          {/* Add button with scale effect */}
+          <Pressable
+            onPress={() => navigation.navigate('CreateTask')}
+            style={({ pressed }) => [
+              styles.addButton,
+              pressed && { transform: [{ scale: 0.9 }] },
+            ]}
+          >
+            <Feather name="plus" size={24} color="#FFFFFF" />
+          </Pressable>
         </View>
 
-        {/* Task List */}
+        {/* Task list */}
         <View style={styles.tasksSection}>
           {filteredTasks.length > 0 ? (
             filteredTasks.map((task) => (
-              <TaskItem 
-                key={task.id} 
-                title={task.title} 
-                date={task.date} 
-                priority={task.priority} 
-                isCompleted={completedTasks[task.id] || false}
-                onToggleComplete={() => toggleTaskCompletion(task.id)}
-              />
+              <Pressable
+                key={task.id}
+                onPress={() => handleTaskEdit(task)}
+                style={({ pressed }) => [
+                  pressed && { transform: [{ scale: 0.97 }] },
+                ]}
+              >
+                <TaskItem
+                  title={task.title}
+                  date={task.date}
+                  priority={task.priority}
+                  startTime={task.startTime}
+                  endTime={task.endTime}
+                  isCompleted={completedTasks[task.id] || false}
+                  onToggleComplete={() => toggleTaskCompletion(task.id)}
+                />
+              </Pressable>
             ))
           ) : (
-            <Text style={styles.noTaskText}>No tasks for this date.</Text>
+            <Text style={[styles.noTaskText, { color: textColor }]}>
+              {t('No tasks for this date.')}
+            </Text>
           )}
         </View>
       </ScrollView>
 
-      {/* Fixed Bottom Navigation */}
+      {/* Edit task modal */}
+      {editTask && (
+        <EditTask
+          visible={!!editTask}
+          task={editTask}
+          onClose={() => setEditTask(null)}
+          onSave={handleSaveTask}
+          onDelete={handleDeleteTask}
+        />
+      )}
+
+      {/* Bottom navigation */}
       <BottomNav />
     </SafeAreaView>
   );
@@ -124,47 +320,63 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 70, 
+    paddingBottom: 70,
   },
   titleContainer: {
-    marginTop: 40,  
-    marginLeft: 37, 
+    marginTop: 40,
+    marginHorizontal: 37,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   titleText: {
-    fontSize: 25,  
+    fontSize: 25,
     fontWeight: 'bold',
+    maxWidth: '80%',
+  },
+  searchResultsContainer: {
+    marginHorizontal: 37,
+  },
+  searchResultItem: {
+    backgroundColor: '#1C2128',
+    padding: 10,
+    marginTop: 5,
+    borderRadius: 8,
+  },
+  searchResultText: {
+    color: '#FFFFFF',
+    fontSize: 16,
   },
   tasksHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Align title and button
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 40, // Now under the calendar
-    marginHorizontal: 37, 
+    marginTop: 40,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '600',
     color: '#FFFFFF',
+    marginLeft: 37,
   },
   addButton: {
-    width: 50, 
-    height: 50, 
-    borderRadius: 25, 
-    backgroundColor: '#131417', 
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#131417',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000', // Same shadow effect
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.5,
     shadowRadius: 5,
+    marginRight: 37,
   },
   tasksSection: {
     marginTop: 20,
-    marginLeft: 37,
-    marginRight: 37,
+    marginHorizontal: 37,
   },
   noTaskText: {
-    color: '#888888',
     fontSize: 16,
     textAlign: 'center',
     marginTop: 20,
