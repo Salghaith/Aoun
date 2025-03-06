@@ -46,7 +46,7 @@ export const useLogin = () => {
 
       await updateUserData(userObject);
 
-      navigation.navigate('Profile');
+      navigation.navigate('Tasks');
     } catch (error) {
       setError(loginErrorHandler(error.code));
     } finally {

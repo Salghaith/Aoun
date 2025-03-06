@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Text,
@@ -7,23 +7,26 @@ import {
   Modal,
   Pressable,
   Alert,
+  Platform,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
-import { ThemeContext } from '../context/ThemeContext';
+import {ThemeContext} from '../context/ThemeContext';
 
-const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
+const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
   // i18n + theme
-  const { t } = useTranslation();
-  const { isDarkMode } = useContext(ThemeContext);
+  const {t} = useTranslation();
+  const {isDarkMode} = useContext(ThemeContext);
 
   const [isEditing, setIsEditing] = useState(false);
 
   // Fields from the existing task
   const [taskTitle, setTaskTitle] = useState(task.title);
-  const [taskDescription, setTaskDescription] = useState(task.description || '');
+  const [taskDescription, setTaskDescription] = useState(
+    task.description || '',
+  );
   const [startTime, setStartTime] = useState(task.startTime || '09:00');
   const [endTime, setEndTime] = useState(task.endTime || '10:00');
   const [priority, setPriority] = useState(task.priority);
@@ -40,7 +43,7 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
   const placeholderColor = '#888'; // same for both, or you can vary
 
   // Convert 'HH:MM' string to a Date object
-  const parseTimeStringToDate = (timeStr) => {
+  const parseTimeStringToDate = timeStr => {
     const [hour, minute] = timeStr.split(':').map(Number);
     const now = new Date();
     now.setHours(hour, minute, 0, 0);
@@ -48,7 +51,7 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
   };
 
   // Format a Date to "HH:MM"
-  const formatTime = (dateObj) => {
+  const formatTime = dateObj => {
     return dateObj.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
@@ -65,7 +68,7 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
   };
 
   // Show the time picker (only if we're editing)
-  const handlePickTime = (which) => {
+  const handlePickTime = which => {
     if (!isEditing) return;
     setTimeType(which);
     setShowTimePicker(true);
@@ -89,7 +92,7 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
           Alert.alert(
             t('Invalid Time'),
             t('End time cannot be before start time. It has been adjusted.'),
-            [{ text: 'OK' }]
+            [{text: 'OK'}],
           );
           setEndTime(startTime);
         } else {
@@ -112,12 +115,12 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
     });
     setIsEditing(false);
     Alert.alert(t('Success'), t('Task updated successfully!'), [
-      { text: 'OK', onPress: onClose },
+      {text: 'OK', onPress: onClose},
     ]);
   };
 
   // Press events
-  const stopPress = (e) => {
+  const stopPress = e => {
     e.stopPropagation();
   };
 
@@ -126,14 +129,15 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
       {/* Outside overlay: pressing here closes */}
       <Pressable style={styles.modalOverlay} onPress={onClose}>
         {/* Window container: pressing inside does NOT close */}
-        <Pressable style={[styles.modalContainer, { backgroundColor }]} onPress={stopPress}>
+        <Pressable
+          style={[styles.modalContainer, {backgroundColor}]}
+          onPress={stopPress}>
           {/* Header */}
           <View style={styles.header}>
             {/* Edit / Check button */}
             <Pressable
               onPress={() => setIsEditing(!isEditing)}
-              style={({ pressed }) => [pressed && { transform: [{ scale: 0.95 }] }]}
-            >
+              style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
               <Feather
                 name={isEditing ? 'check' : 'edit-2'}
                 size={24}
@@ -144,18 +148,17 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
             {/* Trash button */}
             <Pressable
               onPress={() => onDelete(task.id)}
-              style={({ pressed }) => [pressed && { transform: [{ scale: 0.95 }] }]}
-            >
+              style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
               <Feather name="trash-2" size={24} color={textColor} />
             </Pressable>
           </View>
 
           {/* Title */}
-          <Text style={[styles.label, { color: textColor }]}>{t('Title')}</Text>
+          <Text style={[styles.label, {color: textColor}]}>{t('Title')}</Text>
           <TextInput
             style={[
               styles.input,
-              { backgroundColor: containerColor, color: textColor },
+              {backgroundColor: containerColor, color: textColor},
               !isEditing && styles.disabledInput,
             ]}
             value={taskTitle}
@@ -166,12 +169,14 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
           />
 
           {/* Description */}
-          <Text style={[styles.label, { color: textColor }]}>{t('Description')}</Text>
+          <Text style={[styles.label, {color: textColor}]}>
+            {t('Description')}
+          </Text>
           <TextInput
             style={[
               styles.input,
               styles.descriptionInput,
-              { backgroundColor: containerColor, color: textColor },
+              {backgroundColor: containerColor, color: textColor},
               !isEditing && styles.disabledInput,
             ]}
             value={taskDescription}
@@ -183,11 +188,11 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
           />
 
           {/* Date */}
-          <Text style={[styles.label, { color: textColor }]}>{t('Date')}</Text>
+          <Text style={[styles.label, {color: textColor}]}>{t('Date')}</Text>
           <TextInput
             style={[
               styles.input,
-              { backgroundColor: containerColor, color: textColor },
+              {backgroundColor: containerColor, color: textColor},
               !isEditing && styles.disabledInput,
             ]}
             value={date}
@@ -201,18 +206,19 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
           <View style={styles.timeContainer}>
             {/* Start Time */}
             <View style={styles.timeColumn}>
-              <Text style={[styles.label, { color: textColor }]}>{t('Start Time')}</Text>
+              <Text style={[styles.label, {color: textColor}]}>
+                {t('Start Time')}
+              </Text>
               <Pressable
                 disabled={!isEditing}
                 onPress={() => handlePickTime('start')}
-                style={({ pressed }) => [
+                style={({pressed}) => [
                   styles.timeBox,
-                  { backgroundColor: containerColor },
-                  pressed && { transform: [{ scale: 0.95 }] },
-                ]}
-              >
+                  {backgroundColor: containerColor},
+                  pressed && {transform: [{scale: 0.95}]},
+                ]}>
                 <Feather name="clock" size={18} color={textColor} />
-                <Text style={[styles.timeText, { color: textColor }]}>
+                <Text style={[styles.timeText, {color: textColor}]}>
                   {startTime}
                 </Text>
               </Pressable>
@@ -220,18 +226,19 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
 
             {/* End Time */}
             <View style={styles.timeColumn}>
-              <Text style={[styles.label, { color: textColor }]}>{t('End Time')}</Text>
+              <Text style={[styles.label, {color: textColor}]}>
+                {t('End Time')}
+              </Text>
               <Pressable
                 disabled={!isEditing}
                 onPress={() => handlePickTime('end')}
-                style={({ pressed }) => [
+                style={({pressed}) => [
                   styles.timeBox,
-                  { backgroundColor: containerColor },
-                  pressed && { transform: [{ scale: 0.95 }] },
-                ]}
-              >
+                  {backgroundColor: containerColor},
+                  pressed && {transform: [{scale: 0.95}]},
+                ]}>
                 <Feather name="clock" size={18} color={textColor} />
-                <Text style={[styles.timeText, { color: textColor }]}>
+                <Text style={[styles.timeText, {color: textColor}]}>
                   {endTime}
                 </Text>
               </Pressable>
@@ -239,27 +246,27 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
           </View>
 
           {/* Priority */}
-          <Text style={[styles.label, { color: textColor }]}>{t('Priority')}</Text>
+          <Text style={[styles.label, {color: textColor}]}>
+            {t('Priority')}
+          </Text>
           <View style={styles.priorityContainer}>
-            {['high', 'medium', 'low'].map((level) => (
+            {['high', 'medium', 'low'].map(level => (
               <Pressable
                 key={level}
                 onPress={() => {
                   if (isEditing) setPriority(level);
                 }}
-                style={({ pressed }) => [
+                style={({pressed}) => [
                   styles.priorityButton,
-                  { borderColor: textColor },
+                  {borderColor: textColor},
                   priority === level && styles.selectedPriority[level],
-                  pressed && { transform: [{ scale: 0.95 }] },
-                ]}
-              >
+                  pressed && {transform: [{scale: 0.95}]},
+                ]}>
                 <Text
                   style={[
                     styles.priorityText,
-                    priority === level ? { color: '#FFF' } : { color: '#888' },
-                  ]}
-                >
+                    priority === level ? {color: '#FFF'} : {color: '#888'},
+                  ]}>
                   {level.charAt(0).toUpperCase() + level.slice(1)}
                 </Text>
               </Pressable>
@@ -269,12 +276,11 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
           {/* Save Button (only while editing) */}
           {isEditing && (
             <Pressable
-              style={({ pressed }) => [
+              style={({pressed}) => [
                 styles.saveButton,
-                pressed && { transform: [{ scale: 0.95 }] },
+                pressed && {transform: [{scale: 0.95}]},
               ]}
-              onPress={handleSave}
-            >
+              onPress={handleSave}>
               <Text style={styles.saveButtonText}>{t('Save')}</Text>
             </Pressable>
           )}
@@ -292,7 +298,7 @@ const EditTask = ({ visible, onClose, task, onSave, onDelete }) => {
                   : parseTimeStringToDate(endTime)
               }
               mode="time"
-              display="clock"
+              display={Platform.OS === 'ios' ? 'spinner' : 'clock'}
               is24Hour={true}
               onChange={handleTimeChange}
             />
@@ -373,9 +379,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedPriority: {
-    high: { backgroundColor: '#E53835', borderColor: '#E53835' },
-    medium: { backgroundColor: '#007AFF', borderColor: '#007AFF' },
-    low: { backgroundColor: '#0AB161', borderColor: '#0AB161' },
+    high: {backgroundColor: '#E53835', borderColor: '#E53835'},
+    medium: {backgroundColor: '#007AFF', borderColor: '#007AFF'},
+    low: {backgroundColor: '#0AB161', borderColor: '#0AB161'},
   },
   priorityText: {
     fontSize: 16,

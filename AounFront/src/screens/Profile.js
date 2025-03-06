@@ -33,7 +33,7 @@ const ProfileScreen = ({navigation}) => {
         {backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5'},
       ]}>
       <View style={styles.headerContainer}>
-        <BackButton onPress={() => {}} />
+        <BackButton onPress={() => navigation.navigate('Tasks')} />
         <Text
           style={[styles.title, {color: isDarkMode ? '#F9FAFB' : '#1C2128'}]}>
           {t('Profile')}

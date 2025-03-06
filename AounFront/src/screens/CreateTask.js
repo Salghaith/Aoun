@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Text,
@@ -6,16 +6,21 @@ import {
   Modal,
   Alert,
   Pressable, // For scale effect
+  SafeAreaView,
+  Platform,
 } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/Feather';
 
 import BackButton from '../components/BackButton';
 import TaskField from '../components/TaskField';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { ThemeContext } from '../context/ThemeContext';
+import {ThemeContext} from '../context/ThemeContext';
+import {saveTask} from '../services/taskService';
+import {AuthContext} from '../context/AuthContext';
 
-const CreateTask = ({ navigation }) => {
+const CreateTask = ({navigation}) => {
+  const {userData} = useContext(AuthContext);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [weekStartDate, setWeekStartDate] = useState(new Date());
   const [taskName, setTaskName] = useState('');
@@ -27,19 +32,19 @@ const CreateTask = ({ navigation }) => {
   const [priority, setPriority] = useState('Medium'); // "High", "Medium", "Low"
 
   // i18n + Theme
-  const { t } = useTranslation();
-  const { isDarkMode } = useContext(ThemeContext);
+  const {t} = useTranslation();
+  const {isDarkMode} = useContext(ThemeContext);
 
   // Compare two Date objects quickly
   const isBefore = (d1, d2) => d1.getTime() < d2.getTime();
 
-  const handleWeekChange = (days) => {
+  const handleWeekChange = days => {
     const newStartDate = new Date(weekStartDate);
     newStartDate.setDate(newStartDate.getDate() + days);
     setWeekStartDate(newStartDate);
   };
 
-  const handleDaySelect = (day) => {
+  const handleDaySelect = day => {
     setSelectedDate(new Date(day));
   };
 
@@ -59,7 +64,7 @@ const CreateTask = ({ navigation }) => {
         Alert.alert(
           t('Invalid Time'),
           t('End time cannot be before start time. It has been adjusted.'),
-          [{ text: 'OK' }]
+          [{text: 'OK'}],
         );
         setEndTime(startTime);
       } else {
@@ -68,7 +73,7 @@ const CreateTask = ({ navigation }) => {
     }
   };
 
-  const handleCreateTask = () => {
+  const handleCreateTask = async () => {
     // Format date as YYYY-MM-DD
     const formattedDate = selectedDate.toISOString().split('T')[0];
 
@@ -86,15 +91,18 @@ const CreateTask = ({ navigation }) => {
 
     // Build new task
     const newTask = {
+      id: Date.now().toString(), // Temporary ID
       title: taskName,
       description: taskDescription,
       date: formattedDate,
       startTime: formattedStartTime,
       endTime: formattedEndTime,
       priority: priority.toLowerCase(), // e.g., "high"
+      completed: false,
     };
-
-    navigation.navigate('Tasks', { newTask });
+    await saveTask(newTask, userData.userId);
+    //Call backend*** if add successfully do the next line
+    navigation.navigate('Tasks', {newTask});
   };
 
   // Colors
@@ -103,11 +111,11 @@ const CreateTask = ({ navigation }) => {
   const iconColor = isDarkMode ? 'white' : 'black';
 
   return (
-    <View style={[styles.container, { backgroundColor: bgColor }]}>
+    <SafeAreaView style={[styles.container, {backgroundColor: bgColor}]}>
       {/* Header */}
       <View style={styles.headerContainer}>
         <BackButton onPress={() => navigation.goBack()} />
-        <Text style={[styles.headerTitle, { color: textColor }]}>
+        <Text style={[styles.headerTitle, {color: textColor}]}>
           {t('Create New Task')}
         </Text>
       </View>
@@ -116,29 +124,26 @@ const CreateTask = ({ navigation }) => {
       <View style={styles.calendarContainer}>
         <Pressable
           onPress={() => handleWeekChange(-7)}
-          style={({ pressed }) => [pressed && { transform: [{ scale: 0.95 }] }]}
-        >
+          style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
           <Icon name="chevron-left" size={24} color={iconColor} />
         </Pressable>
         <Text
           style={[
             styles.calendarTitle,
-            { fontSize: 18, fontWeight: '500', color: iconColor },
-          ]}
-        >
+            {fontSize: 18, fontWeight: '500', color: iconColor},
+          ]}>
           {selectedDate.toDateString()}
         </Text>
         <Pressable
           onPress={() => handleWeekChange(7)}
-          style={({ pressed }) => [pressed && { transform: [{ scale: 0.95 }] }]}
-        >
+          style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
           <Icon name="chevron-right" size={24} color={iconColor} />
         </Pressable>
       </View>
 
       {/* Weekday Selector */}
       <View style={styles.weekContainer}>
-        {Array.from({ length: 7 }, (_, i) => {
+        {Array.from({length: 7}, (_, i) => {
           const day = new Date(weekStartDate);
           day.setDate(day.getDate() + i);
 
@@ -148,16 +153,15 @@ const CreateTask = ({ navigation }) => {
             <Pressable
               key={i}
               onPress={() => handleDaySelect(day)}
-              style={({ pressed }) => [
+              style={({pressed}) => [
                 styles.dayBox,
                 isSelected && styles.selectedDay,
-                pressed && { transform: [{ scale: 0.95 }] },
-              ]}
-            >
-              <Text style={[styles.dayText, { color: iconColor }]}>
+                pressed && {transform: [{scale: 0.95}]},
+              ]}>
+              <Text style={[styles.dayText, {color: iconColor}]}>
                 {day.toDateString().split(' ')[0]}
               </Text>
-              <Text style={[styles.dateText, { color: iconColor }]}>
+              <Text style={[styles.dateText, {color: iconColor}]}>
                 {day.getDate()}
               </Text>
             </Pressable>
@@ -167,7 +171,7 @@ const CreateTask = ({ navigation }) => {
 
       {/* Task Name & Description */}
       <View style={styles.taskFieldsContainer}>
-        <Text style={[styles.sectionTitle, { color: textColor }]}>
+        <Text style={[styles.sectionTitle, {color: textColor}]}>
           {t('Task')}
         </Text>
         <TaskField
@@ -187,7 +191,7 @@ const CreateTask = ({ navigation }) => {
       <View style={styles.timeContainer}>
         {/* Start Time */}
         <View>
-          <Text style={[styles.timeLabel, { color: textColor }]}>
+          <Text style={[styles.timeLabel, {color: textColor}]}>
             {t('Start Time')}
           </Text>
           <Pressable
@@ -195,12 +199,16 @@ const CreateTask = ({ navigation }) => {
               setTimeType('start');
               setShowPicker(true);
             }}
-            style={({ pressed }) => [
+            style={({pressed}) => [
               styles.timeBox,
-              pressed && { transform: [{ scale: 0.95 }] },
-            ]}
-          >
-            <Icon name="clock" size={26} color="#FFF" style={styles.clockIcon} />
+              pressed && {transform: [{scale: 0.95}]},
+            ]}>
+            <Icon
+              name="clock"
+              size={26}
+              color="#FFF"
+              style={styles.clockIcon}
+            />
             <Text style={styles.timeText}>
               {startTime.toLocaleTimeString([], {
                 hour: '2-digit',
@@ -213,7 +221,7 @@ const CreateTask = ({ navigation }) => {
 
         {/* End Time */}
         <View>
-          <Text style={[styles.timeLabel, { color: textColor }]}>
+          <Text style={[styles.timeLabel, {color: textColor}]}>
             {t('End Time')}
           </Text>
           <Pressable
@@ -221,12 +229,16 @@ const CreateTask = ({ navigation }) => {
               setTimeType('end');
               setShowPicker(true);
             }}
-            style={({ pressed }) => [
+            style={({pressed}) => [
               styles.timeBox,
-              pressed && { transform: [{ scale: 0.95 }] },
-            ]}
-          >
-            <Icon name="clock" size={26} color="#FFF" style={styles.clockIcon} />
+              pressed && {transform: [{scale: 0.95}]},
+            ]}>
+            <Icon
+              name="clock"
+              size={26}
+              color="#FFF"
+              style={styles.clockIcon}
+            />
             <Text style={styles.timeText}>
               {endTime.toLocaleTimeString([], {
                 hour: '2-digit',
@@ -240,46 +252,43 @@ const CreateTask = ({ navigation }) => {
 
       {/* Priority Section */}
       <View style={styles.priorityContainer}>
-        <Text style={[styles.priorityLabel, { color: textColor }]}>
+        <Text style={[styles.priorityLabel, {color: textColor}]}>
           {t('Priority')}
         </Text>
         <View style={styles.priorityButtonsRow}>
           {/* High */}
           <Pressable
             onPress={() => setPriority('High')}
-            style={({ pressed }) => [
+            style={({pressed}) => [
               styles.priorityButton,
-              { borderColor: '#E53835' },
+              {borderColor: '#E53835'},
               priority === 'High' && styles.prioritySelectedRed,
-              pressed && { transform: [{ scale: 0.95 }] },
-            ]}
-          >
+              pressed && {transform: [{scale: 0.95}]},
+            ]}>
             <Text style={styles.priorityButtonText}>{t('High')}</Text>
           </Pressable>
 
           {/* Medium */}
           <Pressable
             onPress={() => setPriority('Medium')}
-            style={({ pressed }) => [
+            style={({pressed}) => [
               styles.priorityButton,
-              { borderColor: '#007AFF' },
+              {borderColor: '#007AFF'},
               priority === 'Medium' && styles.prioritySelectedBlue,
-              pressed && { transform: [{ scale: 0.95 }] },
-            ]}
-          >
+              pressed && {transform: [{scale: 0.95}]},
+            ]}>
             <Text style={styles.priorityButtonText}>{t('Medium')}</Text>
           </Pressable>
 
           {/* Low */}
           <Pressable
             onPress={() => setPriority('Low')}
-            style={({ pressed }) => [
+            style={({pressed}) => [
               styles.priorityButton,
-              { borderColor: '#0AB161' },
+              {borderColor: '#0AB161'},
               priority === 'Low' && styles.prioritySelectedGreen,
-              pressed && { transform: [{ scale: 0.95 }] },
-            ]}
-          >
+              pressed && {transform: [{scale: 0.95}]},
+            ]}>
             <Text style={styles.priorityButtonText}>{t('Low')}</Text>
           </Pressable>
         </View>
@@ -289,11 +298,10 @@ const CreateTask = ({ navigation }) => {
       <View style={styles.createButtonContainer}>
         <Pressable
           onPress={handleCreateTask}
-          style={({ pressed }) => [
+          style={({pressed}) => [
             styles.createButton,
-            pressed && { transform: [{ scale: 0.95 }] },
-          ]}
-        >
+            pressed && {transform: [{scale: 0.95}]},
+          ]}>
           <Text style={styles.createButtonText}>{t('Create Task')}</Text>
         </Pressable>
       </View>
@@ -305,19 +313,19 @@ const CreateTask = ({ navigation }) => {
             <DateTimePicker
               value={timeType === 'start' ? startTime : endTime}
               mode="time"
-              display="clock"
+              display={Platform.OS === 'ios' ? 'spinner' : 'clock'}
               is24Hour={true}
               onChange={handleTimeChange}
             />
           </View>
         </Modal>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: {flex: 1},
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -353,8 +361,8 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
     borderRadius: 8,
   },
-  dayText: { fontSize: 16 },
-  dateText: { fontSize: 16 },
+  dayText: {fontSize: 16},
+  dateText: {fontSize: 16},
   taskFieldsContainer: {
     paddingHorizontal: 20,
     marginTop: 20,
@@ -384,7 +392,7 @@ const styles = StyleSheet.create({
     width: 150,
     justifyContent: 'center',
   },
-  clockIcon: { marginRight: 5 },
+  clockIcon: {marginRight: 5},
   timeText: {
     color: '#FFFFFF',
     fontSize: 22,
@@ -415,9 +423,9 @@ const styles = StyleSheet.create({
     fontWeight: '450',
     fontSize: 16,
   },
-  prioritySelectedRed: { backgroundColor: '#E53835' },
-  prioritySelectedBlue: { backgroundColor: '#007AFF' },
-  prioritySelectedGreen: { backgroundColor: '#0AB161' },
+  prioritySelectedRed: {backgroundColor: '#E53835'},
+  prioritySelectedBlue: {backgroundColor: '#007AFF'},
+  prioritySelectedGreen: {backgroundColor: '#0AB161'},
   createButtonContainer: {
     alignItems: 'center',
     marginTop: 30,
@@ -439,6 +447,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#000000aa',
     padding: 10,
+    alignItems: 'center',
   },
 });
 
