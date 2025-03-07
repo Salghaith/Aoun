@@ -57,13 +57,14 @@ const Tasks = ({navigation}) => {
   );
 
   // Handlers
-  const toggleTaskCompletion = async (task, isCompleted) => {
-    const completed = isCompleted ? false : true;
-    await updateTask(task.id, {completed});
-    setCompletedTasks(prev => ({
-      ...prev,
-      [task.id]: !prev[task.id],
-    }));
+  const toggleTaskCompletion = async task => {
+    const updatedTask = {...task, completed: !task.completed};
+
+    setTasks(prevTasks =>
+      prevTasks.map(t => (t.id === task.id ? updatedTask : t)),
+    );
+
+    await updateTask(task.id, updatedTask);
   };
 
   const handleTaskEdit = task => {
@@ -103,7 +104,6 @@ const Tasks = ({navigation}) => {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled">
-        
         <View style={styles.titleContainer}>
           <Text style={[styles.titleText, {color: textColor}]}>
             {tasksCountText}
@@ -140,7 +140,6 @@ const Tasks = ({navigation}) => {
             {tasksHeaderLabel}
           </Text>
 
-          
           <Pressable
             onPress={() => navigation.navigate('CreateTask')}
             style={({pressed}) => [
@@ -167,7 +166,7 @@ const Tasks = ({navigation}) => {
                   priority={task.priority}
                   startTime={task.startTime}
                   endTime={task.endTime}
-                  isCompleted={completedTasks[task.id] || false}
+                  isCompleted={task.completed}
                   onToggleComplete={() =>
                     toggleTaskCompletion(task, completedTasks[task.id])
                   }

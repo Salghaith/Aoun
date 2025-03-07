@@ -41,15 +41,12 @@ const EditProfileScreen = ({navigation}) => {
     <SafeAreaView
       style={[
         styles.container,
-        {backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5'}, // Light mode update only
+        {backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5'},
       ]}>
       <View style={styles.headerContainer}>
         <BackButton onPress={() => navigation.goBack()} />
         <Text
-          style={[
-            styles.title,
-            {color: isDarkMode ? '#F9FAFB' : '#1C2128'}, // Light mode text color update
-          ]}>
+          style={[styles.title, {color: isDarkMode ? '#F9FAFB' : '#1C2128'}]}>
           {t('Edit Information')}
         </Text>
       </View>
@@ -82,7 +79,7 @@ const EditProfileScreen = ({navigation}) => {
                   backgroundColor: '#F0F0F0',
                   borderColor: '#C0C0C0',
                   color: '#1C2128',
-                }, // Brighter field in Light Mode
+                },
           ]}
         />
         <InputField
@@ -101,7 +98,7 @@ const EditProfileScreen = ({navigation}) => {
                   backgroundColor: '#F0F0F0',
                   borderColor: '#C0C0C0',
                   color: '#1C2128',
-                }, // Brighter field in Light Mode
+                },
           ]}
         />
         <View style={styles.loginButton}>
@@ -155,7 +152,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 105,
     height: 105,
-    borderRadius: 52.5, // Circular image
+    borderRadius: 52.5,
   },
   errorMessage: {
     minHeight: 50,
@@ -168,18 +165,16 @@ const styles = StyleSheet.create({
   EditContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    // marginTop: 50,
   },
 
   inputField: {
-    marginBottom: 25, // Space between inputs
-    // padding: 10,
+    marginBottom: 25,
     borderRadius: 10,
-    borderWidth: 1, // Ensure visibility
+    borderWidth: 1,
   },
 
   loginButton: {
-    marginTop: 30, // Space above the login button
+    marginTop: 30,
   },
 });
 

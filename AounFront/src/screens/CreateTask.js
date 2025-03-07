@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Modal,
   Alert,
-  Pressable, // For scale effect
+  Pressable,
   SafeAreaView,
   Platform,
 } from 'react-native';
@@ -18,6 +18,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import {ThemeContext} from '../context/ThemeContext';
 import {saveTask} from '../services/taskService';
 import {AuthContext} from '../context/AuthContext';
+import {scheduleNotification} from '../services/notificationService';
 
 const CreateTask = ({navigation}) => {
   const {userData} = useContext(AuthContext);
@@ -29,13 +30,11 @@ const CreateTask = ({navigation}) => {
   const [endTime, setEndTime] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [timeType, setTimeType] = useState('start');
-  const [priority, setPriority] = useState('Medium'); // "High", "Medium", "Low"
+  const [priority, setPriority] = useState('Medium'); //Default is Medium
 
-  // i18n + Theme
   const {t} = useTranslation();
   const {isDarkMode} = useContext(ThemeContext);
 
-  // Compare two Date objects quickly
   const isBefore = (d1, d2) => d1.getTime() < d2.getTime();
 
   const handleWeekChange = days => {
@@ -54,12 +53,11 @@ const CreateTask = ({navigation}) => {
 
     if (timeType === 'start') {
       setStartTime(chosenTime);
-      // If new start is after old endTime, adjust endTime
+
       if (isBefore(endTime, chosenTime)) {
         setEndTime(chosenTime);
       }
     } else {
-      // setting endTime
       if (isBefore(chosenTime, startTime)) {
         Alert.alert(
           t('Invalid Time'),
@@ -89,30 +87,27 @@ const CreateTask = ({navigation}) => {
       hour12: false,
     });
 
-    // Build new task
     const newTask = {
-      id: Date.now().toString(), // Temporary ID
+      id: Date.now().toString(),
       title: taskName,
       description: taskDescription,
       date: formattedDate,
       startTime: formattedStartTime,
       endTime: formattedEndTime,
-      priority: priority.toLowerCase(), // e.g., "high"
+      priority: priority.toLowerCase(),
       completed: false,
     };
     await saveTask(newTask, userData.userId);
-    //Call backend*** if add successfully do the next line
+    scheduleNotification(newTask);
     navigation.navigate('Tasks', {newTask});
   };
 
-  // Colors
   const bgColor = isDarkMode ? '#1C2128' : '#F5F5F5';
   const textColor = isDarkMode ? '#F9FAFB' : '#1C2128';
   const iconColor = isDarkMode ? 'white' : 'black';
 
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: bgColor}]}>
-      {/* Header */}
       <View style={styles.headerContainer}>
         <BackButton onPress={() => navigation.goBack()} />
         <Text style={[styles.headerTitle, {color: textColor}]}>
@@ -120,7 +115,6 @@ const CreateTask = ({navigation}) => {
         </Text>
       </View>
 
-      {/* Calendar Navigation */}
       <View style={styles.calendarContainer}>
         <Pressable
           onPress={() => handleWeekChange(-7)}
@@ -141,7 +135,6 @@ const CreateTask = ({navigation}) => {
         </Pressable>
       </View>
 
-      {/* Weekday Selector */}
       <View style={styles.weekContainer}>
         {Array.from({length: 7}, (_, i) => {
           const day = new Date(weekStartDate);
@@ -169,7 +162,6 @@ const CreateTask = ({navigation}) => {
         })}
       </View>
 
-      {/* Task Name & Description */}
       <View style={styles.taskFieldsContainer}>
         <Text style={[styles.sectionTitle, {color: textColor}]}>
           {t('Task')}
@@ -187,9 +179,7 @@ const CreateTask = ({navigation}) => {
         />
       </View>
 
-      {/* Time Selection */}
       <View style={styles.timeContainer}>
-        {/* Start Time */}
         <View>
           <Text style={[styles.timeLabel, {color: textColor}]}>
             {t('Start Time')}
@@ -219,7 +209,6 @@ const CreateTask = ({navigation}) => {
           </Pressable>
         </View>
 
-        {/* End Time */}
         <View>
           <Text style={[styles.timeLabel, {color: textColor}]}>
             {t('End Time')}
@@ -250,13 +239,11 @@ const CreateTask = ({navigation}) => {
         </View>
       </View>
 
-      {/* Priority Section */}
       <View style={styles.priorityContainer}>
         <Text style={[styles.priorityLabel, {color: textColor}]}>
           {t('Priority')}
         </Text>
         <View style={styles.priorityButtonsRow}>
-          {/* High */}
           <Pressable
             onPress={() => setPriority('High')}
             style={({pressed}) => [
@@ -268,7 +255,6 @@ const CreateTask = ({navigation}) => {
             <Text style={styles.priorityButtonText}>{t('High')}</Text>
           </Pressable>
 
-          {/* Medium */}
           <Pressable
             onPress={() => setPriority('Medium')}
             style={({pressed}) => [
@@ -280,7 +266,6 @@ const CreateTask = ({navigation}) => {
             <Text style={styles.priorityButtonText}>{t('Medium')}</Text>
           </Pressable>
 
-          {/* Low */}
           <Pressable
             onPress={() => setPriority('Low')}
             style={({pressed}) => [
@@ -294,7 +279,6 @@ const CreateTask = ({navigation}) => {
         </View>
       </View>
 
-      {/* Create Task Button */}
       <View style={styles.createButtonContainer}>
         <Pressable
           onPress={handleCreateTask}
@@ -306,7 +290,6 @@ const CreateTask = ({navigation}) => {
         </Pressable>
       </View>
 
-      {/* Time Picker Modal */}
       {showPicker && (
         <Modal transparent animationType="slide" visible={showPicker}>
           <View style={styles.modalContainer}>

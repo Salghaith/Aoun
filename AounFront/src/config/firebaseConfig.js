@@ -1,10 +1,7 @@
 import {initializeApp} from 'firebase/app';
 import {getFirestore} from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  getReactNativePersistence,
-  initializeAuth,
-} from 'firebase/auth';
+import {getReactNativePersistence, initializeAuth} from 'firebase/auth';
 import {
   FIREBASE_API_KEY,
   FIREBASE_AUTH_DOMAIN,
@@ -24,6 +21,7 @@ const firebaseConfig = {
   appId: FIREBASE_APP_ID,
   measurementId: FIREBASE_MEASUREMENT_ID,
 };
+globalThis.RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
 
 const firebaseApp = initializeApp(firebaseConfig);
 
