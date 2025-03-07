@@ -17,7 +17,6 @@ export const saveTask = async (task, userId) => {
   }
 };
 
-// Sync Task to Firestore
 const syncTaskToFirestore = async (task, userId) => {
   try {
     const taskRef = await firestore()
