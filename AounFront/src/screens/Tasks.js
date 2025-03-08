@@ -79,12 +79,14 @@ const Tasks = ({navigation}) => {
       ),
     );
     setEditTask(null);
+    //UPDATE THE NOTIFICATION DATE.
   };
 
   const handleDeleteTask = async taskId => {
     await deleteTask(taskId);
     setTasks(prevTasks => prevTasks.filter(t => t.id !== taskId));
     setEditTask(null);
+    //DELETE THE NOTIFICATION.
   };
 
   const backgroundColor = isDarkMode ? '#1C2128' : '#F5F5F5';

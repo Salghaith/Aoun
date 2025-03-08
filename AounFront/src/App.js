@@ -5,7 +5,7 @@ import {AuthProvider} from './context/AuthContext';
 import {ThemeProvider} from './context/ThemeContext'; // Import ThemeProvider
 import {configureNotifications} from './services/notificationService';
 
-configureNotifications();
+// configureNotifications();
 const App = () => {
   return (
     <AuthProvider>
