@@ -1,5 +1,5 @@
 import PushNotification from 'react-native-push-notification';
-import {Platform} from 'react-native';
+import { PermissionsAndroid, Platform } from "react-native";
 
 // 🔹 Configure Push Notifications (Only Once)
 const configureNotifications = () => {
@@ -39,4 +39,18 @@ const scheduleNotification = task => {
   console.log('✅ Local notification scheduled for:', dueDate);
 };
 
-export {configureNotifications, scheduleNotification};
+async function requestNotificationPermission() {
+  if (Platform.OS === "android" && Platform.Version >= 33) {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+    );
+
+    if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+      console.log("Notification permission denied!");
+    } else {
+      console.log("Notification permission granted!");
+    }
+  }
+}
+
+export {configureNotifications, scheduleNotification, requestNotificationPermission};

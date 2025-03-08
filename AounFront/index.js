@@ -6,7 +6,7 @@ import App from './src/App';
 import {name as appName} from './app.json';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from 'react-native-push-notification';
-import {configureNotifications} from './src/services/notificationService';
+import {configureNotifications, requestNotificationPermission} from './src/services/notificationService';
 
 // Must be outside of any component LifeCycle (such as componentDidMount).
 PushNotification.configure({
@@ -21,4 +21,5 @@ PushNotification.configure({
   requestPermissions: Platform.OS === 'ios',
 });
 configureNotifications();
+requestNotificationPermission();
 AppRegistry.registerComponent(appName, () => App);
