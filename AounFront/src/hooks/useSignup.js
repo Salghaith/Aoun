@@ -1,7 +1,6 @@
 import {useState, useContext} from 'react';
-import {auth, db} from '../config/firebaseConfig';
-import {createUserWithEmailAndPassword} from 'firebase/auth';
-import {setDoc, doc} from 'firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import {isValidKSU, validateInputs} from '../utils/validationUtils';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
@@ -30,20 +29,22 @@ export const useSignup = () => {
     setLoading(true);
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+      // Create user in Firebase Authentication
+      const userCredential = await auth().createUserWithEmailAndPassword(
         email,
         password,
       );
       const user = userCredential.user;
 
-      await setDoc(doc(db, 'users', user.uid), {
+      // Save user data in Firestore
+      await firestore().collection('users').doc(user.uid).set({
         username,
         email: email.toLowerCase().trim(),
-        createdAt: new Date(),
+        createdAt: firestore.FieldValue.serverTimestamp(),
         isKSU: KSUStudent,
       });
 
+      // Prepare user object
       const userObject = {
         userId: user.uid,
         username,

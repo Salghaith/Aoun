@@ -1,5 +1,6 @@
-import {initializeApp} from 'firebase/app';
-import {getFirestore} from 'firebase/firestore';
+import {initializeApp} from '@react-native-firebase/app';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getReactNativePersistence, initializeAuth} from 'firebase/auth';
 import {
@@ -12,6 +13,7 @@ import {
   FIREBASE_MEASUREMENT_ID,
 } from '@env';
 
+// Ensure Firebase App is initialized
 const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
   authDomain: FIREBASE_AUTH_DOMAIN,
@@ -21,14 +23,14 @@ const firebaseConfig = {
   appId: FIREBASE_APP_ID,
   measurementId: FIREBASE_MEASUREMENT_ID,
 };
+
 globalThis.RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
 
-const firebaseApp = initializeApp(firebaseConfig);
+// No need to call initializeApp manually; @react-native-firebase/app does this automatically
 
-const auth = initializeAuth(firebaseApp, {
-  persistence: getReactNativePersistence(AsyncStorage),
-});
+const authInstance = auth();
+authInstance.setPersistence(getReactNativePersistence(AsyncStorage));
 
-const db = getFirestore(firebaseApp);
+const db = firestore(); // Correct way to use Firestore in React Native
 
-export {firebaseApp, auth, db};
+export {authInstance as auth, db};

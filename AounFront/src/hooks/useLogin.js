@@ -1,11 +1,12 @@
 import {useState, useContext} from 'react';
 import {auth, db} from '../config/firebaseConfig';
 import {signInWithEmailAndPassword} from 'firebase/auth';
-import {doc, getDoc} from 'firebase/firestore';
+// import {doc, getDoc} from 'firebase/firestore';
 import {isValidKSU, validateInputs} from '../utils/validationUtils';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
 import {loginErrorHandler} from '../utils/errorHandler';
+import firestore from '@react-native-firebase/firestore';
 
 export const useLogin = () => {
   const navigation = useNavigation();
@@ -30,7 +31,7 @@ export const useLogin = () => {
       );
       const user = userCredential.user;
 
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const userDoc = await firestore().collection('users').doc(user.uid).get();
       const username = userDoc.exists() ? userDoc.data().username : 'Unknown';
       const userEmail = userDoc.exists() ? userDoc.data().email : email;
       const isKSU = userDoc.exists() ? userDoc.data().isKSU : false;
