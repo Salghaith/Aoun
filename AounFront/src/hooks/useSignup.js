@@ -29,22 +29,22 @@ export const useSignup = () => {
     setLoading(true);
 
     try {
-      // Create user in Firebase Authentication
+      // ✅ Create user in Firebase Authentication
       const userCredential = await auth().createUserWithEmailAndPassword(
         email,
         password,
       );
       const user = userCredential.user;
 
-      // Save user data in Firestore
+      // ✅ Save user data in Firestore
       await firestore().collection('users').doc(user.uid).set({
         username,
         email: email.toLowerCase().trim(),
-        createdAt: firestore.FieldValue.serverTimestamp(),
+        createdAt: firestore.Timestamp.now(), // ✅ Corrected timestamp
         isKSU: KSUStudent,
       });
 
-      // Prepare user object
+      // ✅ Prepare user object
       const userObject = {
         userId: user.uid,
         username,

@@ -1,12 +1,10 @@
 import {useState, useContext} from 'react';
-import {auth, db} from '../config/firebaseConfig';
-import {signInWithEmailAndPassword} from 'firebase/auth';
-// import {doc, getDoc} from 'firebase/firestore';
-import {isValidKSU, validateInputs} from '../utils/validationUtils';
+import auth from '@react-native-firebase/auth'; // ✅ Use React Native Firebase Auth
+import firestore from '@react-native-firebase/firestore'; // ✅ Firestore import is already correct
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
+import {isValidKSU, validateInputs} from '../utils/validationUtils';
 import {loginErrorHandler} from '../utils/errorHandler';
-import firestore from '@react-native-firebase/firestore';
 
 export const useLogin = () => {
   const navigation = useNavigation();
@@ -24,25 +22,24 @@ export const useLogin = () => {
     setLoading(true);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
+      // ✅ Use React Native Firebase Auth correctly
+      const userCredential = await auth().signInWithEmailAndPassword(
         email,
         password,
       );
       const user = userCredential.user;
 
+      // ✅ Fetch Firestore user document correctly
       const userDoc = await firestore().collection('users').doc(user.uid).get();
-      const username = userDoc.exists() ? userDoc.data().username : 'Unknown';
-      const userEmail = userDoc.exists() ? userDoc.data().email : email;
-      const isKSU = userDoc.exists() ? userDoc.data().isKSU : false;
+      const userData = userDoc.exists ? userDoc.data() : {};
 
       const userObject = {
         userId: user.uid,
-        username,
-        email: userEmail,
+        username: userData.username || 'Unknown',
+        email: userData.email || email,
         userToken: await user.getIdToken(),
         rememberMe,
-        isKSU,
+        isKSU: userData.isKSU || false,
       };
 
       await updateUserData(userObject);
@@ -50,6 +47,7 @@ export const useLogin = () => {
       navigation.navigate('Tasks');
     } catch (error) {
       setError(loginErrorHandler(error.code));
+      console.log(error);
     } finally {
       setLoading(false);
     }
