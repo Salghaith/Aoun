@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, { useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -8,39 +8,45 @@ import {
   TouchableOpacity,
   Switch,
   I18nManager,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
-import {useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import BackButton from '../components/BackButton';
 import Icon from 'react-native-vector-icons/Feather';
 import LanguageSwitch from '../components/LanguageSwitch';
-import i18n, {switchLanguage} from '../i18n';
-import {useLogout} from '../hooks/useLogout';
-import {AuthContext} from '../context/AuthContext';
-import {ThemeContext} from '../context/ThemeContext'; // Import Theme Context
-import DarkModeSwitcher from '../components/DarkModeSwitch';
+import i18n, { switchLanguage } from '../i18n';
+import { useLogout } from '../hooks/useLogout';
+import { AuthContext } from '../context/AuthContext';
+import { ThemeContext } from '../context/ThemeContext'; 
+import BottomNav from '../components/BottomNav';
 
-const ProfileScreen = ({navigation}) => {
-  const {t} = useTranslation();
-  const {handleLogout} = useLogout();
-  const {userData} = useContext(AuthContext);
-  const {isDarkMode, toggleTheme} = useContext(ThemeContext); // Dark Mode Context
+const ProfileScreen = ({ navigation }) => {
+  const { t } = useTranslation();
+  const { handleLogout } = useLogout();
+  const { userData } = useContext(AuthContext);
+  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   return (
     <SafeAreaView
       style={[
         styles.container,
-        {backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5'},
-      ]}>
+        { backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5' },
+      ]}
+    >
+      {/* HEADER */}
       <View style={styles.headerContainer}>
-        <BackButton onPress={() => navigation.navigate('Tasks')} />
+        
         <Text
-          style={[styles.title, {color: isDarkMode ? '#F9FAFB' : '#1C2128'}]}>
+          style={[styles.title, { color: isDarkMode ? '#F9FAFB' : '#1C2128' }]}
+        >
           {t('Profile')}
         </Text>
       </View>
 
-      <View style={styles.ProfileContainer}>
+      {/* MAIN CONTENT */}
+      <View style={styles.profileContent}>
         <Image
           style={styles.image}
           source={require('../assets/images/ProfilePng.png')}
@@ -48,12 +54,14 @@ const ProfileScreen = ({navigation}) => {
 
         <TouchableOpacity
           style={styles.usernameContainer}
-          onPress={() => navigation.navigate('EditProfile')}>
+          onPress={() => navigation.navigate('EditProfile')}
+        >
           <Text
             style={[
               styles.username,
-              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
-            ]}>
+              { color: isDarkMode ? '#F9FAFB' : '#1C2128' },
+            ]}
+          >
             {userData.username}
           </Text>
           <Icon
@@ -65,15 +73,18 @@ const ProfileScreen = ({navigation}) => {
         </TouchableOpacity>
 
         <Text
-          style={[styles.email, {color: isDarkMode ? '#B1B1B1' : '#4A4F55'}]}>
+          style={[styles.email, { color: isDarkMode ? '#B1B1B1' : '#4A4F55' }]}
+        >
           {userData.email}
         </Text>
 
+        {/* LANGUAGE SWITCH */}
         <View
           style={[
             styles.switchContainer,
-            {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
-          ]}>
+            { backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0' },
+          ]}
+        >
           <Icon
             name="globe"
             size={24}
@@ -83,8 +94,9 @@ const ProfileScreen = ({navigation}) => {
           <Text
             style={[
               styles.sectionText,
-              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
-            ]}>
+              { color: isDarkMode ? '#F9FAFB' : '#1C2128' },
+            ]}
+          >
             {t('Language')}
           </Text>
           <View style={styles.languageSwitcherWrapper}>
@@ -95,11 +107,13 @@ const ProfileScreen = ({navigation}) => {
           </View>
         </View>
 
+        {/* NOTIFICATIONS TOGGLE */}
         <View
           style={[
             styles.switchContainer,
-            {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
-          ]}>
+            { backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0' },
+          ]}
+        >
           <Icon
             name="bell"
             size={24}
@@ -109,25 +123,27 @@ const ProfileScreen = ({navigation}) => {
           <Text
             style={[
               styles.sectionText,
-              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
-            ]}>
+              { color: isDarkMode ? '#F9FAFB' : '#1C2128' },
+            ]}
+          >
             {t('Notifications')}
           </Text>
           <Switch
             value={notificationsEnabled}
-            onValueChange={() => setNotificationsEnabled(prev => !prev)}
-            trackColor={{false: '#B0B0B0', true: '#0084FF'}}
+            onValueChange={() => setNotificationsEnabled((prev) => !prev)}
+            trackColor={{ false: '#B0B0B0', true: '#0084FF' }}
             thumbColor={notificationsEnabled ? '#FFFFFF' : '#B0B0B0'}
             style={styles.switch}
           />
         </View>
 
-        {/* Dark Mode Toggle */}
+        {/* DARK MODE TOGGLE */}
         <View
           style={[
             styles.switchContainer,
-            {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
-          ]}>
+            { backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0' },
+          ]}
+        >
           <Icon
             name="moon"
             size={24}
@@ -137,23 +153,30 @@ const ProfileScreen = ({navigation}) => {
           <Text
             style={[
               styles.sectionText,
-              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
-            ]}>
+              { color: isDarkMode ? '#F9FAFB' : '#1C2128' },
+            ]}
+          >
             {t('Dark Mode')}
           </Text>
           <Switch
             value={isDarkMode}
             onValueChange={toggleTheme}
-            trackColor={{false: '#B0B0B0', true: '#0084FF'}}
+            trackColor={{ false: '#B0B0B0', true: '#0084FF' }}
             thumbColor={isDarkMode ? '#FFFFFF' : '#B0B0B0'}
             style={styles.switch}
           />
         </View>
 
+        {/* LOGOUT BUTTON */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutText}>{t('Logout')}</Text>
         </TouchableOpacity>
       </View>
+
+      {/* ✅ Ensures BottomNav does not overlap */}
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <BottomNav activeTab="Profile" />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -163,54 +186,45 @@ const styles = StyleSheet.create({
     flex: 1,
     direction: I18nManager.isRTL ? 'rtl' : 'ltr',
   },
-
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 16,
+    marginTop: 20,
+    justifyContent: 'space-between', // Ensures elements are aligned properly
   },
-
   title: {
     fontSize: 28,
     fontWeight: '600',
-    marginLeft: I18nManager.isRTL ? 0 : 80,
-    marginRight: I18nManager.isRTL ? 80 : 0,
-    marginTop: 18,
+    flex: 1,
+    textAlign: 'center',
   },
-
-  ProfileContainer: {
+  profileContent: {
     flex: 1,
     alignItems: 'center',
-    marginTop: 40,
+    marginBottom: 70, // Prevents BottomNav from overlapping content
   },
-
   image: {
-    alignItems: 'center',
     width: 105,
     height: 105,
+    marginTop: 30,
   },
-
   usernameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     marginTop: 20,
   },
-
   username: {
     fontSize: 30,
     fontWeight: 'bold',
   },
-
   arrowIcon: {
-    marginLeft: I18nManager.isRTL ? 0 : 10,
-    marginRight: I18nManager.isRTL ? 10 : 0,
+    marginLeft: 10,
   },
-
   email: {
     fontSize: 20,
     marginTop: 5,
   },
-
   switchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -221,24 +235,17 @@ const styles = StyleSheet.create({
     marginTop: 22,
     width: '85%',
   },
-
   sectionIcon: {
-    marginLeft: I18nManager.isRTL ? 14 : 0,
-    marginRight: I18nManager.isRTL ? 0 : 14,
+    marginRight: 14,
   },
-
   sectionText: {
     fontSize: 20,
     fontWeight: '500',
     flex: 1,
-    textAlign: I18nManager.isRTL ? 'left' : '',
   },
-
   switch: {
-    transform: [{scaleX: 1.3}, {scaleY: 1.3}],
-    marginRight: 7,
+    transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }],
   },
-
   logoutButton: {
     backgroundColor: '#B02626',
     width: '85%',
@@ -247,7 +254,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     marginTop: 30,
   },
-
   logoutText: {
     color: '#FFFFFF',
     fontSize: 20,

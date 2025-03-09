@@ -50,7 +50,7 @@ const HomeScreen = ({ navigation }) => {
         />
 
         {/* ✅ Updated "Continue as Guest" to navigate to the Tasks Page */}
-        <TouchableOpacity onPress={() => navigation.navigate('Tasks')}>
+        <TouchableOpacity onPress={() => navigation.navigate('GuestChatScreen')}>
           <Text
             style={[
               styles.guestButton,

@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 
+// Import Screens
 import HomeScreen from '../screens/HomeScreen';
 import SplashScreen from '../screens/SplashScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -11,6 +12,8 @@ import ProfileScreen from '../screens/Profile';
 import EditProfile from '../screens/EditProfile';
 import CreateTask from '../screens/CreateTask'; 
 import Tasks from '../screens/Tasks';
+import GuestChatScreen from '../screens/GuestChatScreen';
+import UesrChatScreen from '../screens/UesrChatScreen'; // ✅ Added UserChatScreen
 
 const Stack = createStackNavigator();
 
@@ -29,9 +32,11 @@ const AppNavigator = () => {
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="CreateTask" component={CreateTask} />
-
-        {/* 2️⃣ Register the Tasks screen */}
-        <Stack.Screen name="Tasks" component={Tasks} />
+        <Stack.Screen name="Tasks" component={Tasks} />  
+        
+        {/* ✅ Chat Screens */}
+        <Stack.Screen name="GuestChatScreen" component={GuestChatScreen}/>  
+        <Stack.Screen name="UserChat" component={UesrChatScreen}/>  
 
       </Stack.Navigator>
     </NavigationContainer>
