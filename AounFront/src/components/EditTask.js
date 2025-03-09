@@ -16,13 +16,11 @@ import {useTranslation} from 'react-i18next';
 import {ThemeContext} from '../context/ThemeContext';
 
 const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
-  // i18n + theme
   const {t} = useTranslation();
   const {isDarkMode} = useContext(ThemeContext);
 
   const [isEditing, setIsEditing] = useState(false);
 
-  // Fields from the existing task
   const [taskTitle, setTaskTitle] = useState(task.title);
   const [taskDescription, setTaskDescription] = useState(
     task.description || '',
@@ -31,18 +29,18 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
   const [endTime, setEndTime] = useState(task.endTime || '10:00');
   const [priority, setPriority] = useState(task.priority);
   const [date, setDate] = useState(task.date);
-
-  // State for showing the time picker
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const convertToRiyadhTime = (dateObj) => {
+    return new Date(dateObj.getTime() + 3 * 60 * 60 * 1000);
+  };
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [timeType, setTimeType] = useState(null); // 'start' or 'end'
-
-  // For dark/light
+  const [timeType, setTimeType] = useState(null);
+  
   const backgroundColor = isDarkMode ? '#131417' : '#F5F5F5';
   const containerColor = isDarkMode ? '#1C2128' : '#EAEAEA';
   const textColor = isDarkMode ? '#FFFFFF' : '#1C2128';
-  const placeholderColor = '#888'; // same for both, or you can vary
+  const placeholderColor = '#888';
 
-  // Convert 'HH:MM' string to a Date object
   const parseTimeStringToDate = timeStr => {
     const [hour, minute] = timeStr.split(':').map(Number);
     const now = new Date();
@@ -50,7 +48,12 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
     return now;
   };
 
-  // Format a Date to "HH:MM"
+  const parseDateStringToDate = (dateStr) => {
+    if (!dateStr) return new Date();
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  };
+
   const formatTime = dateObj => {
     return dateObj.toLocaleTimeString([], {
       hour: '2-digit',
@@ -59,35 +62,33 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
     });
   };
 
-  // Compare times
+  const formatDate = (dateObj) => {
+    return dateObj.toISOString().split('T')[0]; // Formats as YYYY-MM-DD
+  };
+
   const isBefore = (t1, t2) => {
-    // t1, t2 are "HH:MM" strings
     const d1 = parseTimeStringToDate(t1);
     const d2 = parseTimeStringToDate(t2);
     return d1.getTime() < d2.getTime();
   };
 
-  // Show the time picker (only if we're editing)
   const handlePickTime = which => {
     if (!isEditing) return;
     setTimeType(which);
     setShowTimePicker(true);
   };
 
-  // Once the user chooses a time
   const handleTimeChange = (event, selectedTime) => {
     setShowTimePicker(false);
     if (selectedTime) {
       const newString = formatTime(selectedTime);
 
       if (timeType === 'start') {
-        // If new start is after the old endTime, fix
         if (!isBefore(newString, endTime)) {
           setEndTime(newString);
         }
         setStartTime(newString);
       } else {
-        // if chosen endTime < startTime => fix
         if (isBefore(newString, startTime)) {
           Alert.alert(
             t('Invalid Time'),
@@ -102,7 +103,13 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
     }
   };
 
-  // Save the updates
+  const handleDateChange = (event, selectedDate) => {
+    if (Platform.OS === 'android') setShowDatePicker(false);
+    if (selectedDate) {
+      setDate(formatDate(selectedDate));
+    }
+  };
+
   const handleSave = () => {
     onSave({
       id: task.id,
@@ -119,41 +126,49 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
     ]);
   };
 
-  // Press events
   const stopPress = e => {
     e.stopPropagation();
   };
 
   return (
     <Modal transparent visible={visible} animationType="fade">
-      {/* Outside overlay: pressing here closes */}
       <Pressable style={styles.modalOverlay} onPress={onClose}>
-        {/* Window container: pressing inside does NOT close */}
         <Pressable
           style={[styles.modalContainer, {backgroundColor}]}
           onPress={stopPress}>
-          {/* Header */}
           <View style={styles.header}>
-            {/* Edit / Check button */}
             <Pressable
-              onPress={() => setIsEditing(!isEditing)}
-              style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
-              <Feather
-                name={isEditing ? 'check' : 'edit-2'}
-                size={24}
-                color={textColor}
-              />
-            </Pressable>
+  onPress={() => {
+    if (isEditing) {
+      setIsEditing(false);
+    } else {
+      setIsEditing(true);
+    }
+  }}
+  style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
+  <Feather
+    name={isEditing ? 'x' : 'edit-2'} 
+    size={24}
+    color={textColor}
+  />
+</Pressable>
 
-            {/* Trash button */}
             <Pressable
-              onPress={() => onDelete(task.id)}
-              style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
-              <Feather name="trash-2" size={24} color={textColor} />
-            </Pressable>
+              onPress={() =>
+              Alert.alert(
+              t('Delete Task?'),
+              t('Are you sure you want to delete this task? This action cannot be undone.'),
+            [
+        { text: t('Cancel'), style: 'cancel' },
+        { text: t('Delete'), style: 'destructive', onPress: () => onDelete(task.id) },
+      ]
+    )
+  }
+  style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
+  <Feather name="trash-2" size={24} color={textColor} />
+</Pressable>
           </View>
 
-          {/* Title */}
           <Text style={[styles.label, {color: textColor}]}>{t('Title')}</Text>
           <TextInput
             style={[
@@ -168,7 +183,6 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
             editable={isEditing}
           />
 
-          {/* Description */}
           <Text style={[styles.label, {color: textColor}]}>
             {t('Description')}
           </Text>
@@ -187,24 +201,32 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
             editable={isEditing}
           />
 
-          {/* Date */}
-          <Text style={[styles.label, {color: textColor}]}>{t('Date')}</Text>
-          <TextInput
-            style={[
-              styles.input,
-              {backgroundColor: containerColor, color: textColor},
-              !isEditing && styles.disabledInput,
-            ]}
-            value={date}
-            onChangeText={setDate}
-            placeholder="YYYY-MM-DD"
-            placeholderTextColor={placeholderColor}
-            editable={isEditing}
-          />
+<Text style={[styles.label, { color: textColor }]}>{t('Date')}</Text>
+<Pressable 
+  disabled={!isEditing} 
+  onPress={() => setShowDatePicker(true)}
+  style={[
+    styles.input,
+    { backgroundColor: containerColor, color: textColor, justifyContent: 'center' },
+    !isEditing && styles.disabledInput,
+  ]}>
+  <Text style={{ color: textColor, fontSize: 16 }}>
+    {date || t('Select Date')}
+  </Text>
+</Pressable>
 
-          {/* Time selection */}
+{showDatePicker && (
+  <DateTimePicker
+    value={parseDateStringToDate(date)}
+    mode="date"
+    display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
+    onChange={handleDateChange}
+  />
+)}
+
+
+
           <View style={styles.timeContainer}>
-            {/* Start Time */}
             <View style={styles.timeColumn}>
               <Text style={[styles.label, {color: textColor}]}>
                 {t('Start Time')}
@@ -224,7 +246,6 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
               </Pressable>
             </View>
 
-            {/* End Time */}
             <View style={styles.timeColumn}>
               <Text style={[styles.label, {color: textColor}]}>
                 {t('End Time')}
@@ -245,7 +266,6 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
             </View>
           </View>
 
-          {/* Priority */}
           <Text style={[styles.label, {color: textColor}]}>
             {t('Priority')}
           </Text>
@@ -273,7 +293,6 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
             ))}
           </View>
 
-          {/* Save Button (only while editing) */}
           {isEditing && (
             <Pressable
               style={({pressed}) => [
@@ -287,7 +306,6 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
         </Pressable>
       </Pressable>
 
-      {/* Time picker modal */}
       {showTimePicker && (
         <Modal transparent animationType="slide" visible={showTimePicker}>
           <View style={styles.pickerModalContainer}>
@@ -339,7 +357,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   disabledInput: {
-    // you can style it differently if read-only
     opacity: 0.7,
   },
   descriptionInput: {
