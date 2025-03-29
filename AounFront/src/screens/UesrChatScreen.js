@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import {
   View,
   Text,
@@ -12,18 +12,25 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import firestore from '@react-native-firebase/firestore';
 // Import components
 import ChatBubble from '../components/ChatBubble';
 import ChatInputBar from '../components/ChatInputBar'; 
 import BottomNav from '../components/BottomNav';
 import HamburgerMenu from '../components/HamburgerMenu';
+import {AuthContext} from '../context/AuthContext';
+import { getChatbotResponse } from '../services/openaiService'; // ✅ Add this
+import uuid from 'react-native-uuid';
 
 const UserChatScreen = ({ navigation }) => {
   // No old messages are loaded by default
   const [messages, setMessages] = useState([]);  
   const [firstInteraction, setFirstInteraction] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const {userData} = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [currentSessionId, setCurrentSessionId] = useState(null);
 
   // ✅ Reset chat (clears messages, welcome reappears)
   const handleResetChat = async () => {
@@ -40,35 +47,106 @@ const UserChatScreen = ({ navigation }) => {
   };
 
   // ✅ Handle sending a new message
-  const handleSendMessage = async (newMessage) => {
-    if (newMessage.trim().length > 0) {
-      const userMsg = {
-        id: Date.now().toString(),
-        text: newMessage.trim(),
-        sender: 'guestUser',
-      };
+  const handleSendMessage = async (messageObject) => {
+    if (!messageObject) return;
 
-      // Add user message, remove welcome
-      setMessages((prev) => [...prev, userMsg]);
-      setFirstInteraction(false);
+    let sessionId = currentSessionId;
+    if (!sessionId) {
+      sessionId = Date.now().toString();
+      setCurrentSessionId(sessionId); // ✅ Set in state
+      // ✅ Create the session in Firestore
+      await firestore()
+      .collection('chats')
+      .doc(userData.userId)
+      .collection('sessions')
+      .doc(sessionId)
+      .set({
+        createdAt: firestore.FieldValue.serverTimestamp(),
+        sessionName: "Chat " + new Date().toLocaleString(), // Optional
+      });
+  }
+    const userMsg = {
+      id: Date.now().toString(),
+      type: messageObject.type, // "text" or "file" or "mixed"
+      text: messageObject.text || "",
+      files: messageObject.files || [],
+      sender: 'guestUser',
+    };
+  
+    setMessages((prev) => [...prev, userMsg]);
+    setFirstInteraction(false);
+    setIsTyping(true); // 👉 Show typing
 
-      // Simulated bot response
-      setTimeout(async () => {
-        const botReply = {
-          id: `bot-${Date.now()}`,
-          text: `I see! You're asking about "${newMessage}". Let me help you with that.`,
-          sender: 'bot',
-          relatedTo: userMsg.id
+    try {
+      setLoading(true);
+      // ✅ Get the conversation context
+      const contextSnapshot = await firestore()
+      .collection('chats')
+      .doc(userData.userId)
+      .collection('sessions')
+      .doc(sessionId)
+      .collection('messages')
+      .orderBy('createdAt', 'asc')
+      .get();
+
+      const contextMessages = contextSnapshot.docs.map(doc => {
+        const msg = doc.data();
+       return {
+      role: msg.sender === 'bot' ? 'assistant' : 'user',
+      content: msg.text,
         };
+     });
 
-        setMessages((prev) => [...prev, botReply]);
+       // Append the new user message to context
+      contextMessages.push({ role: "user", content: userMsg.text });
+      // ✅ Send text and files to OpenAI for processing
+      
+      const botResponse = await getChatbotResponse(contextMessages, userMsg.files);
+      setLoading(false);
+      const botReply = {
+        id: `bot-${Date.now()}`,
+        type: 'text',
+        text: botResponse,
+        sender: 'bot',
+      };
+  
+      setMessages((prev) => [...prev, botReply]);
+  
+      // ✅ Save chat history
+      await saveMessageToFirestore(userData.userId, sessionId, userMsg);
+      await saveMessageToFirestore(userData.userId, sessionId, botReply);
 
-        // Optionally save the bot response for old answers
-        await saveBotResponse(botReply);
-      }, 1000);
+       // Optionally update sessionId if it's a new session
+      // setCurrentSessionId(sessionId);
+    } catch (error) {
+      console.error("❌ Chatbot error:", error);
+    }
+    finally {
+      setIsTyping(false); // 👉 Hide typing
     }
   };
 
+  const saveMessageToFirestore = async (userId, sessionId, message) => {
+    try {
+      const messageRef = firestore()
+        .collection('chats')
+        .doc(userId)
+        .collection('sessions')
+        .doc(sessionId)
+        .collection('messages');
+  
+      await messageRef.add({
+        ...message,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+      });
+  
+      console.log('✅ Message saved to Firestore.');
+    } catch (error) {
+      console.error('❌ Error saving message to Firestore:', error);
+    }
+  };
+
+  
   // ✅ Edit a sent message and update bot's response
   const handleEditMessage = (messageId, newText) => {
     setMessages((prevMessages) =>
@@ -89,32 +167,41 @@ const UserChatScreen = ({ navigation }) => {
   };
 
   // ✅ Save only bot responses for old answers
-  const saveBotResponse = async (botReply) => {
-    try {
-      const storedResponses = await AsyncStorage.getItem('savedAnswers');
-      const savedResponses = storedResponses ? JSON.parse(storedResponses) : [];
-      savedResponses.push(botReply);
-      await AsyncStorage.setItem('savedAnswers', JSON.stringify(savedResponses));
-    } catch (error) {
-      console.error("Error saving bot response:", error);
-    }
-  };
+  const saveChatHistory = async (chatMessages) => {
+  if (!userData || !userData.userId) {
+    console.error("❌ No authenticated user. Cannot save chat history.");
+    return;
+  }
+
+  try {
+    await firestore().collection('chats').doc(userData.userId).set({
+      messages: chatMessages,
+      timestamp: firestore.FieldValue.serverTimestamp()
+    });
+    console.log(`✅ Chat history saved for user: ${userData.userId}`);
+  } catch (error) {
+    console.error("❌ Error saving chat history:", error);
+  }
+};
 
   // ✅ Load conversation from old answers (hamburger menu)
-  const handleOpenOldChat = async (chatId) => {
+  const handleOpenOldChat = async () => {
+    if (!userData || !userData.userId) {
+      console.error("❌ No authenticated user. Cannot load chat history.");
+      return;
+    }
+  
     try {
-      const storedChats = await AsyncStorage.getItem('chatSessions');
-      if (storedChats) {
-        const savedChats = JSON.parse(storedChats);
-        const selectedChat = savedChats.find(chat => chat.id === chatId);
-        if (selectedChat) {
-          setMessages(selectedChat.messages);
-          setFirstInteraction(false);
-          setIsMenuOpen(false);
-        }
+      const chatDoc = await firestore().collection('chats').doc(userData.userId).get();
+      if (chatDoc.exists) {
+        setMessages(chatDoc.data().messages);
+        setFirstInteraction(false);
+        console.log(`✅ Loaded chat history for user: ${userData.userId}`);
+      } else {
+        console.log("ℹ️ No chat history found for this user.");
       }
     } catch (error) {
-      console.error("Error opening old chat:", error);
+      console.error("Error loading previous chats:", error);
     }
   };
 
@@ -157,7 +244,7 @@ const UserChatScreen = ({ navigation }) => {
           </View>
         ) : (
           <FlatList
-            data={messages}
+          data={isTyping ? [...messages, { id: 'typing', type: 'typing', sender: 'bot' }] : messages}
             renderItem={({ item }) => (
               <ChatBubble message={item} onEdit={handleEditMessage} />
             )}
@@ -174,7 +261,7 @@ const UserChatScreen = ({ navigation }) => {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
         style={styles.keyboardAvoid}
       >
-        <ChatInputBar onSend={handleSendMessage} isLoggedIn={true} />
+        <ChatInputBar onSend={handleSendMessage} isLoggedIn={true} loading={loading} setLoading={setLoading}/>
       </KeyboardAvoidingView>
 
       {/* BOTTOM NAVIGATION */}

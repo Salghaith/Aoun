@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Linking } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import Markdown from 'react-native-markdown-display';
 
 const ChatBubble = ({ message, onEdit }) => {
   const isUserMessage = message.sender === 'guestUser';
@@ -21,6 +22,20 @@ const ChatBubble = ({ message, onEdit }) => {
     setIsEditing(false);
   };
 
+
+
+  if (message.type === 'typing') {
+    return (
+      <View style={[styles.bubbleWrapper, styles.botContainer]}>
+        <MaterialCommunityIcons name="robot-outline" size={30} color="#FFF" style={styles.icon} />
+        <View style={[styles.bubbleContainer, styles.botBubble]}>
+          <Text style={styles.bubbleText}>...</Text>
+        </View>
+      </View>
+    );
+  }
+
+  
   return (
     <View
       style={[
@@ -63,7 +78,34 @@ const ChatBubble = ({ message, onEdit }) => {
             onSubmitEditing={handleSaveEdit}
           />
         ) : (
-          <Text style={styles.bubbleText}>{message.text}</Text>
+          <>
+  {/* Show text message */}
+  {message.text?.trim()?.length > 0 && (
+    <Markdown style={markdownStyles}>
+    {message.text}
+  </Markdown>
+  )}
+
+  {/* Show uploaded files (if any) */}
+  {message.files?.length > 0 && (
+    <View style={styles.fileList}>
+      {message.files.map((file, index) => (
+        <TouchableOpacity
+          key={index}
+          onPress={() => {
+            // You can use Linking API to open file
+            Linking.openURL(file.url);
+            console.log('Tapped:', file.name);
+          }}
+          style={styles.fileItem}
+        >
+          <Ionicons name="document-outline" size={18} color="#CCC" />
+          <Text style={styles.fileName}>{file.name}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  )}
+</>
         )}
       </View>
 
@@ -111,6 +153,7 @@ const styles = StyleSheet.create({
   bubbleText: {
     color: '#FFF',
     fontSize: 16,
+    lineHeight: 20,
   },
   editButton: {
     marginRight: 10, // Places edit button on the left side for user messages
@@ -123,4 +166,28 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 5,
   },
+  fileList: {
+    marginTop: 3,
+  },
+  
+  fileItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  
+  fileName: {
+    marginLeft: 4,
+    color: '#DDD',
+    fontSize: 14,
+    flexShrink: 1,
+  },
 });
+const markdownStyles = {
+  body: { color: '#FFF', fontSize: 16, lineHeight: 21 },
+  strong: { fontWeight: 'bold' },
+  em: { fontStyle: 'italic' },
+  bullet_list: { paddingLeft: 1 },
+  ordered_list: { paddingLeft: 1 },
+  list_item: { marginVertical: 2 },
+};
