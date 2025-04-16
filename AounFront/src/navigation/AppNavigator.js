@@ -14,6 +14,8 @@ import CreateTask from '../screens/CreateTask';
 import Tasks from '../screens/Tasks';
 import GuestChatScreen from '../screens/GuestChatScreen';
 import UesrChatScreen from '../screens/UesrChatScreen'; // ✅ Added UserChatScreen
+import GenerateSchedule from '../screens/GenerateSchedule'; // ✅ Added GenerateSchedule
+import AddSubjectManually from '../screens/AddSubjectManually';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +39,9 @@ const AppNavigator = () => {
         {/* ✅ Chat Screens */}
         <Stack.Screen name="GuestChatScreen" component={GuestChatScreen}/>  
         <Stack.Screen name="UserChat" component={UesrChatScreen}/>  
+
+        <Stack.Screen name='GenerateSchedule' component={GenerateSchedule}/> 
+        <Stack.Screen name='AddSubjectManually' component={AddSubjectManually}/>
 
       </Stack.Navigator>
     </NavigationContainer>

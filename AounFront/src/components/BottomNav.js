@@ -16,7 +16,7 @@ const BottomNav = ({ activeTab }) => {
       </TouchableOpacity>
 
       {/* Calendar */}
-      <TouchableOpacity onPress={() => navigation.navigate('Page2')}>
+      <TouchableOpacity onPress={() => navigation.navigate('GenerateSchedule')}>
         <Ionicons name="calendar-outline" size={28} color={iconColor('Page2')} />
       </TouchableOpacity>
 
