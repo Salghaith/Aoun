@@ -17,18 +17,18 @@ const TimeInfoOfSection = () => {
     <View style={styles.lectureRow}>
       <View style={styles.dropdownBox}>
         <View style={styles.Icon}>
-          <Icon name="calendar-day" size={18} style={{marginRight: 5}} />
-          <Text style={styles.lectureText}>Day</Text>
+          <Icon name="calendar-day" size={18} style={{marginRight: 5 , marginTop:5}} />
+          <Text style={styles.lectureDay}>Day</Text>
         </View>
         <View style={styles.underline} />
       </View>
       <View style={styles.Icon}>
         <Ionicons name="time" size={18} />
-        <Text style={styles.lectureText}>8:00AM</Text>
+        <Text style={styles.lectureTime}>8:00AM</Text>
       </View>
       <View style={styles.Icon}>
         <Ionicons name="time" size={18} />
-        <Text style={styles.lectureText}>8:50AM</Text>
+        <Text style={styles.lectureTime}>8:50AM</Text>
       </View>
     </View>
   );
@@ -57,9 +57,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#C7C7C7',
     marginTop: 4,
   },
-  lectureText: {
+  lectureDay: {
     fontSize: 14,
     color: '#000',
     fontWeight: '500',
+    marginTop: 5,
+  },
+  lectureTime: {
+    fontSize: 14,
+    color: '#000',
+    fontWeight: '500',
+    marginBottom: 5,
   },
 });

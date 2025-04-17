@@ -1,31 +1,69 @@
-import React, {useState, useContext} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-} from 'react-native';
-
+import React, {useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet, Animated} from 'react-native';
+import {Swipeable} from 'react-native-gesture-handler';
 import TimeInfoOfSection from './TimeInfoOfSection';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const SectionDetails = ({}) => {
+const SectionDetails = ({onDelete, isDeletable}) => {
+  const [lectureRows, setLectureRows] = useState([Date.now()]);
+
+  const handleAddLecture = () => {
+    setLectureRows(prev => [...prev, Date.now()]);
+  };
+
+  const handleDeleteLecture = id => {
+    setLectureRows(prev => prev.filter(item => item !== id));
+  };
+
+  const renderLeftActions = (progress, dragX) => {
+    const backgroundColor = dragX.interpolate({
+      inputRange: [0, 100],
+      outputRange: ['#fff', '#ff8a8a'],
+      extrapolate: 'clamp',
+    });
+
+    return (
+      <Animated.View style={[styles.swipeBackground, {backgroundColor}]} />
+    );
+  };
+
   return (
     <View>
-      {/* Section Number Block */}
       <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>Section number</Text>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Section number</Text>
+          {isDeletable && (
+            <TouchableOpacity onPress={onDelete}>
+              <Icon name="trash" size={16} style={{marginBottom: 7}} />
+            </TouchableOpacity>
+          )}
+        </View>
+
         <View style={styles.divider} />
 
-        {/* Lecture Row 1 */}
-        <TimeInfoOfSection />
+        {lectureRows.map((id, index) =>
+          index === 0 ? (
+            <TimeInfoOfSection key={id} />
+          ) : (
+            <Swipeable
+              key={id}
+              renderLeftActions={renderLeftActions}
+              onSwipeableOpen={() => handleDeleteLecture(id)}>
+              <TimeInfoOfSection />
+            </Swipeable>
+          ),
+        )}
       </View>
 
-      {/* Add Lecture Button */}
-      <TouchableOpacity style={styles.addLectureButton}>
-        {/* TODO: Plus icon */}
+      <TouchableOpacity
+        style={styles.addLectureButton}
+        onPress={handleAddLecture}>
+        <Icon
+          name="plus-circle"
+          size={16}
+          color="#FFFFFF"
+          style={{marginHorizontal: 6}}
+        />
         <Text style={styles.addLectureText}>Add new lecture</Text>
       </TouchableOpacity>
     </View>
@@ -49,6 +87,11 @@ const styles = StyleSheet.create({
     color: '#AAA',
     marginBottom: 8,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   divider: {
     height: 1,
     backgroundColor: '#AAA',
@@ -61,10 +104,19 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 16,
     alignItems: 'center',
     marginHorizontal: 34,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   addLectureText: {
     color: '#FFF',
     fontSize: 14,
     fontWeight: 'bold',
+    marginRight: 8,
+  },
+  swipeBackground: {
+    flex: 1,
+    borderRadius: 6,
+    marginBottom: 10,
   },
 });

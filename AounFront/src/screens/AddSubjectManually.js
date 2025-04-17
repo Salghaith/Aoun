@@ -7,7 +7,6 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
-  Image,
 } from 'react-native';
 
 import BackButton from '../components/BackButton';
@@ -22,6 +21,12 @@ const AddSubjectManually = ({navigation}) => {
   const {t} = useTranslation();
   const {isDarkMode} = useContext(ThemeContext);
   const textColor = isDarkMode ? '#F9FAFB' : '#1C2128';
+
+  const [sections, setSections] = useState([Date.now()]);
+
+  const handleAddSection = () => {
+    setSections(prev => [...prev, Date.now()]);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -51,10 +56,12 @@ const AddSubjectManually = ({navigation}) => {
       {/* Action Buttons */}
       <View style={styles.buttonRow}>
         <TouchableOpacity style={styles.actionButton}>
-          <FontAwesome6 name="pen" color="white" size="20" />
+          <FontAwesome6 name="pen" color="white" size={20} />
           <Text style={styles.buttonText}>Final</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={handleAddSection}>
           <FontAwesome6
             name="user-plus"
             color="white"
@@ -69,7 +76,21 @@ const AddSubjectManually = ({navigation}) => {
         </TouchableOpacity>
       </View>
 
-      <SectionDetails />
+      {/* Scrollable Sections */}
+      <ScrollView
+        style={{flex: 1}}
+        contentContainerStyle={{paddingBottom: 100}}>
+        {sections.map((id, index) => (
+          <View key={id} style={{marginBottom: 20}}>
+            <SectionDetails
+              onDelete={() =>
+                setSections(prev => prev.filter(item => item !== id))
+              }
+              isDeletable={sections.length > 1}
+            />
+          </View>
+        ))}
+      </ScrollView>
 
       <BottomNav activeTab="Chat" />
     </SafeAreaView>
@@ -108,7 +129,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 5,
-    marginBottom: -90, //to make section details close to the buttons
+    marginBottom: -90, // Keep this if it helps your layout
     marginHorizontal: 34,
   },
   actionButton: {
