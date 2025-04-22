@@ -5,8 +5,9 @@ import {auth} from '../config/firebaseConfig';
 import i18n from '../i18n';
 import {AuthContext} from '../context/AuthContext';
 
-const SplashScreen = ({navigation}) => {
-  const {updateUserData} = useContext(AuthContext);
+const SplashScreen = () => {
+  const {updateUserData} = useContext(AuthContext); // ⬅️ use this to switch stack
+
   useEffect(() => {
     const initializeApp = async () => {
       const savedLang = await getData('userLanguage');
@@ -19,21 +20,20 @@ const SplashScreen = ({navigation}) => {
           if (user) {
             try {
               userData.userToken = await user.getIdToken(true);
-              await updateUserData(userData);
-              navigation.navigate('Profile');
+              updateUserData(userData); // ✅ trigger switch to AppStack
             } catch (error) {
               console.log('❌ Error refreshing token:', error);
               await removeData('userData');
-              navigation.replace('Home');
+              updateUserData(null); // ✅ stay in AuthStack
             }
           } else {
             await removeData('userData');
-            navigation.navigate('Home');
+            updateUserData(null);
           }
         });
       } else {
         await removeData('userData');
-        navigation.navigate('Home');
+        updateUserData(null);
       }
     };
 

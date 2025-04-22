@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const BottomNav = ({ activeTab }) => {
+const BottomNav = ({activeTab}) => {
   const navigation = useNavigation();
-  const iconColor = (tab) => (activeTab === tab ? '#A0A0A0' : '#A0A0A0'); // ✅ Ensures same color logic
+  const iconColor = tab => (activeTab === tab ? 'white' : '#A0A0A0');
 
   return (
     <View style={styles.container}>
@@ -17,22 +17,38 @@ const BottomNav = ({ activeTab }) => {
 
       {/* Calendar */}
       <TouchableOpacity onPress={() => navigation.navigate('GenerateSchedule')}>
-        <Ionicons name="calendar-outline" size={28} color={iconColor('Page2')} />
+        <Ionicons
+          name="calendar-outline"
+          size={28}
+          color={iconColor('GenerateSchedule')}
+        />
       </TouchableOpacity>
 
       {/* ChatBot */}
       <TouchableOpacity onPress={() => navigation.navigate('UserChat')}>
-        <MaterialCommunityIcons name="robot-outline" size={28} color={iconColor('Page3')} />
+        <MaterialCommunityIcons
+          name="robot-outline"
+          size={28}
+          color={iconColor('UserChat')}
+        />
       </TouchableOpacity>
 
       {/* Tasks */}
       <TouchableOpacity onPress={() => navigation.navigate('Tasks')}>
-        <Ionicons name="clipboard-outline" size={28} color={iconColor('Tasks')} />
+        <Ionicons
+          name="clipboard-outline"
+          size={28}
+          color={iconColor('Tasks')}
+        />
       </TouchableOpacity>
 
       {/* Profile */}
       <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-        <Ionicons name="person-outline" size={28} color={iconColor('Profile')} />
+        <Ionicons
+          name="person-outline"
+          size={28}
+          color={iconColor('Profile')}
+        />
       </TouchableOpacity>
     </View>
   );

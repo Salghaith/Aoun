@@ -11,7 +11,7 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import {useTranslation} from 'react-i18next';
 import {ThemeContext} from '../context/ThemeContext';
-import BottomNav from '../components/BottomNav';
+
 import SearchBar from '../components/SearchBar';
 import CalendarComponent from '../components/CalendarComponent';
 import TaskItem from '../components/TaskItem';
@@ -194,8 +194,7 @@ const Tasks = ({navigation}) => {
         />
       )}
 
-      {/* Bottom navigation */}
-      <BottomNav />
+     
     </SafeAreaView>
   );
 };

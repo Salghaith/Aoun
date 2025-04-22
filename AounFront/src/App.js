@@ -1,16 +1,17 @@
 import React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
 
 import AppNavigator from './navigation/AppNavigator';
 import {AuthProvider} from './context/AuthContext';
-import {ThemeProvider} from './context/ThemeContext'; // Import ThemeProvider
-import {configureNotifications} from './services/notificationService';
+import {ThemeProvider} from './context/ThemeContext';
 
-// configureNotifications();
 const App = () => {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <AppNavigator />
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
       </ThemeProvider>
     </AuthProvider>
   );

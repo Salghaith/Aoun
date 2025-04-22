@@ -1,6 +1,5 @@
 import {useContext} from 'react';
-import {Alert} from 'react-native';
-import auth from '@react-native-firebase/auth'; // ✅ Fixed import
+import auth from '@react-native-firebase/auth'; 
 import {removeData} from '../utils/storageUtils';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
@@ -13,7 +12,7 @@ export const useLogout = () => {
     try {
       await removeData('userData');
       await removeData('tasks');
-      await auth().signOut(); // ✅ Fixed signOut call
+      await auth().signOut();
       await updateUserData(null);
       navigation.navigate('Home');
     } catch (error) {

@@ -8,7 +8,6 @@ import {
   Image,
 } from 'react-native';
 
-import BottomNav from '../components/BottomNav';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const CalendarScreen = ({navigation}) => {
@@ -53,7 +52,7 @@ const CalendarScreen = ({navigation}) => {
         <Text style={styles.generateButtonText}>Generate Schedule</Text>
       </TouchableOpacity>
 
-      <BottomNav activeTab="Chat" />
+      
     </SafeAreaView>
   );
 };

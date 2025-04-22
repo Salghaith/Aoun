@@ -1,6 +1,6 @@
 import {useState, useContext} from 'react';
-import auth from '@react-native-firebase/auth'; // ✅ Use React Native Firebase Auth
-import firestore from '@react-native-firebase/firestore'; // ✅ Firestore import is already correct
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
 import {isValidKSU, validateInputs} from '../utils/validationUtils';
@@ -22,14 +22,13 @@ export const useLogin = () => {
     setLoading(true);
 
     try {
-      // ✅ Use React Native Firebase Auth correctly
       const userCredential = await auth().signInWithEmailAndPassword(
         email,
         password,
       );
       const user = userCredential.user;
 
-      // ✅ Fetch Firestore user document correctly
+      //Fetch user document
       const userDoc = await firestore().collection('users').doc(user.uid).get();
       const userData = userDoc.exists ? userDoc.data() : {};
 

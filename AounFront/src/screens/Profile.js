@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Text,
@@ -11,36 +11,33 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import Icon from 'react-native-vector-icons/Feather';
 import LanguageSwitch from '../components/LanguageSwitch';
-import i18n, { switchLanguage } from '../i18n';
-import { useLogout } from '../hooks/useLogout';
-import { AuthContext } from '../context/AuthContext';
-import { ThemeContext } from '../context/ThemeContext'; 
-import BottomNav from '../components/BottomNav';
+import i18n, {switchLanguage} from '../i18n';
+import {useLogout} from '../hooks/useLogout';
+import {AuthContext} from '../context/AuthContext';
+import {ThemeContext} from '../context/ThemeContext';
 
-const ProfileScreen = ({ navigation }) => {
-  const { t } = useTranslation();
-  const { handleLogout } = useLogout();
-  const { userData } = useContext(AuthContext);
-  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
+
+const ProfileScreen = ({navigation}) => {
+  const {t} = useTranslation();
+  const {handleLogout} = useLogout();
+  const {userData} = useContext(AuthContext);
+  const {isDarkMode, toggleTheme} = useContext(ThemeContext);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   return (
     <SafeAreaView
       style={[
         styles.container,
-        { backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5' },
-      ]}
-    >
+        {backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5'},
+      ]}>
       {/* HEADER */}
       <View style={styles.headerContainer}>
-        
         <Text
-          style={[styles.title, { color: isDarkMode ? '#F9FAFB' : '#1C2128' }]}
-        >
+          style={[styles.title, {color: isDarkMode ? '#F9FAFB' : '#1C2128'}]}>
           {t('Profile')}
         </Text>
       </View>
@@ -54,14 +51,12 @@ const ProfileScreen = ({ navigation }) => {
 
         <TouchableOpacity
           style={styles.usernameContainer}
-          onPress={() => navigation.navigate('EditProfile')}
-        >
+          onPress={() => navigation.navigate('EditProfile')}>
           <Text
             style={[
               styles.username,
-              { color: isDarkMode ? '#F9FAFB' : '#1C2128' },
-            ]}
-          >
+              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
+            ]}>
             {userData.username}
           </Text>
           <Icon
@@ -73,8 +68,7 @@ const ProfileScreen = ({ navigation }) => {
         </TouchableOpacity>
 
         <Text
-          style={[styles.email, { color: isDarkMode ? '#B1B1B1' : '#4A4F55' }]}
-        >
+          style={[styles.email, {color: isDarkMode ? '#B1B1B1' : '#4A4F55'}]}>
           {userData.email}
         </Text>
 
@@ -82,9 +76,8 @@ const ProfileScreen = ({ navigation }) => {
         <View
           style={[
             styles.switchContainer,
-            { backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0' },
-          ]}
-        >
+            {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
+          ]}>
           <Icon
             name="globe"
             size={24}
@@ -94,9 +87,8 @@ const ProfileScreen = ({ navigation }) => {
           <Text
             style={[
               styles.sectionText,
-              { color: isDarkMode ? '#F9FAFB' : '#1C2128' },
-            ]}
-          >
+              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
+            ]}>
             {t('Language')}
           </Text>
           <View style={styles.languageSwitcherWrapper}>
@@ -111,9 +103,8 @@ const ProfileScreen = ({ navigation }) => {
         <View
           style={[
             styles.switchContainer,
-            { backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0' },
-          ]}
-        >
+            {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
+          ]}>
           <Icon
             name="bell"
             size={24}
@@ -123,15 +114,14 @@ const ProfileScreen = ({ navigation }) => {
           <Text
             style={[
               styles.sectionText,
-              { color: isDarkMode ? '#F9FAFB' : '#1C2128' },
-            ]}
-          >
+              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
+            ]}>
             {t('Notifications')}
           </Text>
           <Switch
             value={notificationsEnabled}
-            onValueChange={() => setNotificationsEnabled((prev) => !prev)}
-            trackColor={{ false: '#B0B0B0', true: '#0084FF' }}
+            onValueChange={() => setNotificationsEnabled(prev => !prev)}
+            trackColor={{false: '#B0B0B0', true: '#0084FF'}}
             thumbColor={notificationsEnabled ? '#FFFFFF' : '#B0B0B0'}
             style={styles.switch}
           />
@@ -141,9 +131,8 @@ const ProfileScreen = ({ navigation }) => {
         <View
           style={[
             styles.switchContainer,
-            { backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0' },
-          ]}
-        >
+            {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
+          ]}>
           <Icon
             name="moon"
             size={24}
@@ -153,15 +142,14 @@ const ProfileScreen = ({ navigation }) => {
           <Text
             style={[
               styles.sectionText,
-              { color: isDarkMode ? '#F9FAFB' : '#1C2128' },
-            ]}
-          >
+              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
+            ]}>
             {t('Dark Mode')}
           </Text>
           <Switch
             value={isDarkMode}
             onValueChange={toggleTheme}
-            trackColor={{ false: '#B0B0B0', true: '#0084FF' }}
+            trackColor={{false: '#B0B0B0', true: '#0084FF'}}
             thumbColor={isDarkMode ? '#FFFFFF' : '#B0B0B0'}
             style={styles.switch}
           />
@@ -173,10 +161,9 @@ const ProfileScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* ✅ Ensures BottomNav does not overlap */}
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <BottomNav activeTab="Profile" />
-      </KeyboardAvoidingView>
+      
+
+      
     </SafeAreaView>
   );
 };
@@ -244,7 +231,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   switch: {
-    transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }],
+    transform: [{scaleX: 1.3}, {scaleY: 1.3}],
   },
   logoutButton: {
     backgroundColor: '#B02626',

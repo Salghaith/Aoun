@@ -5,6 +5,6 @@ import firestore from '@react-native-firebase/firestore';
 
 const authInstance = auth(); // Just initialize auth normally
 
-const db = firestore(); // Correct way to use Firestore in React Native
+const db = firestore();
 
 export {authInstance as auth, db};

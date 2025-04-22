@@ -16,7 +16,6 @@ import firestore from '@react-native-firebase/firestore';
 // Import components
 import ChatBubble from '../components/ChatBubble';
 import ChatInputBar from '../components/ChatInputBar'; 
-import BottomNav from '../components/BottomNav';
 import HamburgerMenu from '../components/HamburgerMenu';
 import {AuthContext} from '../context/AuthContext';
 import { getChatbotResponse } from '../services/openaiService'; // ✅ Add this
@@ -264,8 +263,6 @@ const UserChatScreen = ({ navigation }) => {
         <ChatInputBar onSend={handleSendMessage} isLoggedIn={true} loading={loading} setLoading={setLoading}/>
       </KeyboardAvoidingView>
 
-      {/* BOTTOM NAVIGATION */}
-      <BottomNav activeTab="Chat" />
     </SafeAreaView>
   );
 };

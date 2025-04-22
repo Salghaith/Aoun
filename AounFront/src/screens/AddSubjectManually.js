@@ -15,7 +15,7 @@ import {useTranslation} from 'react-i18next';
 import SectionDetails from '../components/SectionDetails';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import BottomNav from '../components/BottomNav';
+
 
 const AddSubjectManually = ({navigation}) => {
   const {t} = useTranslation();
@@ -92,7 +92,6 @@ const AddSubjectManually = ({navigation}) => {
         ))}
       </ScrollView>
 
-      <BottomNav activeTab="Chat" />
     </SafeAreaView>
   );
 };
