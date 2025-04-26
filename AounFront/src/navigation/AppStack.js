@@ -15,6 +15,7 @@ import GuestChatScreen from '../screens/GuestChatScreen';
 import UserChatScreen from '../screens/UesrChatScreen';
 import GenerateSchedule from '../screens/GenerateSchedule';
 import AddSubjectManually from '../screens/AddSubjectManually';
+import HomeScreen from '../screens/HomeScreen';
 
 const Stack = createStackNavigator();
 
@@ -32,6 +33,7 @@ export default function AppStack() {
           cardStyleInterpolator:
             CardStyleInterpolators.forFadeFromBottomAndroid,
         }}>
+        <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="CreateTask" component={CreateTask} />

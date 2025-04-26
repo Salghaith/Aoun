@@ -27,7 +27,7 @@ const LoginScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <BackButton onPress={() => navigation.navigate('Home')} />
+      <BackButton onPress={() => navigation.navigate('Welcome')} />
 
       <Text style={styles.title}>{t('Login Your Account')}</Text>
       <View style={styles.errorMessage}>

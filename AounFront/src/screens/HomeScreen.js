@@ -1,66 +1,65 @@
-import React, { useContext } from 'react';
+import React, {useContext} from 'react';
 import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
   View,
-  Image,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  I18nManager,
   TouchableOpacity,
 } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import i18n, { switchLanguage } from '../i18n';
-import LoginButton from '../components/LoginButton';
-import { ThemeContext } from '../context/ThemeContext'; // Import Theme Context
+import {useTranslation} from 'react-i18next';
+import {useLogout} from '../hooks/useLogout';
+import {AuthContext} from '../context/AuthContext';
+import {ThemeContext} from '../context/ThemeContext';
+import Icon from 'react-native-vector-icons/AntDesign';
 
-const HomeScreen = ({ navigation }) => {
-  const { isDarkMode } = useContext(ThemeContext); // Get theme state
-  const { t } = useTranslation();
+const HomeScreen = ({navigation}) => {
+  const {t} = useTranslation();
+  const {userData} = useContext(AuthContext);
+  const {isDarkMode, toggleTheme} = useContext(ThemeContext);
+  const iconColor = isDarkMode ? 'white' : 'black';
 
   return (
     <SafeAreaView
       style={[
         styles.container,
-        { backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5' }, // Light Mode background update
-      ]}
-    >
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-
-      <Image
-        source={require('../assets/images/aoun-logo.png')}
-        style={styles.logo}
-      />
-      <Text
-        style={[
-          styles.text,
-          { color: isDarkMode ? '#FFFFFF' : '#1C2128' }, // Adjust text color
-        ]}
-      >
-        {t('Welcome to \nAoun')}
-      </Text>
-
-      <View style={styles.buttonsSection}>
-        <LoginButton
-          title={t('Log in')}
-          onPress={() => navigation.navigate('Login')}
-        />
-        <LoginButton
-          title={t('Sign up')}
-          onPress={() => navigation.navigate('Signup')}
-        />
-
-        {/* ✅ Updated "Continue as Guest" to navigate to the Tasks Page */}
-        <TouchableOpacity onPress={() => navigation.navigate('GuestChatScreen')}>
-          <Text
-            style={[
-              styles.guestButton,
-              { color: isDarkMode ? '#FFFFFF' : '#1C2128' }, // Adjust text color
-            ]}
-          >
-            {t('Continue as Guest')}
-          </Text>
-        </TouchableOpacity>
+        {backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5'},
+      ]}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerText}>Good morning, {userData.username}</Text>
       </View>
+      <View style={styles.weekContainer}>
+        {Array.from({length: 7}, (_, i) => {
+          //   const day = new Date(Date.now()); **orginal**
+          const day = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+          day.setDate(day.getDate() + i);
+
+          return (
+            <View style={styles.dayBox} key={i}>
+              <Text style={[styles.dayText, {color: iconColor}]}>
+                {day.toDateString().split(' ')[0]}
+              </Text>
+              <Text style={[styles.dayText, {color: iconColor}]}>
+                {day.getDate()}
+              </Text>
+            </View>
+          );
+        })}
+      </View>
+      <View style={styles.wisdomContainer}>
+        <Text style={styles.wisdomText}>
+          Hi {userData.username}, don’t forget to check your tasks for today.
+          Keep making progress!
+        </Text>
+      </View>
+      <TouchableOpacity
+        style={styles.createTaskContainer}
+        onPress={() => navigation.navigate('CreateTask')}>
+        <Text style={styles.createTaskText}>Create Task</Text>
+        <View style={styles.circle}>
+          <Icon name="arrowright" size={22} color="white" />
+        </View>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -68,34 +67,68 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+  },
+  headerContainer: {
+    width: 256,
+    height: 80,
+    marginTop: 15,
+    marginLeft: 40,
+  },
+  headerText: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  weekContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 32,
+    marginBottom: 15,
+    paddingHorizontal: 20,
+  },
+  dayBox: {
     alignItems: 'center',
+    padding: 8,
   },
-
-  logo: {
-    marginTop: 40,
-    marginBottom: 35,
-    width: 200,
-    height: 200,
+  dayText: {fontSize: 16},
+  wisdomContainer: {
+    alignSelf: 'center',
+    width: 360,
+    marginTop: 13,
+    backgroundColor: '#131417',
+    padding: 16,
+    borderRadius: 12,
   },
-
-  text: {
-    fontSize: 40,
-    textAlign: 'center',
-    height: 100,
-    fontWeight: "500",
+  wisdomText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
   },
-
-  buttonsSection: {
-    height: 197,
-    marginTop: 100,
+  createTaskContainer: {
+    alignSelf: 'center',
+    width: 320,
+    height: 63,
+    backgroundColor: '#131417',
+    borderRadius: 20,
+    marginTop: 25,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 24,
   },
-
-  guestButton: {
-    opacity: 0.7,
-    fontSize: 16,
-    fontWeight: '500',
+  createTaskText: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  circle: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 45,
+    height: 45,
+    borderRadius: 50,
+    backgroundColor: '#1C2128',
   },
 });
 

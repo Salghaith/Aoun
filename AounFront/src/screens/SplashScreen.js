@@ -6,7 +6,7 @@ import i18n from '../i18n';
 import {AuthContext} from '../context/AuthContext';
 
 const SplashScreen = () => {
-  const {updateUserData} = useContext(AuthContext); // ⬅️ use this to switch stack
+  const {updateUserData} = useContext(AuthContext); 
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -20,11 +20,11 @@ const SplashScreen = () => {
           if (user) {
             try {
               userData.userToken = await user.getIdToken(true);
-              updateUserData(userData); // ✅ trigger switch to AppStack
+              updateUserData(userData);
             } catch (error) {
               console.log('❌ Error refreshing token:', error);
               await removeData('userData');
-              updateUserData(null); // ✅ stay in AuthStack
+              updateUserData(null);
             }
           } else {
             await removeData('userData');

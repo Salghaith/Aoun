@@ -28,7 +28,7 @@ const SignupScreen = ({navigation}) => {
   const [rememberMe, setRememberMe] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
-      <BackButton onPress={() => navigation.navigate('Home')} />
+      <BackButton onPress={() => navigation.navigate('Welcome')} />
       <View style={{flexDirection: 'row'}}>
         <Text style={styles.title}>{t('Create Your Account')}</Text>
         {KSUStudent && (
