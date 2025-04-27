@@ -54,7 +54,6 @@ export const useSignup = () => {
       };
 
       await updateUserData(userObject);
-      navigation.navigate('Profile');
     } catch (error) {
       setError(SignupErrorHandler(error.code));
     } finally {

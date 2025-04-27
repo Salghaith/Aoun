@@ -1,5 +1,5 @@
 import {useContext} from 'react';
-import auth from '@react-native-firebase/auth'; 
+import auth from '@react-native-firebase/auth';
 import {removeData} from '../utils/storageUtils';
 import {useNavigation} from '@react-navigation/native';
 import {AuthContext} from '../context/AuthContext';
@@ -14,7 +14,7 @@ export const useLogout = () => {
       await removeData('tasks');
       await auth().signOut();
       await updateUserData(null);
-      navigation.navigate('Home');
+      // navigation.navigate('Welcome');
     } catch (error) {
       console.error('Logout Error:', error);
     }

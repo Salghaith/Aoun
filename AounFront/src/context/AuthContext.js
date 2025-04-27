@@ -4,13 +4,16 @@ import {storeData} from '../utils/storageUtils';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
-  const [userData, setUserData] = useState();
+  const [userData, setUserData] = useState(null);
 
-  //Function to update user data globally
   const updateUserData = async updatedUser => {
-    const newUserData = {...userData, ...updatedUser};
-    setUserData(newUserData);
-    await storeData('userData', newUserData);
+    if (updatedUser) {
+      const newUserData = {...userData, ...updatedUser};
+      setUserData(newUserData);
+      await storeData('userData', newUserData);
+    } else {
+      setUserData(null);
+    }
   };
 
   return (

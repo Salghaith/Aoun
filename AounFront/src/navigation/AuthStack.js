@@ -5,11 +5,10 @@ import {
   CardStyleInterpolators,
 } from '@react-navigation/stack';
 
-import SplashScreen from '../screens/SplashScreen';
+import WelcomeScreen from '../screens/WelcomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import ForgetPass from '../screens/ForgetPass';
-import WelcomeScreen from '../screens/WelcomeScreen';
 
 const Stack = createStackNavigator();
 
@@ -25,7 +24,6 @@ export default function AuthStack() {
         },
         cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
       }}>
-      <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />

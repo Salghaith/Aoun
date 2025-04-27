@@ -12,12 +12,45 @@ import {useLogout} from '../hooks/useLogout';
 import {AuthContext} from '../context/AuthContext';
 import {ThemeContext} from '../context/ThemeContext';
 import Icon from 'react-native-vector-icons/AntDesign';
+import HomeClassCard from '../components/HomeClassCard';
 
 const HomeScreen = ({navigation}) => {
   const {t} = useTranslation();
   const {userData} = useContext(AuthContext);
   const {isDarkMode, toggleTheme} = useContext(ThemeContext);
   const iconColor = isDarkMode ? 'white' : 'black';
+  const schedule = [
+    //DUMMY DATA
+    {
+      code: 'SWE444',
+      subject: 'Software development lab',
+      section: '1212',
+      lectures: [
+        {day: '2', start: '08:00', end: '09:50'},
+        {day: '4', start: '08:00', end: '09:50'},
+      ],
+    },
+    {
+      code: 'SWE485',
+      subject: 'AI',
+      section: '1111',
+      lectures: [
+        {day: '1', start: '08:00', end: '09:50'},
+        {day: '3', start: '08:00', end: '09:50'},
+        {day: '5', start: '08:00', end: '08:50'},
+      ],
+    },
+    {
+      code: 'SWE486',
+      subject: 'Cloud',
+      section: '3333',
+      lectures: [
+        {day: '1', start: '10:00', end: '11:50'},
+        {day: '3', start: '10:00', end: '11:50'},
+        {day: '5', start: '10:00', end: '11:50'},
+      ],
+    },
+  ];
 
   return (
     <SafeAreaView
@@ -35,7 +68,7 @@ const HomeScreen = ({navigation}) => {
           day.setDate(day.getDate() + i);
 
           return (
-            <View style={styles.dayBox} key={i}>
+            <View style={[styles.dayBox, i == 3 && styles.selectedDay]} key={i}>
               <Text style={[styles.dayText, {color: iconColor}]}>
                 {day.toDateString().split(' ')[0]}
               </Text>
@@ -60,6 +93,12 @@ const HomeScreen = ({navigation}) => {
           <Icon name="arrowright" size={22} color="white" />
         </View>
       </TouchableOpacity>
+      <View style={styles.classesContainer}>
+        <Text style={styles.classesHeader}>
+          Up Coming Classes {schedule[0].code}
+        </Text>
+      </View>
+      <HomeClassCard style={styles.classesSection} />
     </SafeAreaView>
   );
 };
@@ -68,12 +107,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     direction: I18nManager.isRTL ? 'rtl' : 'ltr',
+    alignItems: 'center',
   },
   headerContainer: {
     width: 256,
     height: 80,
     marginTop: 15,
-    marginLeft: 40,
+    marginHorizontal: '10%',
+    alignSelf: 'flex-start',
   },
   headerText: {
     fontSize: 32,
@@ -84,7 +125,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginTop: 32,
-    marginBottom: 15,
+    alignSelf: 'stretch',
     paddingHorizontal: 20,
   },
   dayBox: {
@@ -92,9 +133,13 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   dayText: {fontSize: 16},
+  selectedDay: {
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    borderRadius: 8,
+  },
   wisdomContainer: {
-    alignSelf: 'center',
-    width: 360,
+    width: '89%',
     marginTop: 13,
     backgroundColor: '#131417',
     padding: 16,
@@ -106,8 +151,6 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   createTaskContainer: {
-    alignSelf: 'center',
-    width: 320,
     height: 63,
     backgroundColor: '#131417',
     borderRadius: 20,
@@ -121,6 +164,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 24,
     fontWeight: 'bold',
+    marginRight: 95,
   },
   circle: {
     alignItems: 'center',
@@ -129,6 +173,21 @@ const styles = StyleSheet.create({
     height: 45,
     borderRadius: 50,
     backgroundColor: '#1C2128',
+  },
+  classesContainer: {
+    marginTop: 25,
+    width: '100%',
+    alignItems: 'center',
+  },
+  classesHeader: {
+    alignSelf: 'flex-start',
+    marginHorizontal: 28,
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  classesSection: {
+    marginTop: 15,
   },
 });
 
