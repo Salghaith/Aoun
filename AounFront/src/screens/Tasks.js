@@ -11,13 +11,14 @@ import {
 import Feather from 'react-native-vector-icons/Feather';
 import {useTranslation} from 'react-i18next';
 import {ThemeContext} from '../context/ThemeContext';
-
 import SearchBar from '../components/SearchBar';
 import CalendarComponent from '../components/CalendarComponent';
 import TaskItem from '../components/TaskItem';
 import EditTask from '../components/EditTask';
 import {AuthContext} from '../context/AuthContext';
-import {getTasks, updateTask, deleteTask} from '../services/taskService';
+import {TaskContext} from '../context/TaskContext';
+
+import {updateTask, deleteTask} from '../services/taskService';
 
 LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
 
@@ -25,6 +26,7 @@ const Tasks = ({navigation}) => {
   const {t} = useTranslation();
   const {isDarkMode} = useContext(ThemeContext);
   const {userData} = useContext(AuthContext);
+  const {tasks, setTasks, refreshTasks, loading} = useContext(TaskContext);
 
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split('T')[0],
@@ -33,15 +35,15 @@ const Tasks = ({navigation}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [editTask, setEditTask] = useState(null);
 
-  const [tasks, setTasks] = useState([]);
+  // const [tasks, setTasks] = useState([]);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      const userTasks = await getTasks(userData.userId);
-      setTasks(userTasks);
-    };
-    fetchTasks();
-  }, []);
+  // useEffect(() => {
+  //   const fetchTasks = async () => {
+  //     const userTasks = await getTasks(userData.userId);
+  //     setTasks(userTasks);
+  //   };
+  //   fetchTasks();
+  // }, []);
 
   // Filter tasks by selected date
   const filteredTasks = tasks.filter(task => task.date === selectedDate);
@@ -193,8 +195,6 @@ const Tasks = ({navigation}) => {
           onDelete={handleDeleteTask}
         />
       )}
-
-     
     </SafeAreaView>
   );
 };

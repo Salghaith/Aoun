@@ -19,6 +19,7 @@ import {ThemeContext} from '../context/ThemeContext';
 import {saveTask} from '../services/taskService';
 import {AuthContext} from '../context/AuthContext';
 import {scheduleNotification} from '../services/notificationService';
+import {TaskContext} from '../context/TaskContext';
 
 const CreateTask = ({navigation}) => {
   const {userData} = useContext(AuthContext);
@@ -34,6 +35,7 @@ const CreateTask = ({navigation}) => {
 
   const {t} = useTranslation();
   const {isDarkMode} = useContext(ThemeContext);
+  const {setTasks, refreshTasks} = useContext(TaskContext);
 
   const isBefore = (d1, d2) => d1.getTime() < d2.getTime();
 
@@ -98,8 +100,10 @@ const CreateTask = ({navigation}) => {
       completed: false,
     };
     await saveTask(newTask, userData.userId);
+    setTasks(prevTasks => [...prevTasks, newTask]);
+    // await refreshTasks();
     scheduleNotification(newTask);
-    navigation.navigate('Tasks', {newTask});
+    navigation.navigate('Tasks');
   };
 
   const bgColor = isDarkMode ? '#1C2128' : '#F5F5F5';

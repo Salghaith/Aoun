@@ -23,7 +23,9 @@ export default function HomeClassCard({style, subject, today}) {
       return;
     }
 
-    const interval = setInterval(() => {
+    let timeoutId;
+
+    const checkTime = () => {
       const [startHour, startMinute] = lectureToday.start
         .split(':')
         .map(Number);
@@ -42,26 +44,31 @@ export default function HomeClassCard({style, subject, today}) {
 
       if (now > endTime) {
         setShowCard(false);
-        clearInterval(interval);
         return;
       }
 
       if (diffSeconds <= 60 && diffSeconds >= 0) {
         setStatus('red');
         setTimeLeft('NOW');
+        timeoutId = setTimeout(checkTime, 10000);
       } else if (diffMinutes <= 10 && diffMinutes >= 1) {
         setStatus('red');
         setTimeLeft(`${diffMinutes} min`);
+        timeoutId = setTimeout(checkTime, 60000);
       } else if (diffSeconds < 0) {
         setShowCard(false);
-        clearInterval(interval);
       } else {
         setStatus('green');
         setTimeLeft(null);
+        timeoutId = setTimeout(checkTime, 5 * 60 * 1000);
       }
-    }, 1000);
+    };
 
-    return () => clearInterval(interval);
+    checkTime();
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, []);
 
   if (!showCard) return null;
