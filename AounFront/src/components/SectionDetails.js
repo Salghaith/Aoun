@@ -1,58 +1,132 @@
-import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Animated} from 'react-native';
-import {Swipeable} from 'react-native-gesture-handler';
+import React, {useState, forwardRef, useImperativeHandle} from 'react';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+} from 'react-native';
 import TimeInfoOfSection from './TimeInfoOfSection';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const SectionDetails = ({onDelete, isDeletable}) => {
-  const [lectureRows, setLectureRows] = useState([Date.now()]);
+const SectionDetails = forwardRef(({onDelete, isDeletable}, ref) => {
+  const [sectionNumber, setSectionNumber] = useState('');
+  const [lectures, setLectures] = useState([
+    {
+      id: Date.now(),
+      day: 'Day',
+      startTime: '8:00AM',
+      endTime: '8:50PM',
+      isDropdownOpen: false,
+    },
+  ]);
 
   const handleAddLecture = () => {
-    setLectureRows(prev => [...prev, Date.now()]);
+    setLectures(prev => [
+      ...prev,
+      {
+        id: Date.now(),
+        day: 'Day',
+        startTime: '8:00AM',
+        endTime: '8:50PM',
+        isDropdownOpen: false,
+      },
+    ]);
   };
 
-  const handleDeleteLecture = id => {
-    setLectureRows(prev => prev.filter(item => item !== id));
-  };
-
-  const renderLeftActions = (progress, dragX) => {
-    const backgroundColor = dragX.interpolate({
-      inputRange: [0, 100],
-      outputRange: ['#fff', '#ff8a8a'],
-      extrapolate: 'clamp',
-    });
-
-    return (
-      <Animated.View style={[styles.swipeBackground, {backgroundColor}]} />
+  const toggleDropdown = id => {
+    setLectures(prev =>
+      prev.map(lecture =>
+        lecture.id === id
+          ? {...lecture, isDropdownOpen: !lecture.isDropdownOpen}
+          : {...lecture, isDropdownOpen: false},
+      ),
     );
   };
+
+  const handleSelectDay = (id, selectedDay) => {
+    setLectures(prev =>
+      prev.map(lecture =>
+        lecture.id === id
+          ? {...lecture, day: selectedDay, isDropdownOpen: false}
+          : lecture,
+      ),
+    );
+  };
+
+  const handleSelectStartTime = (id, selectedTime) => {
+    setLectures(prev =>
+      prev.map(lecture =>
+        lecture.id === id ? {...lecture, startTime: selectedTime} : lecture,
+      ),
+    );
+  };
+
+  const handleSelectEndTime = (id, selectedTime) => {
+    setLectures(prev =>
+      prev.map(lecture =>
+        lecture.id === id ? {...lecture, endTime: selectedTime} : lecture,
+      ),
+    );
+  };
+
+  const validateDays = () => {
+    // Check if any lecture has the default "Day" value
+    return !lectures.some(lecture => lecture.day === 'Day');
+  };
+
+  useImperativeHandle(ref, () => ({
+    getSectionData: () => ({
+      sectionNumber,
+      lectures,
+    }),
+    // Add validation method that can be called from parent
+    validateSection: () => {
+      return {
+        isValid: sectionNumber.trim() !== '' && validateDays(),
+        errorMessage:
+          sectionNumber.trim() === ''
+            ? 'Section number is required'
+            : !validateDays()
+            ? 'Please select a day for all lectures'
+            : null,
+      };
+    },
+  }));
 
   return (
     <View>
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Section number</Text>
+          <TextInput
+            style={styles.sectionInput}
+            placeholder="Section number"
+            placeholderTextColor="#AAA"
+            value={sectionNumber}
+            onChangeText={setSectionNumber}
+            keyboardType="numeric"
+          />
           {isDeletable && (
             <TouchableOpacity onPress={onDelete}>
               <Icon name="trash" size={16} style={{marginBottom: 7}} />
             </TouchableOpacity>
           )}
         </View>
-
         <View style={styles.divider} />
 
-        {lectureRows.map((id, index) =>
-          index === 0 ? (
-            <TimeInfoOfSection key={id} />
-          ) : (
-            <Swipeable
-              key={id}
-              renderLeftActions={renderLeftActions}
-              onSwipeableOpen={() => handleDeleteLecture(id)}>
-              <TimeInfoOfSection />
-            </Swipeable>
-          ),
-        )}
+        {lectures.map(lecture => (
+          <TimeInfoOfSection
+            key={lecture.id}
+            day={lecture.day}
+            startTime={lecture.startTime}
+            endTime={lecture.endTime}
+            isDropdownOpen={lecture.isDropdownOpen}
+            onToggleDropdown={() => toggleDropdown(lecture.id)}
+            onSelectDay={day => handleSelectDay(lecture.id, day)}
+            onSelectStartTime={time => handleSelectStartTime(lecture.id, time)}
+            onSelectEndTime={time => handleSelectEndTime(lecture.id, time)}
+          />
+        ))}
       </View>
 
       <TouchableOpacity
@@ -68,7 +142,7 @@ const SectionDetails = ({onDelete, isDeletable}) => {
       </TouchableOpacity>
     </View>
   );
-};
+});
 
 export default SectionDetails;
 
@@ -81,16 +155,20 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     marginHorizontal: 34,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#AAA',
-    marginBottom: 8,
-  },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  sectionInput: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+    paddingVertical: 4,
+    borderBottomWidth: 1,
+    borderColor: '#CCC',
+    flex: 1,
+    marginRight: 10,
   },
   divider: {
     height: 1,
@@ -104,7 +182,6 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 16,
     alignItems: 'center',
     marginHorizontal: 34,
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
   },
@@ -113,10 +190,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     marginRight: 8,
-  },
-  swipeBackground: {
-    flex: 1,
-    borderRadius: 6,
-    marginBottom: 10,
   },
 });
