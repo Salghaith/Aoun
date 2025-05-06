@@ -10,16 +10,20 @@ import {
   I18nManager,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
+import Dialog from 'react-native-dialog';
 import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import Icon from 'react-native-vector-icons/Feather';
+import CalendarIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import LanguageSwitch from '../components/LanguageSwitch';
 import i18n, {switchLanguage} from '../i18n';
 import {useLogout} from '../hooks/useLogout';
 import {AuthContext} from '../context/AuthContext';
 import {ThemeContext} from '../context/ThemeContext';
-
+import {importCalendarTasks} from '../services/calendarService';
 
 const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
@@ -27,6 +31,8 @@ const ProfileScreen = ({navigation}) => {
   const {userData} = useContext(AuthContext);
   const {isDarkMode, toggleTheme} = useContext(ThemeContext);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [LMSPass, setLMSPass] = useState('');
 
   return (
     <SafeAreaView
@@ -128,42 +134,62 @@ const ProfileScreen = ({navigation}) => {
         </View>
 
         {/* DARK MODE TOGGLE */}
-        <View
-          style={[
-            styles.switchContainer,
-            {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
-          ]}>
-          <Icon
-            name="moon"
-            size={24}
-            color={isDarkMode ? '#B0B0B0' : '#4A4F55'}
-            style={styles.sectionIcon}
+        {userData.isKSU && (
+          <TouchableOpacity onPress={() => setVisible(true)}>
+            <View
+              style={[
+                styles.switchContainer,
+                {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
+              ]}>
+              <CalendarIcon
+                name="calendar-import"
+                size={24}
+                color={isDarkMode ? '#B0B0B0' : '#4A4F55'}
+                style={styles.sectionIcon}
+              />
+              <Text
+                style={[
+                  styles.sectionText,
+                  {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
+                ]}>
+                {t('Import LMS Calendar')}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
+        <Dialog.Container visible={visible}>
+          <Dialog.Title>Enter Your LMS Password</Dialog.Title>
+          <Dialog.Input
+            onChangeText={setLMSPass}
+            value={LMSPass}
+            secureTextEntry
           />
-          <Text
-            style={[
-              styles.sectionText,
-              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
-            ]}>
-            {t('Dark Mode')}
-          </Text>
-          <Switch
-            value={isDarkMode}
-            onValueChange={toggleTheme}
-            trackColor={{false: '#B0B0B0', true: '#0084FF'}}
-            thumbColor={isDarkMode ? '#FFFFFF' : '#B0B0B0'}
-            style={styles.switch}
+          <Dialog.Button label="Cancel" onPress={() => setVisible(false)} />
+          <Dialog.Button
+            label="Import"
+            onPress={async () => {
+              try {
+                await importCalendarTasks(
+                  userData.userId,
+                  userData.email.split('@')[0],
+                  LMSPass,
+                );
+                Alert.alert('✅ Success', 'Calendar tasks synced.');
+              } catch (error) {
+                console.error('❌ Sync error:', error);
+                Alert.alert('❌ Error', 'Failed to sync calendar tasks.');
+              } finally {
+                setVisible(false);
+              }
+            }}
           />
-        </View>
+        </Dialog.Container>
 
         {/* LOGOUT BUTTON */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutText}>{t('Logout')}</Text>
         </TouchableOpacity>
       </View>
-
-      
-
-      
     </SafeAreaView>
   );
 };
