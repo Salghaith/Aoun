@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     height: 66,
-    width: '83%',
+    width: '100%',
     marginBottom: 25,
   },
   infoSection: {

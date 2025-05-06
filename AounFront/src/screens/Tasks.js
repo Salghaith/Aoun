@@ -19,6 +19,10 @@ import {AuthContext} from '../context/AuthContext';
 import {TaskContext} from '../context/TaskContext';
 
 import {updateTask, deleteTask} from '../services/taskService';
+import {
+  cancelNotification,
+  scheduleNotification,
+} from '../services/notificationService';
 
 LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
 
@@ -74,6 +78,8 @@ const Tasks = ({navigation}) => {
   };
 
   const handleSaveTask = async updatedTask => {
+    cancelNotification(updatedTask.id);
+    scheduleNotification(updatedTask);
     await updateTask(updatedTask.id, updatedTask);
     setTasks(prevTasks =>
       prevTasks.map(t =>
@@ -81,14 +87,13 @@ const Tasks = ({navigation}) => {
       ),
     );
     setEditTask(null);
-    //UPDATE THE NOTIFICATION DATE.
   };
 
   const handleDeleteTask = async taskId => {
+    cancelNotification(taskId);
     await deleteTask(taskId);
     setTasks(prevTasks => prevTasks.filter(t => t.id !== taskId));
     setEditTask(null);
-    //DELETE THE NOTIFICATION.
   };
 
   const backgroundColor = isDarkMode ? '#1C2128' : '#F5F5F5';
