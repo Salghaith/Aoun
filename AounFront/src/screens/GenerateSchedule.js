@@ -1,24 +1,70 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  Image,
+  FlatList,
 } from 'react-native';
 
+import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import firestore from '@react-native-firebase/firestore';
+import SubjectCard from '../components/SubjectCard';
 
-const CalendarScreen = ({navigation}) => {
+const GenerateSchedule = ({navigation}) => {
+  const [subjects, setSubjects] = useState([]);
+
+  const fetchSubjects = async () => {
+    const user = auth().currentUser;
+    if (!user) return;
+
+    try {
+      const snapshot = await firestore()
+        .collection('subjects')
+        .where('userId', '==', user.uid)
+        .orderBy('createdAt', 'asc')
+        .get();
+
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        isSelected: doc.data().isSelected || false,
+      }));
+
+      setSubjects(data);
+    } catch (error) {
+      console.error('Error fetching subjects:', error);
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', fetchSubjects);
+    return unsubscribe;
+  }, [navigation]);
+
+  const handleToggle = async (id, currentState) => {
+    try {
+      await firestore().collection('subjects').doc(id).update({
+        isSelected: !currentState,
+      });
+      setSubjects(prev =>
+        prev.map(sub =>
+          sub.id === id ? {...sub, isSelected: !currentState} : sub,
+        ),
+      );
+    } catch (error) {
+      console.error('Error updating subject toggle:', error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header Title */}
       <Text style={styles.title}>Schedule Generation</Text>
 
-      {/* Retrieve subject Buttons */}
       <View style={styles.buttonView}>
-        <TouchableOpacity style={styles.ButtonTouchOpa}>
+        <TouchableOpacity style={styles.ButtonTouchOpa} onPress={fetchSubjects}>
           <Text style={styles.buttonText}>Retrieve subject</Text>
           <Icon
             name="cloud-download-alt"
@@ -28,7 +74,6 @@ const CalendarScreen = ({navigation}) => {
           />
         </TouchableOpacity>
 
-        {/* Add Subject Manually Button */}
         <TouchableOpacity
           style={styles.ButtonTouchOpa}
           onPress={() => navigation.navigate('AddSubjectManually')}>
@@ -42,22 +87,35 @@ const CalendarScreen = ({navigation}) => {
         </TouchableOpacity>
       </View>
 
-      {/* Placeholder for middle content */}
-      <View style={styles.middlePlaceholder}>
-        {/* Future content goes here */}
-      </View>
+      <FlatList
+        key={'3cols'}
+        data={subjects}
+        keyExtractor={item => item.id}
+        numColumns={3}
+        columnWrapperStyle={styles.cardRow}
+        contentContainerStyle={styles.cardContainer}
+        showsVerticalScrollIndicator={false}
+        renderItem={({item}) => (
+          <SubjectCard
+            name={item.name}
+            code={item.code}
+            sections={Object.keys(item.sections || {}).length}
+            isEnabled={item.isSelected}
+            onToggle={() => handleToggle(item.id, item.isSelected)}
+          />
+        )}
+      />
 
-      {/* Generate Schedule Button */}
-      <TouchableOpacity style={styles.generateButton}>
+      <TouchableOpacity
+        style={styles.generateButton}
+        onPress={() => navigation.navigate('ScheduleFilter')}>
         <Text style={styles.generateButtonText}>Generate Schedule</Text>
       </TouchableOpacity>
-
-      
     </SafeAreaView>
   );
 };
 
-export default CalendarScreen;
+export default GenerateSchedule;
 
 const styles = StyleSheet.create({
   container: {
@@ -89,6 +147,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 30,
   },
   buttonText: {
     color: '#FFFFFF',
@@ -96,9 +155,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingLeft: 12,
   },
-  middlePlaceholder: {
-    flex: 1,
-    marginVertical: 20,
+  cardContainer: {
+    paddingHorizontal: 6,
+    paddingBottom: 10,
+  },
+  cardRow: {
+    justifyContent: 'flex-start',
+    marginBottom: 9,
   },
   generateButton: {
     backgroundColor: '#131417',
@@ -106,6 +169,7 @@ const styles = StyleSheet.create({
     borderRadius: 11,
     alignItems: 'center',
     marginBottom: 55,
+    marginTop: 10,
     width: '70%',
     alignSelf: 'center',
   },

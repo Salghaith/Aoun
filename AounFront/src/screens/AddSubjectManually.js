@@ -10,6 +10,7 @@ import {
   Alert,
 } from 'react-native';
 
+import auth from '@react-native-firebase/auth'; // ⬅️ add this line at the top
 import BackButton from '../components/BackButton';
 import {ThemeContext} from '../context/ThemeContext';
 import {useTranslation} from 'react-i18next';
@@ -106,12 +107,19 @@ const AddSubjectManually = ({navigation}) => {
       };
     });
 
+    const user = auth().currentUser;
+    if (!user) {
+      Alert.alert('Error', 'User not logged in.');
+      return;
+    }
+
     const subjectData = {
       name: subjectName.trim(),
       code: subjectCode.trim() || null,
       final: finalDetails || null,
       sections: structuredSections,
       createdAt: new Date().toISOString(),
+      userId: user.uid, // ✅ Save the subject under the current user
     };
 
     try {
@@ -127,10 +135,7 @@ const AddSubjectManually = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
-        <BackButton
-          style={styles.backButtonSty}
-          onPress={() => navigation.goBack()}
-        />
+        <BackButton onPress={() => navigation.goBack()} />
         <Text style={[styles.headerTitle, {color: textColor}]}>
           Add subject manually
         </Text>
@@ -142,6 +147,7 @@ const AddSubjectManually = ({navigation}) => {
         placeholderTextColor="#AAA"
         value={subjectName}
         onChangeText={setSubjectName}
+        maxLength={40}
       />
       <TextInput
         style={styles.input}
@@ -176,6 +182,7 @@ const AddSubjectManually = ({navigation}) => {
       </View>
 
       <ScrollView
+        showsVerticalScrollIndicator={false}
         style={{flex: 1}}
         contentContainerStyle={{paddingBottom: 100}}>
         {sections.map(id => (

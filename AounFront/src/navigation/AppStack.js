@@ -15,7 +15,9 @@ import GuestChatScreen from '../screens/GuestChatScreen';
 import UserChatScreen from '../screens/UesrChatScreen';
 import GenerateSchedule from '../screens/GenerateSchedule';
 import AddSubjectManually from '../screens/AddSubjectManually';
+import ScheduleFilter from '../screens/ScheduleFilter';
 import HomeScreen from '../screens/HomeScreen';
+import MatchingSchedules from '../screens/MatchingSchedules';
 
 const Stack = createStackNavigator();
 
@@ -44,6 +46,11 @@ export default function AppStack() {
         <Stack.Screen
           name="AddSubjectManually"
           component={AddSubjectManually}
+        />
+        <Stack.Screen name="ScheduleFilter" component={ScheduleFilter} />
+        <Stack.Screen
+          name="MatchingSchedules"
+          component={MatchingSchedules}
         />
       </Stack.Navigator>
       <BottomNavWrapper />

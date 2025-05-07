@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -19,7 +19,7 @@ const TimeInfoOfSection = ({
   const [isStartPickerVisible, setStartPickerVisible] = useState(false);
   const [isEndPickerVisible, setEndPickerVisible] = useState(false);
 
-  const formatTime = (date) => {
+  const formatTime = date => {
     const hours = date.getHours();
     const minutes = date.getMinutes();
     const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -27,7 +27,6 @@ const TimeInfoOfSection = ({
     const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
     return `${formattedHours}:${formattedMinutes}${ampm}`;
   };
-  
 
   return (
     <View style={styles.lectureRow}>
@@ -35,7 +34,11 @@ const TimeInfoOfSection = ({
       <View style={styles.dayContainer}>
         <TouchableOpacity onPress={onToggleDropdown}>
           <View style={styles.Icon}>
-            <Icon name="calendar-day" size={18} style={{ marginRight: 5, marginTop: 5 }} />
+            <Icon
+              name="calendar-day"
+              size={18}
+              style={{marginRight: 5, marginTop: 5}}
+            />
             <Text style={styles.lectureDay}>{day}</Text>
           </View>
         </TouchableOpacity>
@@ -53,13 +56,17 @@ const TimeInfoOfSection = ({
       </View>
 
       {/* Start Time */}
-      <TouchableOpacity style={styles.Icon} onPress={() => setStartPickerVisible(true)}>
+      <TouchableOpacity
+        style={styles.Icon}
+        onPress={() => setStartPickerVisible(true)}>
         <Ionicons name="time" size={18} />
         <Text style={styles.lectureTime}>{startTime}</Text>
       </TouchableOpacity>
 
       {/* End Time */}
-      <TouchableOpacity style={styles.Icon} onPress={() => setEndPickerVisible(true)}>
+      <TouchableOpacity
+        style={styles.Icon}
+        onPress={() => setEndPickerVisible(true)}>
         <Ionicons name="time" size={18} />
         <Text style={styles.lectureTime}>{endTime}</Text>
       </TouchableOpacity>
@@ -68,7 +75,7 @@ const TimeInfoOfSection = ({
       <DateTimePickerModal
         isVisible={isStartPickerVisible}
         mode="time"
-        onConfirm={(date) => {
+        onConfirm={date => {
           onSelectStartTime(formatTime(date));
           setStartPickerVisible(false);
         }}
@@ -77,7 +84,7 @@ const TimeInfoOfSection = ({
       <DateTimePickerModal
         isVisible={isEndPickerVisible}
         mode="time"
-        onConfirm={(date) => {
+        onConfirm={date => {
           onSelectEndTime(formatTime(date));
           setEndPickerVisible(false);
         }}
