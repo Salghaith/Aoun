@@ -30,7 +30,7 @@ const UserChatScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [currentSessionId, setCurrentSessionId] = useState(null);
-
+  const [oldSessions, setOldSessions] = useState([]);
   // ✅ Reset chat (clears messages, welcome reappears)
   const handleResetChat = async () => {
     setMessages([]);
@@ -42,7 +42,13 @@ const UserChatScreen = ({ navigation }) => {
 
   // ✅ Open/close the previous answers menu
   const handleToggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen(prev => {
+      const newState = !prev;
+      if (newState) {
+        handleOpenOldChat(); // 👉 Call it only when opening the menu
+      }
+      return newState;
+    });
   };
 
   // ✅ Handle sending a new message
@@ -191,16 +197,43 @@ const UserChatScreen = ({ navigation }) => {
     }
   
     try {
-      const chatDoc = await firestore().collection('chats').doc(userData.userId).get();
-      if (chatDoc.exists) {
-        setMessages(chatDoc.data().messages);
-        setFirstInteraction(false);
-        console.log(`✅ Loaded chat history for user: ${userData.userId}`);
-      } else {
-        console.log("ℹ️ No chat history found for this user.");
-      }
+      const sessionsSnapshot = await firestore()
+        .collection('chats')
+        .doc(userData.userId)
+        .collection('sessions')
+        .orderBy('createdAt', 'desc')
+        .get();
+  
+      const sessions = sessionsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+  
+      setOldSessions(sessions); // You'll use this in the hamburger menu
+      setIsMenuOpen(true);
+      console.log("✅ Loaded old chat sessions:", sessions.length);
     } catch (error) {
-      console.error("Error loading previous chats:", error);
+      console.error("❌ Error loading sessions:", error);
+    }
+  };
+  const loadSessionMessages = async (sessionId) => {
+    try {
+      const messagesSnapshot = await firestore()
+        .collection('chats')
+        .doc(userData.userId)
+        .collection('sessions')
+        .doc(sessionId)
+        .collection('messages')
+        .orderBy('createdAt', 'asc')  // 🟢 use 'createdAt' instead of 'timestamp'
+        .get();
+  
+      const chatMessages = messagesSnapshot.docs.map(doc => doc.data());
+      setMessages(chatMessages);
+      setCurrentSessionId(sessionId);
+      setFirstInteraction(false);
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error('❌ Failed to load session messages:', error);
     }
   };
 
@@ -221,11 +254,12 @@ const UserChatScreen = ({ navigation }) => {
 
       {/* Hamburger Menu Component */}
       {isMenuOpen && (
-        <HamburgerMenu 
-          onClose={handleToggleMenu} 
-          onSelectAnswer={handleOpenOldChat} 
-        />
-      )}
+      <HamburgerMenu 
+       onClose={handleToggleMenu} 
+       sessions={oldSessions}
+       onSelectSession={loadSessionMessages} 
+      />
+    )}
 
       {/* MAIN CONTENT */}
       <View style={styles.chatContainer}>

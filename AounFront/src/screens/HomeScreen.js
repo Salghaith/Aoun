@@ -13,6 +13,7 @@ import {ThemeContext} from '../context/ThemeContext';
 import Icon from 'react-native-vector-icons/AntDesign';
 import HomeClassSection from '../components/HomeClassSection';
 import {ScrollView} from 'react-native-gesture-handler';
+import HomeToDoSection from '../components/HomeToDoSection';
 
 const HomeScreen = ({navigation}) => {
   const {t} = useTranslation();
@@ -27,7 +28,7 @@ const HomeScreen = ({navigation}) => {
       section: '1212',
       lectures: [
         {day: '1', start: '23:57', end: '23:50'},
-        {day: '2', start: '08:01', end: '09:50'},
+        {day: '3', start: '08:01', end: '09:50'},
         {day: '4', start: '08:00', end: '09:50'},
       ],
     },
@@ -37,7 +38,7 @@ const HomeScreen = ({navigation}) => {
       section: '1111',
       lectures: [
         {day: '1', start: '23:59', end: '23:50'},
-        {day: '2', start: '00:12', end: '09:50'},
+        {day: '3', start: '00:12', end: '09:50'},
         {day: '5', start: '08:00', end: '08:50'},
       ],
     },
@@ -47,7 +48,7 @@ const HomeScreen = ({navigation}) => {
       section: '3333',
       lectures: [
         {day: '1', start: '23:34', end: '23:50'},
-        {day: '2', start: '00:30', end: '00:50'},
+        {day: '3', start: '02:57', end: '03:50'},
         {day: '5', start: '10:00', end: '11:50'},
       ],
     },
@@ -61,7 +62,8 @@ const HomeScreen = ({navigation}) => {
       ]}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled">
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>
             Good morning, {userData.username}
@@ -106,6 +108,7 @@ const HomeScreen = ({navigation}) => {
         <HomeClassSection style={styles.classesSection} schedule={schedule} />
         <View>
           <Text style={styles.classesHeader}>To Do</Text>
+          <HomeToDoSection />
         </View>
       </ScrollView>
     </SafeAreaView>

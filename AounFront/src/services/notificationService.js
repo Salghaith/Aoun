@@ -1,18 +1,8 @@
 import PushNotification from 'react-native-push-notification';
-import { PermissionsAndroid, Platform } from "react-native";
+import {PermissionsAndroid, Platform} from 'react-native';
 
 // 🔹 Configure Push Notifications (Only Once)
 const configureNotifications = () => {
-  // PushNotification.configure({
-  //   onRegister: function (token) {
-  //     console.log('✅ FCM Token:', token);
-  //   },
-  //   onNotification: function (notification) {
-  //     console.log('🚀 Notification Received:', notification);
-  //   },
-  //   requestPermissions: Platform.OS === 'ios', // Prevents issue on Android
-  // });
-
   PushNotification.createChannel(
     {
       channelId: 'task-reminders',
@@ -34,23 +24,33 @@ const scheduleNotification = task => {
     message: `Your task "${task.title}" is due now!`,
     date: dueDate,
     allowWhileIdle: true,
+    id: task.id,
   });
 
   console.log('✅ Local notification scheduled for:', dueDate);
 };
+const cancelNotification = taskId => {
+  PushNotification.cancelLocalNotifications({id: taskId});
+  console.log(`❌ Notification with ID ${taskId} canceled.`);
+};
 
 async function requestNotificationPermission() {
-  if (Platform.OS === "android" && Platform.Version >= 33) {
+  if (Platform.OS === 'android' && Platform.Version >= 33) {
     const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
     );
 
     if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-      console.log("Notification permission denied!");
+      console.log('Notification permission denied!');
     } else {
-      console.log("Notification permission granted!");
+      console.log('Notification permission granted!');
     }
   }
 }
 
-export {configureNotifications, scheduleNotification, requestNotificationPermission};
+export {
+  configureNotifications,
+  scheduleNotification,
+  requestNotificationPermission,
+  cancelNotification,
+};

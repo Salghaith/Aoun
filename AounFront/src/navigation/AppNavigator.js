@@ -6,6 +6,7 @@ import SplashScreen from '../screens/SplashScreen';
 import {getData, removeData} from '../utils/storageUtils';
 import {auth} from '../config/firebaseConfig';
 import i18n from '../i18n';
+import {TaskProvider} from '../context/TaskContext';
 
 export default function AppNavigator() {
   const {userData, updateUserData} = useContext(AuthContext);
@@ -64,5 +65,11 @@ export default function AppNavigator() {
     return <SplashScreen />;
   }
 
-  return userData ? <AppStack /> : <AuthStack />;
+  return userData ? (
+    <TaskProvider userId={userData.userId}>
+      <AppStack />
+    </TaskProvider>
+  ) : (
+    <AuthStack />
+  );
 }

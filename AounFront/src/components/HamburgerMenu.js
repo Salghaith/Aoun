@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,30 +8,11 @@ import {
   Animated,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const HamburgerMenu = ({ onClose, onSelectAnswer }) => {
-  // State to store saved conversations
-  const [savedConversations, setSavedConversations] = useState([]);
-
-  // Slide-in animation for smooth menu opening
+const HamburgerMenu = ({ onClose, sessions, onSelectSession }) => {
   const slideAnim = useRef(new Animated.Value(-300)).current;
 
-  // Load saved conversations from AsyncStorage when menu opens
   useEffect(() => {
-    const loadConversations = async () => {
-      try {
-        const storedConversations = await AsyncStorage.getItem('savedConversations');
-        if (storedConversations) {
-          setSavedConversations(JSON.parse(storedConversations));
-        }
-      } catch (error) {
-        console.error('Error loading saved conversations:', error);
-      }
-    };
-    loadConversations();
-
-    // Start slide-in animation
     Animated.timing(slideAnim, {
       toValue: 0,
       duration: 300,
@@ -41,34 +22,33 @@ const HamburgerMenu = ({ onClose, onSelectAnswer }) => {
 
   return (
     <Animated.View style={[styles.menuContainer, { transform: [{ translateX: slideAnim }] }]}>
-      {/* Header Section with Title & Close Button */}
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Previous Answers</Text>
+        <Text style={styles.header}>Previous Chats</Text>
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
           <Ionicons name="close-circle-outline" size={28} color="#FFF" />
         </TouchableOpacity>
       </View>
 
-      {/* List of Saved Conversations */}
       <FlatList
-        data={savedConversations}
+        data={sessions}
         renderItem={({ item }) => (
-          <TouchableOpacity 
-            style={styles.messageItem} 
-            onPress={() => onSelectAnswer(item)} // Opens full previous conversation
+          <TouchableOpacity
+            style={styles.messageItem}
+            onPress={() => onSelectSession(item.id)}
           >
-            <Text style={styles.messageText}>{item.title}</Text>
+            <Text style={styles.messageText}>
+              {item.sessionName || `Chat ${new Date(item.createdAt?.toDate?.()).toLocaleString()}`}
+            </Text>
           </TouchableOpacity>
         )}
-        keyExtractor={(item, index) => index.toString()}
-        ListEmptyComponent={<Text style={styles.emptyMessage}>No saved answers yet.</Text>}
+        keyExtractor={(item) => item.id}
+        ListEmptyComponent={<Text style={styles.emptyMessage}>No saved chats yet.</Text>}
       />
     </Animated.View>
   );
 };
 
 export default HamburgerMenu;
-
 // ✅ STYLES
 const styles = StyleSheet.create({
   menuContainer: {
