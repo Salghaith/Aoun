@@ -1,5 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, FlatList, StyleSheet, SafeAreaView} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  SafeAreaView,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
+
 import BackButton from '../components/BackButton';
 import ScheduleCard from '../components/ScheduleCard';
 import firestore from '@react-native-firebase/firestore';
@@ -8,15 +17,17 @@ import auth from '@react-native-firebase/auth';
 const MatchingSchedules = ({route, navigation}) => {
   const {filters} = route.params;
   const [validSchedules, setValidSchedules] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const generateSchedules = async () => {
+      setLoading(true);
       const user = auth().currentUser;
       if (!user) return;
 
       const snapshot = await firestore()
         .collection('subjects')
-        .where('userId', '==', user.uid) // ✅ scoped to this user
+        .where('userId', '==', user.uid)
         .get();
 
       const allSubjects = snapshot.docs.map(doc => ({
@@ -26,18 +37,41 @@ const MatchingSchedules = ({route, navigation}) => {
 
       const selectedSubjects = allSubjects.filter(subj => subj.isSelected);
 
-      // ✅ Prevent generating if no subjects are selected
-      if (selectedSubjects.length === 0) {
-        setValidSchedules([]); // empty result
+      // Filter and map subjects to include subjectCode with each section
+      const filteredSectionLists = selectedSubjects
+        .map(subject => {
+          const subjectCode = subject.code || 'No code';
+          const entries = Object.entries(subject.sections || {});
+          return entries.map(([sectionNum, data]) => ({
+            sectionNum,
+            ...data,
+            subjectCode,
+          }));
+        })
+        .filter(sectionList => sectionList.length > 0);
+
+      const combinations = getCombinations(filteredSectionLists);
+
+      console.log('Total combinations:', combinations.length);
+
+      // Safety cap
+      if (combinations.length > 100) {
+        console.warn('Too many combinations. Aborting to prevent freezing.');
+        setValidSchedules([]);
+        setLoading(false);
         return;
       }
 
-      const combinations = getCombinations(
-        selectedSubjects.map(s => Object.entries(s.sections || {})),
-      );
+      const valid = combinations
+        .filter(schedule => isValid(schedule, filters))
+        .filter(schedule =>
+          schedule.some(section => section.lectures?.length > 0),
+        ); // ✅ exclude empty ones
 
-      const valid = combinations.filter(schedule => isValid(schedule, filters));
+      console.log('Valid schedules:', valid.length);
+
       setValidSchedules(valid);
+      setLoading(false);
     };
 
     generateSchedules();
@@ -47,8 +81,8 @@ const MatchingSchedules = ({route, navigation}) => {
     if (sectionLists.length === 0) return [[]];
     const [first, ...rest] = sectionLists;
     const restCombinations = getCombinations(rest);
-    return first.flatMap(([sectionNum, data]) =>
-      restCombinations.map(comb => [...comb, {sectionNum, ...data}]),
+    return first.flatMap(section =>
+      restCombinations.map(comb => [...comb, section]),
     );
   };
 
@@ -64,8 +98,10 @@ const MatchingSchedules = ({route, navigation}) => {
     };
 
     const allLectures = schedule.flatMap(section => section.lectures);
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
+    const usedDays = new Set(allLectures.map(lec => lec.day));
 
-    // ✅ 1. No overlapping lectures
+    // 1. No overlapping lectures
     for (let i = 0; i < allLectures.length; i++) {
       const lecA = allLectures[i];
       const startA = toMinutes(lecA.startTime);
@@ -77,36 +113,32 @@ const MatchingSchedules = ({route, navigation}) => {
         if (dayA !== lecB.day) continue;
         const startB = toMinutes(lecB.startTime);
         const endB = toMinutes(lecB.endTime);
-
         if (Math.max(startA, startB) < Math.min(endA, endB)) {
-          return false; // overlap
+          return false;
         }
       }
     }
 
-    // ✅ 2. No lectures on off days (unless 'None' or 'Any' is selected)
-    if (offDays && !offDays.includes('None') && !offDays.includes('Any')) {
-      for (let section of schedule) {
-        for (let lec of section.lectures) {
-          if (offDays.includes(lec.day)) return false;
-        }
+    // 2. Off Days logic
+    if (offDays.includes('None')) {
+      if (!daysOfWeek.every(day => usedDays.has(day))) return false;
+    } else if (!offDays.includes('Any')) {
+      for (let day of offDays) {
+        if (usedDays.has(day)) return false;
       }
     }
 
-    // ✅ 3. All lectures within study hours
+    // 3. Study hours
     const minStart = startHour * 60;
     const maxEnd = endHour * 60;
     for (let lec of allLectures) {
       const start = toMinutes(lec.startTime);
       const end = toMinutes(lec.endTime);
-      if (start < minStart || end > maxEnd) {
-        return false;
-      }
+      if (start < minStart || end > maxEnd) return false;
     }
 
-    // ✅ 4. No break between two lectures exceeds maxBreak (in minutes)
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
-    for (let day of days) {
+    // 4. Max break duration
+    for (let day of daysOfWeek) {
       const lectures = allLectures
         .filter(l => l.day === day)
         .sort((a, b) => toMinutes(a.startTime) - toMinutes(b.startTime));
@@ -114,10 +146,7 @@ const MatchingSchedules = ({route, navigation}) => {
       for (let i = 1; i < lectures.length; i++) {
         const prevEnd = toMinutes(lectures[i - 1].endTime);
         const nextStart = toMinutes(lectures[i].startTime);
-        const breakLength = nextStart - prevEnd;
-        if (breakLength > maxBreak * 60) {
-          return false;
-        }
+        if (nextStart - prevEnd > maxBreak * 60) return false;
       }
     }
 
@@ -130,26 +159,44 @@ const MatchingSchedules = ({route, navigation}) => {
         <BackButton onPress={() => navigation.goBack()} />
         <Text style={styles.title}>Schedule</Text>
       </View>
-      <Text style={styles.subText}>
-        Number of schedules created: {validSchedules.length}
-      </Text>
 
-      {validSchedules.length === 0 && (
-        <Text style={[styles.subText, {textAlign: 'center', marginTop: 20}]}>
-          No matching schedules found.
-        </Text>
+      {loading ? (
+        <ActivityIndicator size="large" color="#FFF" style={{marginTop: 30}} />
+      ) : (
+        <>
+          <Text style={styles.subText}>
+            Number of schedules created: {validSchedules.length}
+          </Text>
+
+          {validSchedules.length === 0 && (
+            <Text
+              style={[styles.subText2, {textAlign: 'center', marginTop: 20}]}>
+              No matching schedules found.
+            </Text>
+          )}
+
+          <FlatList
+            data={validSchedules}
+            renderItem={({item, index}) => (
+              <TouchableOpacity
+                style={styles.cardWrapper}
+                activeOpacity={0.9}
+                onPress={() =>
+                  navigation.navigate('SchedulePreviewScreen', {
+                    schedule: item,
+                    index: index,
+                  })
+                }>
+                <ScheduleCard schedule={item} index={index} />
+              </TouchableOpacity>
+            )}
+            keyExtractor={(_, idx) => idx.toString()}
+            numColumns={2}
+            columnWrapperStyle={{justifyContent: 'flex-start', marginLeft: 5}}
+            contentContainerStyle={{paddingBottom: 100, paddingTop: 10}}
+          />
+        </>
       )}
-
-      <FlatList
-        data={validSchedules}
-        renderItem={({item, index}) => (
-          <ScheduleCard schedule={item} index={index}/>
-        )}
-        keyExtractor={(_, idx) => idx.toString()}
-        numColumns={2}
-        columnWrapperStyle={{justifyContent: 'flex-start', marginLeft: 5}}
-        contentContainerStyle={{paddingBottom: 100, paddingTop: 10}}
-      />
     </SafeAreaView>
   );
 };
@@ -159,6 +206,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1C2128',
     paddingHorizontal: 12,
+  },
+  cardWrapper: {
+    width: '45%',
+    marginVertical: 10,
+    marginRight: 14,
+    marginLeft: 7,
   },
   header: {
     flexDirection: 'row',
@@ -178,6 +231,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     marginLeft: 36,
+  },
+  subText2: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    paddingTop: 200,
   },
 });
 

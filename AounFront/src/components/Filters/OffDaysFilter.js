@@ -10,7 +10,7 @@ const shortToFull = {
   Thu: 'Thursday',
 };
 
-const displayDays = ['None', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Any'];
+const displayDays = ['Any', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'None'];
 
 const OffDaysFilter = ({offDays, setOffDays}) => {
   const toggleDay = day => {

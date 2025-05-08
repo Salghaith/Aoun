@@ -1,10 +1,14 @@
 import React from 'react';
-import {View, Text, StyleSheet, Switch} from 'react-native';
+import {View, Text, StyleSheet, Switch, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const SubjectCard = ({name, code, sections, isEnabled, onToggle}) => {
+const SubjectCard = ({name, code, sections, isEnabled, onToggle, onPress}) => {
   return (
-    <View style={styles.cardContainer}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      style={styles.cardContainer}
+      onPress={onPress} // ✅ Make the card clickable
+    >
       <View style={styles.topSection}>
         <Text style={styles.subjectName} numberOfLines={3} ellipsizeMode="tail">
           {name}
@@ -36,7 +40,7 @@ const SubjectCard = ({name, code, sections, isEnabled, onToggle}) => {
           style={styles.switch}
         />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

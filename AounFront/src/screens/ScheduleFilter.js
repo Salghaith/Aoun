@@ -5,6 +5,7 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import BackButton from '../components/BackButton';
 import OffDaysFilter from '../components/Filters/OffDaysFilter';
@@ -12,20 +13,19 @@ import StudyHoursFilter from '../components/Filters/StudyHoursFilter';
 import BreakDurationFilter from '../components/Filters/BreakDurationFilter';
 
 const ScheduleFilter = ({navigation}) => {
-  const [offDays, setOffDays] = useState(['None']);
+  const [offDays, setOffDays] = useState(['Any']);
   const [startHour, setStartHour] = useState(8);
   const [endHour, setEndHour] = useState(20);
   const [maxBreak, setMaxBreak] = useState(8);
+  const [loading, setLoading] = useState(false);
 
   const handleGenerateSchedule = () => {
-    const filters = {
-      offDays,
-      startHour,
-      endHour,
-      maxBreak,
-    };
-
-    navigation.navigate('MatchingSchedules', {filters});
+    setLoading(true);
+    setTimeout(() => {
+      const filters = {offDays, startHour, endHour, maxBreak};
+      setLoading(false);
+      navigation.navigate('MatchingSchedules', {filters});
+    }, 100);
   };
 
   return (
@@ -48,8 +48,13 @@ const ScheduleFilter = ({navigation}) => {
 
       <TouchableOpacity
         style={styles.generateButton}
-        onPress={handleGenerateSchedule}>
-        <Text style={styles.generateButtonText}>Generate Schedule</Text>
+        onPress={handleGenerateSchedule}
+        disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color="#FFF" size="small" />
+        ) : (
+          <Text style={styles.generateButtonText}>Generate Schedule</Text>
+        )}
       </TouchableOpacity>
     </SafeAreaView>
   );

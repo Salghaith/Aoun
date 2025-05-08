@@ -10,6 +10,7 @@ import {
   Alert,
 } from 'react-native';
 
+import {useRoute} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth'; // ⬅️ add this line at the top
 import BackButton from '../components/BackButton';
 import {ThemeContext} from '../context/ThemeContext';
@@ -25,16 +26,62 @@ const AddSubjectManually = ({navigation}) => {
   const {isDarkMode} = useContext(ThemeContext);
   const textColor = isDarkMode ? '#F9FAFB' : '#1C2128';
 
-  const [subjectName, setSubjectName] = useState('');
-  const [subjectCode, setSubjectCode] = useState('');
-  const [sections, setSections] = useState([Date.now()]);
+  const route = useRoute();
+  const editingSubject = route.params?.subject;
+
+  const [subjectName, setSubjectName] = useState(editingSubject?.name || '');
+  const [subjectCode, setSubjectCode] = useState(editingSubject?.code || '');
+  const [sections, setSections] = useState(
+    editingSubject
+      ? Object.entries(editingSubject.sections || {}).map(
+          ([sectionNumber, {lectures}]) => ({
+            id: `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
+            sectionNumber,
+            lectures,
+          }),
+        )
+      : [
+          {
+            id: `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
+            sectionNumber: '',
+            lectures: [
+              {
+                id: `${Date.now()}-${Math.random()
+                  .toString(36)
+                  .substring(2, 8)}`,
+                day: 'Day',
+                startTime: '8:00AM',
+                endTime: '8:50AM',
+                isDropdownOpen: false,
+              },
+            ],
+          },
+        ],
+  );
+
   const sectionRefs = useRef({});
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [finalDetails, setFinalDetails] = useState(null);
-
+  const [finalDetails, setFinalDetails] = useState(
+    editingSubject?.final || null,
+  );
   const handleAddSection = () => {
-    const id = Date.now();
-    setSections(prev => [...prev, id]);
+    const newId = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+    setSections(prev => [
+      ...prev,
+      {
+        id: newId,
+        sectionNumber: '',
+        lectures: [
+          {
+            id: `${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
+            day: 'Day',
+            startTime: '8:00AM',
+            endTime: '8:50AM',
+            isDropdownOpen: false,
+          },
+        ],
+      },
+    ]);
   };
 
   const handleSaveFinalDetails = data => {
@@ -45,6 +92,11 @@ const AddSubjectManually = ({navigation}) => {
   const handleSave = async () => {
     if (!subjectName.trim()) {
       Alert.alert('Validation', 'Please enter the subject name.');
+      return;
+    }
+
+    if (!subjectCode.trim()) {
+      Alert.alert('Validation', 'Please enter the subject code.');
       return;
     }
 
@@ -123,13 +175,48 @@ const AddSubjectManually = ({navigation}) => {
     };
 
     try {
-      await firestore().collection('subjects').add(subjectData);
-      Alert.alert('Success', 'Subject saved');
+      const subjectRef = firestore().collection('subjects');
+      if (editingSubject?.id) {
+        await subjectRef.doc(editingSubject.id).update(subjectData);
+        Alert.alert('Success', 'Subject updated');
+      } else {
+        await subjectRef.add(subjectData);
+        Alert.alert('Success', 'Subject saved');
+      }
       navigation.goBack();
     } catch (err) {
       console.error('Error saving subject:', err);
       Alert.alert('Error', 'Failed to save subject');
     }
+  };
+
+  const handleDelete = async () => {
+    if (!editingSubject?.id) return;
+
+    Alert.alert(
+      'Delete Subject',
+      'Are you sure you want to delete this subject?',
+      [
+        {text: 'Cancel', style: 'cancel'},
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await firestore()
+                .collection('subjects')
+                .doc(editingSubject.id)
+                .delete();
+              Alert.alert('Deleted', 'Subject has been removed.');
+              navigation.goBack();
+            } catch (err) {
+              console.error('Delete error:', err);
+              Alert.alert('Error', 'Failed to delete subject.');
+            }
+          },
+        },
+      ],
+    );
   };
 
   return (
@@ -151,10 +238,11 @@ const AddSubjectManually = ({navigation}) => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Subject code (Optional)"
+        placeholder="Subject code"
         placeholderTextColor="#AAA"
         value={subjectCode}
         onChangeText={setSubjectCode}
+        maxLength={7}
       />
 
       <View style={styles.buttonRow}>
@@ -184,20 +272,29 @@ const AddSubjectManually = ({navigation}) => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{flex: 1}}
-        contentContainerStyle={{paddingBottom: 100}}>
-        {sections.map(id => (
-          <View key={id} style={{marginBottom: 20}}>
+        contentContainerStyle={{paddingBottom: 120}}>
+        {sections.map(section => (
+          <View key={section.id} style={{marginBottom: 20}}>
             <SectionDetails
-              ref={ref => (sectionRefs.current[id] = ref)}
+              ref={ref => (sectionRefs.current[section.id] = ref)}
               onDelete={() => {
-                setSections(prev => prev.filter(item => item !== id));
-                delete sectionRefs.current[id];
+                setSections(prev =>
+                  prev.filter(item => item.id !== section.id),
+                );
+                delete sectionRefs.current[section.id];
               }}
               isDeletable={sections.length > 1}
+              initialData={section}
             />
           </View>
         ))}
       </ScrollView>
+
+      {editingSubject?.id && (
+        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
+          <Text style={styles.deleteButtonText}>Delete Subject</Text>
+        </TouchableOpacity>
+      )}
 
       <FinalDetailsModal
         isVisible={isModalVisible}
@@ -240,7 +337,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 5,
-    marginBottom: -90,
+    marginBottom: -95,
     marginHorizontal: 34,
   },
   actionButton: {
@@ -256,5 +353,18 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 11,
     fontWeight: 'bold',
+  },
+  deleteButton: {
+    backgroundColor: 'rgba(252, 48, 48, 0.8)',
+    paddingVertical: 15,
+    borderRadius: 10,
+    marginHorizontal: 34,
+    marginBottom: 25,
+    alignItems: 'center',
+  },
+  deleteButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

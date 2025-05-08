@@ -15,6 +15,7 @@ import SubjectCard from '../components/SubjectCard';
 
 const GenerateSchedule = ({navigation}) => {
   const [subjects, setSubjects] = useState([]);
+  const hasSelectedSubject = subjects.some(sub => sub.isSelected);
 
   const fetchSubjects = async () => {
     const user = auth().currentUser;
@@ -87,28 +88,44 @@ const GenerateSchedule = ({navigation}) => {
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        key={'3cols'}
-        data={subjects}
-        keyExtractor={item => item.id}
-        numColumns={3}
-        columnWrapperStyle={styles.cardRow}
-        contentContainerStyle={styles.cardContainer}
-        showsVerticalScrollIndicator={false}
-        renderItem={({item}) => (
-          <SubjectCard
-            name={item.name}
-            code={item.code}
-            sections={Object.keys(item.sections || {}).length}
-            isEnabled={item.isSelected}
-            onToggle={() => handleToggle(item.id, item.isSelected)}
-          />
-        )}
-      />
+      {subjects.length === 0 ? (
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyText}>
+            No subjects added yet. Please add one to begin.
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          key={'3cols'}
+          data={subjects}
+          keyExtractor={item => item.id}
+          numColumns={3}
+          columnWrapperStyle={styles.cardRow}
+          contentContainerStyle={styles.cardContainer}
+          showsVerticalScrollIndicator={false}
+          renderItem={({item}) => (
+            <SubjectCard
+              name={item.name}
+              code={item.code}
+              sections={Object.keys(item.sections || {}).length}
+              isEnabled={item.isSelected}
+              onToggle={() => handleToggle(item.id, item.isSelected)}
+              onPress={() =>
+                navigation.navigate('AddSubjectManually', {subject: item})
+              }
+            />
+          )}
+        />
+      )}
 
       <TouchableOpacity
-        style={styles.generateButton}
-        onPress={() => navigation.navigate('ScheduleFilter')}>
+        style={[styles.generateButton, {opacity: hasSelectedSubject ? 1 : 0.4}]}
+        onPress={() => {
+          if (hasSelectedSubject) {
+            navigation.navigate('ScheduleFilter');
+          }
+        }}
+        disabled={!hasSelectedSubject}>
         <Text style={styles.generateButtonText}>Generate Schedule</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -162,6 +179,18 @@ const styles = StyleSheet.create({
   cardRow: {
     justifyContent: 'flex-start',
     marginBottom: 9,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: '#fff',
+    fontSize: 32,
+    textAlign: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 80,
   },
   generateButton: {
     backgroundColor: '#131417',

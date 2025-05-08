@@ -10,9 +10,9 @@ const StudyHoursFilter = ({startHour, endHour, setStartHour, setEndHour}) => {
   };
 
   const formatHour = h => {
-    if (h < 12) return `${h} Am`;
-    if (h === 12) return `12 Pm`;
-    return `${h - 12} Pm`;
+    if (h < 12) return `${h} AM`;
+    if (h === 12) return `12 PM`;
+    return `${h - 12} PM`;
   };
 
   return (
