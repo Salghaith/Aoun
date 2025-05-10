@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import {useRoute} from '@react-navigation/native';
-import auth from '@react-native-firebase/auth'; // ⬅️ add this line at the top
+import auth from '@react-native-firebase/auth';
 import BackButton from '../components/BackButton';
 import {ThemeContext} from '../context/ThemeContext';
 import {useTranslation} from 'react-i18next';
@@ -224,7 +224,7 @@ const AddSubjectManually = ({navigation}) => {
       <View style={styles.headerContainer}>
         <BackButton onPress={() => navigation.goBack()} />
         <Text style={[styles.headerTitle, {color: textColor}]}>
-          Add subject manually
+          {editingSubject ? t('Edit subject') : t('Add subject manually')}
         </Text>
       </View>
 

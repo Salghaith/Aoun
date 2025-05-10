@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, {useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,10 @@ import {
   FlatList,
   Animated,
 } from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const HamburgerMenu = ({ onClose, sessions, onSelectSession }) => {
+const HamburgerMenu = ({onClose, sessions, onSelectSession}) => {
   const slideAnim = useRef(new Animated.Value(-300)).current;
 
   useEffect(() => {
@@ -21,30 +22,36 @@ const HamburgerMenu = ({ onClose, sessions, onSelectSession }) => {
   }, []);
 
   return (
-    <Animated.View style={[styles.menuContainer, { transform: [{ translateX: slideAnim }] }]}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.header}>Previous Chats</Text>
-        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-          <Ionicons name="close-circle-outline" size={28} color="#FFF" />
-        </TouchableOpacity>
-      </View>
-
-      <FlatList
-        data={sessions}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={styles.messageItem}
-            onPress={() => onSelectSession(item.id)}
-          >
-            <Text style={styles.messageText}>
-              {item.sessionName || `Chat ${new Date(item.createdAt?.toDate?.()).toLocaleString()}`}
-            </Text>
+    <SafeAreaView style={[{flex: 1}, styles.menuContainer]}>
+      <Animated.View style={[{transform: [{translateX: slideAnim}]}]}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.header}>Previous Chats</Text>
+          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <Ionicons name="close-circle-outline" size={28} color="#FFF" />
           </TouchableOpacity>
-        )}
-        keyExtractor={(item) => item.id}
-        ListEmptyComponent={<Text style={styles.emptyMessage}>No saved chats yet.</Text>}
-      />
-    </Animated.View>
+        </View>
+
+        <FlatList
+          data={sessions}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              style={styles.messageItem}
+              onPress={() => onSelectSession(item.id)}>
+              <Text style={styles.messageText}>
+                {item.sessionName ||
+                  `Chat ${new Date(
+                    item.createdAt?.toDate?.(),
+                  ).toLocaleString()}`}
+              </Text>
+            </TouchableOpacity>
+          )}
+          keyExtractor={item => item.id}
+          ListEmptyComponent={
+            <Text style={styles.emptyMessage}>No saved chats yet.</Text>
+          }
+        />
+      </Animated.View>
+    </SafeAreaView>
   );
 };
 
@@ -61,7 +68,7 @@ const styles = StyleSheet.create({
     padding: 20,
     zIndex: 10,
     shadowColor: '#000',
-    shadowOffset: { width: -2, height: 0 },
+    shadowOffset: {width: -2, height: 0},
     shadowOpacity: 0.4,
     shadowRadius: 8,
     elevation: 10,

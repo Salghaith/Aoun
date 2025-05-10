@@ -1,13 +1,9 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {AuthContext} from '../context/AuthContext';
-import {ThemeContext} from '../context/ThemeContext';
 
 export default function HomeClassCard({style, subject, today}) {
   const {t} = useTranslation();
-  const {userData} = useContext(AuthContext);
-  const {isDarkMode, toggleTheme} = useContext(ThemeContext);
 
   const [status, setStatus] = useState('green');
   const [showCard, setShowCard] = useState(true);
@@ -74,7 +70,7 @@ export default function HomeClassCard({style, subject, today}) {
   if (!showCard) return null;
 
   const infoSectionWidth =
-    status === 'red' ? 260 : status === 'green' ? 315 : 260;
+    status === 'red' ? '71%' : status === 'green' ? '84%' : '71%';
 
   return (
     <View style={[styles.container, style]}>
@@ -121,7 +117,7 @@ const styles = StyleSheet.create({
   },
   redStatus: {
     backgroundColor: '#E53835',
-    width: '22%',
+    width: '18%',
   },
   greenStatus: {
     backgroundColor: '#4CAF50',

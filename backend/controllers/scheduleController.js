@@ -15,6 +15,16 @@ export const fetchSchedule = async (req, res) => {
     const page = await browser.newPage();
 
     await page.goto("https://edugate.ksu.edu.sa/ksu/init");
+    await Promise.all([
+      page.waitForNavigation({ waitUntil: "networkidle0", timeout: 10000 }),
+      page.evaluate(() => {
+        const el = document.querySelector(
+          "#loginForm > div.topBarKSU.loginTop > div.topBarLinkSec > div > a:nth-child(3)"
+        );
+        if (el) el.click();
+      }),
+    ]);
+
     await page.type("#username", username);
     await page.type("#password", password);
     await Promise.all([
@@ -83,7 +93,7 @@ export const fetchSchedule = async (req, res) => {
           schedule.push({
             sectionNum,
             subjectCode: code,
-            subjectName: name,
+            // subjectName: name,
             lectures,
           });
         }

@@ -11,13 +11,11 @@ export default function HomeClassSection({style, schedule}) {
   const {isDarkMode, toggleTheme} = useContext(ThemeContext);
   const [noClasses, setNoClasses] = useState(false);
 
-  const today = new Date().getDay()+1;
-
+  const today = new Date().getDay() + 1;
 
   const todaySubjects = schedule.filter(subject =>
     subject.lectures.some(lecture => Number(lecture.day) === today),
   );
-
 
   const sortedSubjects = todaySubjects.sort((a, b) => {
     const lectureA = a.lectures.find(lec => Number(lec.day) === today);
@@ -38,7 +36,7 @@ export default function HomeClassSection({style, schedule}) {
     return <Text style={styles.text}>{t('No classes left today')}</Text>;
 
   return (
-    <View style={[style]}>
+    <View style={[style, styles.container]}>
       {sortedSubjects.length > 0 ? (
         sortedSubjects.map(subject => (
           <HomeClassCard
@@ -61,5 +59,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: 'white',
     fontSize: 22,
+  },
+  container: {
+    width: '100%',
   },
 });

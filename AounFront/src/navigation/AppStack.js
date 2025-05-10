@@ -19,6 +19,7 @@ import ScheduleFilter from '../screens/ScheduleFilter';
 import HomeScreen from '../screens/HomeScreen';
 import MatchingSchedules from '../screens/MatchingSchedules';
 import SchedulePreviewScreen from '../screens/SchedulePreviewScreen';
+import MyScheduleScreen from '../screens/MyScheduleScreen';
 
 const Stack = createStackNavigator();
 
@@ -54,6 +55,7 @@ export default function AppStack() {
           name="SchedulePreviewScreen"
           component={SchedulePreviewScreen}
         />
+        <Stack.Screen name="MyScheduleScreen" component={MyScheduleScreen} />
       </Stack.Navigator>
       <BottomNavWrapper />
     </View>

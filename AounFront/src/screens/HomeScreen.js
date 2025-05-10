@@ -39,7 +39,7 @@ const HomeScreen = ({navigation}) => {
       lectures: [
         {day: '1', start: '23:59', end: '23:50'},
         {day: '3', start: '00:12', end: '09:50'},
-        {day: '5', start: '08:00', end: '08:50'},
+        {day: '4', start: '23:40', end: '23:50'},
       ],
     },
     {
@@ -105,7 +105,9 @@ const HomeScreen = ({navigation}) => {
         <View style={styles.classesContainer}>
           <Text style={styles.classesHeader}>Up Coming Classes</Text>
         </View>
-        <HomeClassSection style={styles.classesSection} schedule={schedule} />
+        <View style={styles.classesContainer}>
+          <HomeClassSection  schedule={schedule} />
+        </View>
         <View>
           <Text style={styles.classesHeader}>To Do</Text>
           <HomeToDoSection />
@@ -169,7 +171,7 @@ const styles = StyleSheet.create({
   },
   createTaskContainer: {
     height: 63,
-    // width: '80%',
+    width: '89%',
     backgroundColor: '#131417',
     borderRadius: 20,
     marginTop: 25,
@@ -207,7 +209,8 @@ const styles = StyleSheet.create({
   },
   classesSection: {
     marginTop: 25,
-    alignSelf: 'center',
+    // alignSelf: 'center',
+    width: '100%',
   },
 });
 

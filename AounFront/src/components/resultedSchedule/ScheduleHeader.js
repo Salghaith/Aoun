@@ -3,7 +3,9 @@ import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const ScheduleHeader = ({schedule}) => {
-  const allLectures = schedule.flatMap(s => s.lectures);
+  const allLectures = schedule
+    .flatMap(s => s.lectures)
+    .filter(l => l.day && l.startTime && l.endTime);
 
   const toMinutes = time => {
     const [hourStr, ampm] = time.split(/(?=[AP]M)/);
