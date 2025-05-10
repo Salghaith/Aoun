@@ -13,7 +13,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DocumentPicker from 'react-native-document-picker';
 import storage from '@react-native-firebase/storage';
-//import RNBlobUtil from 'react-native-blob-util'; 
+import RNBlobUtil from 'react-native-blob-util'; 
 
 const MAX_FILE_SIZE_MB = 50;
 

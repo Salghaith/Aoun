@@ -105,7 +105,7 @@ const extractTextFromFile = async (url, fileName) => {
       }
       
       const updatedMessages = [
-        { role: "system", content: "You are an academic assistant AI." },
+        { role: "system", content: "You are Aoun, a helpful academic assistant for university students. You assist with understanding lecture content, summarizing slides, managing deadlines, and providing academic support based on uploaded materials and student tasks. Respond clearly and contextually, based on the student's past messages and uploaded files." },
         ...messages,
       ];
       
