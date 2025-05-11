@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, Pressable, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {useTranslation} from 'react-i18next';
 
 const shortToFull = {
   Sun: 'Sunday',
@@ -13,6 +14,7 @@ const shortToFull = {
 const displayDays = ['Any', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'None'];
 
 const OffDaysFilter = ({offDays, setOffDays}) => {
+  const {t} = useTranslation();
   const toggleDay = day => {
     if (day === 'None') {
       setOffDays(['None']);
@@ -34,11 +36,11 @@ const OffDaysFilter = ({offDays, setOffDays}) => {
 
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.sectionTitle}>Off Days</Text>
+      <Text style={styles.sectionTitle}>{t('Off Days')}</Text>
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Icon name="bed" color="black" size={14} />
-          <Text style={styles.cardHeaderText}> Choose your off days</Text>
+          <Text style={styles.cardHeaderText}>{t('Choose your off days')}</Text>
         </View>
         <View style={styles.daysRow}>
           {displayDays.map(day => {
@@ -55,7 +57,7 @@ const OffDaysFilter = ({offDays, setOffDays}) => {
                 {isSelected ? (
                   <Icon name="check-circle" solid size={22} color="#000" />
                 ) : (
-                  <Text style={styles.dayText}>{day}</Text>
+                  <Text style={styles.dayText}>{t(day)}</Text>
                 )}
               </Pressable>
             );

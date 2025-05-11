@@ -13,11 +13,13 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DocumentPicker from 'react-native-document-picker';
 import storage from '@react-native-firebase/storage';
-import RNBlobUtil from 'react-native-blob-util'; 
+import RNBlobUtil from 'react-native-blob-util';
+import {useTranslation} from 'react-i18next';
 
 const MAX_FILE_SIZE_MB = 50;
 
 const ChatInputBar = ({ onSend, isLoggedIn, loading, setLoading }) => {
+  const {t} = useTranslation();
   const [message, setMessage] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(null);
@@ -104,7 +106,7 @@ const ChatInputBar = ({ onSend, isLoggedIn, loading, setLoading }) => {
       setUploadProgress(null);
       setLoading(false);
     } else if (uploadFailed) {
-      Alert.alert("Upload Failed", "We couldn't upload your files. Please try again.");
+      Alert.alert(t("Upload Failed"), t("We couldn't upload your files. Please try again."));
     }
   };
 
@@ -129,7 +131,7 @@ const ChatInputBar = ({ onSend, isLoggedIn, loading, setLoading }) => {
             readAudio === PermissionsAndroid.RESULTS.GRANTED;
   
           if (!granted) {
-            Alert.alert('Permission Denied', 'Storage access is required to upload files.');
+            Alert.alert(t('Permission Denied'), t('Storage access is required to upload files.'));
             return false;
           }
         } else {
@@ -138,7 +140,7 @@ const ChatInputBar = ({ onSend, isLoggedIn, loading, setLoading }) => {
           );
   
           if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-            Alert.alert('Permission Denied', 'Storage access is required to upload files.');
+            Alert.alert(t('Permission Denied'), t('Storage access is required to upload files.'));
             return false;
           }
         }
@@ -168,7 +170,7 @@ const ChatInputBar = ({ onSend, isLoggedIn, loading, setLoading }) => {
     // 🔒 Check size (in bytes)
     const oversized = res.find(file => file.size > MAX_FILE_SIZE_MB * 1024 * 1024);
     if (oversized) {
-      Alert.alert('File too large', `Limit: ${MAX_FILE_SIZE_MB}MB`);
+      Alert.alert(t('File too large'), `Limit: ${MAX_FILE_SIZE_MB}MB`);
       return;
     }
 
@@ -213,7 +215,7 @@ const ChatInputBar = ({ onSend, isLoggedIn, loading, setLoading }) => {
       {/* 📝 Chat Input */}
       <TextInput
         style={styles.input}
-        placeholder="Ask me anything"
+        placeholder={t('Ask me anything')}
         placeholderTextColor="#777"
         value={message}
         onChangeText={setMessage}

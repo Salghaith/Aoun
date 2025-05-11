@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {useTranslation} from 'react-i18next';
 
 const FinalDetailsModal = ({ isVisible, onClose = () => {}, onSave = () => {} }) => {
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [startTimePickerVisible, setStartTimePickerVisible] = useState(false);
   const [endTimePickerVisible, setEndTimePickerVisible] = useState(false);
+  const {t} = useTranslation();
 
   const [date, setDate] = useState(null);
   const [startTime, setStartTime] = useState(null);
@@ -37,11 +39,11 @@ const FinalDetailsModal = ({ isVisible, onClose = () => {}, onSave = () => {} })
     <Modal visible={isVisible} transparent animationType="fade">
       <View style={styles.backdrop}>
         <View style={styles.modalContainer}>
-          <Text style={styles.title}>Final Exam Details</Text>
+          <Text style={styles.title}>{t('Final Exam Details')}</Text>
 
           {/* Date Picker */}
           <TouchableOpacity onPress={() => setDatePickerVisible(true)} style={styles.inputBox}>
-            <Text style={styles.inputText}>{date ? formatDate(date) : 'Pick a date'}</Text>
+            <Text style={styles.inputText}>{date ? formatDate(date) : t('Pick a date')}</Text>
           </TouchableOpacity>
 
           {/* Time Row */}
@@ -50,14 +52,14 @@ const FinalDetailsModal = ({ isVisible, onClose = () => {}, onSave = () => {} })
               onPress={() => setStartTimePickerVisible(true)}
               style={[styles.halfInputBox, { marginRight: 8 }]}
             >
-              <Text style={styles.inputText}>{startTime ? formatTime(startTime) : 'Start time'}</Text>
+              <Text style={styles.inputText}>{startTime ? formatTime(startTime) : t('Start time')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => setEndTimePickerVisible(true)}
               style={styles.halfInputBox}
             >
-              <Text style={styles.inputText}>{endTime ? formatTime(endTime) : 'End time'}</Text>
+              <Text style={styles.inputText}>{endTime ? formatTime(endTime) : t('End time')}</Text>
             </TouchableOpacity>
           </View>
 

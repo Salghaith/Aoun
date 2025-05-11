@@ -12,8 +12,10 @@ import {
 import BackButton from '../components/BackButton';
 import ScheduleCard from '../components/ScheduleCard';
 import {useSubjects} from '../context/SubjectContext';
+import {useTranslation} from 'react-i18next';
 
 const MatchingSchedules = ({route, navigation}) => {
+  const {t} = useTranslation();
   const {filters} = route.params;
   const [validSchedules, setValidSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -145,7 +147,7 @@ const MatchingSchedules = ({route, navigation}) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <BackButton onPress={() => navigation.goBack()} />
-        <Text style={styles.title}>Schedule</Text>
+        <Text style={styles.title}>{t('Schedule')}</Text>
       </View>
 
       {loading ? (
@@ -153,7 +155,7 @@ const MatchingSchedules = ({route, navigation}) => {
       ) : (
         <>
           <Text style={styles.subText}>
-            Number of schedules created: {validSchedules.length}
+            {t('Number of schedules created')}: {validSchedules.length}
           </Text>
 
           {validSchedules.length === 0 && (

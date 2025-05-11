@@ -17,12 +17,14 @@ import ScheduleHeader from '../components/resultedSchedule/ScheduleHeader';
 import {AuthContext} from '../context/AuthContext';
 import {useSchedule} from '../context/ScheduleContext';
 import {importSchedule} from '../services/calendarService';
+import {useTranslation} from 'react-i18next';
 
 const HOURS = Array.from({length: 13}, (_, i) => `${8 + i}:00`);
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
 const COLUMN_WIDTH = 60;
 
 const MyScheduleScreen = ({navigation}) => {
+  const {t} = useTranslation();
   const {userData} = useContext(AuthContext);
   const {schedule, saveSchedule, deleteSchedule} = useSchedule();
   const [visible, setVisible] = useState(false);
@@ -31,20 +33,20 @@ const MyScheduleScreen = ({navigation}) => {
 
   const handleDeleteSchedule = () => {
     Alert.alert(
-      'Delete Schedule',
-      'Are you sure you want to delete your saved schedule?',
+      t('Delete Schedule'),
+      t('Are you sure you want to delete your saved schedule?'),
       [
-        {text: 'Cancel', style: 'cancel'},
+        {text: t('Cancel'), style: 'cancel'},
         {
-          text: 'Delete',
+          text: t('Delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteSchedule();
-              Alert.alert('Success', 'Schedule deleted successfully.');
+              Alert.alert(t('Success'), t('Schedule deleted successfully.'));
             } catch (error) {
               console.error('Error deleting schedule:', error);
-              Alert.alert('Error', 'Failed to delete schedule.');
+              Alert.alert(t('Error'), t('Failed to delete schedule.'));
             }
           },
         },
@@ -55,15 +57,19 @@ const MyScheduleScreen = ({navigation}) => {
   const handleImportSchedule = async () => {
     if (!userData.isKSU) {
       Alert.alert(
-        'Warning',
-        'You are not allowed to import a schedule from LMS. Please generate your own schedule or register as a KSU student.',
+        t('Warning'),
+        t(
+          'You are not allowed to import a schedule from LMS. Please generate your own schedule or register as a KSU student.',
+        ),
       );
       return;
     }
     if (schedule) {
       Alert.alert(
-        'Warning',
-        'You already have a saved schedule. Please delete it first before importing a new one.',
+        t('Warning'),
+        t(
+          'You already have a saved schedule. Please delete it first before importing a new one.',
+        ),
       );
       return;
     }
@@ -147,13 +153,13 @@ const MyScheduleScreen = ({navigation}) => {
       ) : (
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>
-            No schedule saved yet. Generate a schedule or import one from LMS.
+            {t('No schedule saved yet. Generate a schedule or import one from LMS.')}
           </Text>
         </View>
       )}
 
       <Dialog.Container visible={visible}>
-        <Dialog.Title>Enter Your LMS Password</Dialog.Title>
+        <Dialog.Title>{t('Enter Your LMS Password')}</Dialog.Title>
         <Dialog.Input
           onChangeText={setLMSPass}
           value={LMSPass}
@@ -166,14 +172,14 @@ const MyScheduleScreen = ({navigation}) => {
           </View>
         )}
         <Dialog.Button
-          label="Cancel"
+          label={t('Cancel')}
           onPress={() => {
             if (!loading) setVisible(false);
           }}
           disabled={loading}
         />
         <Dialog.Button
-          label="Import"
+          label={t('Import')}
           onPress={async () => {
             setLoading(true);
             try {
@@ -183,7 +189,6 @@ const MyScheduleScreen = ({navigation}) => {
                 LMSPass,
               );
               await saveSchedule(importedSchedule);
-              Alert.alert('✅ Success', 'Schedule Imported.');
             } catch (error) {
               const message =
                 error.response?.data?.error ||

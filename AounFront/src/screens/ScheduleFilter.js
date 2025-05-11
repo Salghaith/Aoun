@@ -11,8 +11,10 @@ import BackButton from '../components/BackButton';
 import OffDaysFilter from '../components/Filters/OffDaysFilter';
 import StudyHoursFilter from '../components/Filters/StudyHoursFilter';
 import BreakDurationFilter from '../components/Filters/BreakDurationFilter';
+import {useTranslation} from 'react-i18next';
 
 const ScheduleFilter = ({navigation}) => {
+  const {t} = useTranslation();
   const [offDays, setOffDays] = useState(['Any']);
   const [startHour, setStartHour] = useState(8);
   const [endHour, setEndHour] = useState(20);
@@ -32,7 +34,7 @@ const ScheduleFilter = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <BackButton onPress={() => navigation.goBack()} />
-        <Text style={styles.headerTitle}>Filters</Text>
+        <Text style={styles.headerTitle}>{t('Filters')}</Text>
       </View>
 
       <View style={styles.filters}>
@@ -53,7 +55,7 @@ const ScheduleFilter = ({navigation}) => {
         {loading ? (
           <ActivityIndicator color="#FFF" size="small" />
         ) : (
-          <Text style={styles.generateButtonText}>Generate Schedule</Text>
+          <Text style={styles.generateButtonText}>{t('Generate Schedule')}</Text>
         )}
       </TouchableOpacity>
     </SafeAreaView>

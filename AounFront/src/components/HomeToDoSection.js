@@ -7,6 +7,7 @@ import {TaskContext} from '../context/TaskContext';
 import HomeToDoCard from './HomeToDoCard';
 
 const HomeToDoSection = ({style}) => {
+  const {t} = useTranslation();
   const {tasks} = useContext(TaskContext);
 
   const filteredTasks = tasks.filter(task => {
@@ -19,7 +20,7 @@ const HomeToDoSection = ({style}) => {
       {filteredTasks.length > 0 ? (
         filteredTasks.map(task => <HomeToDoCard key={task.id} task={task} />)
       ) : (
-        <Text style={styles.noTaskText}>No upcoming tasks!</Text>
+        <Text style={styles.noTaskText}>{t('No upcoming tasks!')}</Text>
       )}
     </View>
   );

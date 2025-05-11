@@ -2,8 +2,10 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {useTranslation} from 'react-i18next';
 
 const StudyHoursFilter = ({startHour, endHour, setStartHour, setEndHour}) => {
+  const {t} = useTranslation();
   const handleValuesChange = values => {
     setStartHour(values[0]);
     setEndHour(values[1]);
@@ -17,11 +19,11 @@ const StudyHoursFilter = ({startHour, endHour, setStartHour, setEndHour}) => {
 
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.sectionTitle}>Study hours</Text>
+      <Text style={styles.sectionTitle}>{t('Study hours')}</Text>
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Icon name="calendar-check" size={14} solid color="black" />
-          <Text style={styles.cardHeaderText}> Set the day's time range</Text>
+          <Text style={styles.cardHeaderText}>{t('Set the day\'s time range')}</Text>
         </View>
 
         <View style={styles.sliderRow}>

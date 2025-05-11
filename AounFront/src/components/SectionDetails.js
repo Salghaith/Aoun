@@ -10,9 +10,11 @@ import {
 import {Swipeable} from 'react-native-gesture-handler';
 import TimeInfoOfSection from './TimeInfoOfSection';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {useTranslation} from 'react-i18next';
 
 const SectionDetails = forwardRef(
   ({onDelete, isDeletable, initialData = {}}, ref) => {
+    const {t} = useTranslation();
     const [sectionNumber, setSectionNumber] = useState(
       initialData.sectionNumber || '',
     );
@@ -112,7 +114,7 @@ const SectionDetails = forwardRef(
               },
             ]}>
             <Icon name="trash-alt" size={16} color="#E53835" />
-            <Text style={styles.deleteActionText}>Delete</Text>
+            <Text style={styles.deleteActionText}>{t('Delete')}</Text>
           </Animated.View>
         </TouchableOpacity>
       );
@@ -125,12 +127,15 @@ const SectionDetails = forwardRef(
       }),
       validateSection: () => {
         if (sectionNumber.trim() === '') {
-          return {isValid: false, errorMessage: 'Section number is required'};
+          return {
+            isValid: false,
+            errorMessage: t('Section number is required'),
+          };
         }
         if (!validateDays()) {
           return {
             isValid: false,
-            errorMessage: 'Please select a day for all lectures',
+            errorMessage: t('Please select a day for all lectures'),
           };
         }
 
@@ -160,7 +165,9 @@ const SectionDetails = forwardRef(
             if (overlap) {
               return {
                 isValid: false,
-                errorMessage: `Lectures on ${lec1.day} overlap in section ${sectionNumber}`,
+                errorMessage: `${t('Lectures on')} ${lec1.day} ${t(
+                  'overlap in section',
+                )} ${sectionNumber}`,
               };
             }
           }
@@ -176,7 +183,7 @@ const SectionDetails = forwardRef(
           <View style={styles.sectionHeader}>
             <TextInput
               style={styles.sectionInput}
-              placeholder="Section number"
+              placeholder={t('Section number')}
               placeholderTextColor="#AAA"
               value={sectionNumber}
               onChangeText={setSectionNumber}
@@ -231,7 +238,7 @@ const SectionDetails = forwardRef(
             color="#FFFFFF"
             style={{marginHorizontal: 6}}
           />
-          <Text style={styles.addLectureText}>Add new lecture</Text>
+          <Text style={styles.addLectureText}>{t('Add new lecture')}</Text>
         </TouchableOpacity>
       </View>
     );

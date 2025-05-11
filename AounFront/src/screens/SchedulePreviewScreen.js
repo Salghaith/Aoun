@@ -11,7 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import LectureBlock from '../components/resultedSchedule/LectureBlock';
 import ScheduleHeader from '../components/resultedSchedule/ScheduleHeader';
@@ -21,6 +21,7 @@ const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
 const COLUMN_WIDTH = 60;
 
 const SchedulePreviewScreen = ({route, navigation}) => {
+  const {t} = useTranslation();
   const {schedule, index} = route.params;
 
   const handleSaveSchedule = async () => {
@@ -35,8 +36,10 @@ const SchedulePreviewScreen = ({route, navigation}) => {
       const savedSchedule = await AsyncStorage.getItem('savedSchedule');
       if (savedSchedule) {
         Alert.alert(
-          'Warning',
-          'You already have a saved schedule. Please delete it first before saving a new one.',
+          t('Warning'),
+          t(
+            'You already have a saved schedule. Please delete it first before saving a new one.',
+          ),
         );
         return;
       }
@@ -49,10 +52,10 @@ const SchedulePreviewScreen = ({route, navigation}) => {
       };
 
       await AsyncStorage.setItem('savedSchedule', JSON.stringify(newSchedule));
-      Alert.alert('Success', 'Schedule saved successfully.');
+      Alert.alert(t('Success'), t('Schedule saved successfully.'));
     } catch (err) {
       console.error('Error saving schedule:', err);
-      Alert.alert('Error', 'Failed to save schedule.');
+      Alert.alert(t('Error'), t('Failed to save schedule.'));
     }
   };
 
@@ -60,7 +63,9 @@ const SchedulePreviewScreen = ({route, navigation}) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerRow}>
         <BackButton onPress={() => navigation.goBack()} />
-        <Text style={styles.title}>Schedule {index + 1}</Text>
+        <Text style={styles.title}>
+          {t('Schedule')} {index + 1}
+        </Text>
         <TouchableOpacity onPress={handleSaveSchedule} style={styles.saveIcon}>
           <Icon name="save" size={20} color="#FFF" solid />
         </TouchableOpacity>

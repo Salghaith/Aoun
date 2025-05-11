@@ -24,12 +24,12 @@ const ForgetPassScreen = ({navigation}) => {
 
     sendPasswordResetEmail(auth, email)
       .then(() => {
-        Alert.alert('Password reset email sent!', 'Please check your inbox.');
+        Alert.alert(t('Password reset email sent!'), t('Please check your inbox.'));
         navigation.goBack();
       })
       .catch(error => {
         console.error('Password reset error: ', error);
-        Alert.alert('Error', error.message);
+        Alert.alert(t('Error'), error.message);
       });
   };
 

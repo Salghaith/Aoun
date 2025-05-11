@@ -1,8 +1,10 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {useTranslation} from 'react-i18next';
 
 const ScheduleCard = ({schedule, index}) => {
+  const {t} = useTranslation();
   const allLectures = schedule.flatMap(section => section.lectures);
 
   const toMinutes = t => {
@@ -45,30 +47,30 @@ const ScheduleCard = ({schedule, index}) => {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.cardTitle}>Schedule {index + 1}</Text>
+      <Text style={styles.cardTitle}>{t('Schedule')} {index + 1}</Text>
       <View style={styles.row}>
         <Icon name="bed" size={12} />
-        <Text style={styles.label}>Off Days</Text>
+        <Text style={styles.label}>{t('Off Days')}</Text>
         <Text>{offDays.length}</Text>
       </View>
       <View style={styles.row}>
         <Icon name="coffee" size={12} />
-        <Text style={styles.label}>Breaks</Text>
+        <Text style={styles.label}>{t('Breaks')}</Text>
         <Text>{breaks.length}</Text>
       </View>
       <View style={styles.row}>
         <Icon name="clock" size={12} solid />
-        <Text style={styles.label}>Longest break</Text>
+        <Text style={styles.label}>{t('Longest break')}</Text>
         <Text>{Math.floor(longestBreak / 60)}</Text>
       </View>
       <View style={styles.row}>
         <Icon name="calendar-day" size={12} />
-        <Text style={styles.label}>Day Begins</Text>
+        <Text style={styles.label}>{t('Day Begins')}</Text>
         <Text>{toHourFormat(startTime)}</Text>
       </View>
       <View style={styles.row}>
         <Icon name="calendar-day" size={12} />
-        <Text style={styles.label}>Day Ends</Text>
+        <Text style={styles.label}>{t('Day Ends')}</Text>
         <Text>{toHourFormat(endTime)}</Text>
       </View>
     </View>

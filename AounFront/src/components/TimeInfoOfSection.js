@@ -10,6 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {useTranslation} from 'react-i18next';
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
 
@@ -26,7 +27,7 @@ const TimeInfoOfSection = ({
   const [isStartPickerVisible, setStartPickerVisible] = useState(false);
   const [isEndPickerVisible, setEndPickerVisible] = useState(false);
   const [isDayModalVisible, setDayModalVisible] = useState(false);
-
+  const {t} = useTranslation();
   const parseTimeTo24 = t => {
     const match = t.match(/^(\d{1,2}):(\d{2})(AM|PM)$/);
     if (!match) return [0, 0];
@@ -149,7 +150,7 @@ const TimeInfoOfSection = ({
 
           // Minimum: 8:00 AM, Maximum: 7:00 PM
           if (startHour < 8 || startHour > 19) {
-            alert('Start time must be between 8:00 AM and 7:00 PM');
+            alert(t('Start time must be between 8:00 AM and 7:00 PM') );
             setStartPickerVisible(false);
             return;
           }
@@ -182,9 +183,9 @@ const TimeInfoOfSection = ({
           const selectedStr = formatTime(date);
 
           if (selected <= currentStart) {
-            alert('End time must be after start time.');
+            alert(t('End time must be after start time.'));
           } else if (selectedStr === startTime) {
-            alert('Start and end times cannot be the same.');
+            alert(t('Start and end times cannot be the same.'));
           } else {
             onSelectEndTime(selectedStr);
           }

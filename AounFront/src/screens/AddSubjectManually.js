@@ -92,12 +92,12 @@ const AddSubjectManually = ({navigation}) => {
 
   const handleSave = async () => {
     if (!subjectName.trim()) {
-      Alert.alert('Validation', 'Please enter the subject name.');
+      Alert.alert(t('Validation'), t('Please enter the subject name.'));
       return;
     }
 
     if (!subjectCode.trim()) {
-      Alert.alert('Validation', 'Please enter the subject code.');
+      Alert.alert(t('Validation'), t('Please enter the subject code.'));
       return;
     }
 
@@ -109,7 +109,7 @@ const AddSubjectManually = ({navigation}) => {
       result => !result.isValid,
     );
     if (validationErrors.length > 0) {
-      Alert.alert('Validation', validationErrors[0].errorMessage);
+      Alert.alert(t('Validation'), validationErrors[0].errorMessage);
       return;
     }
 
@@ -123,8 +123,8 @@ const AddSubjectManually = ({navigation}) => {
 
     if (!hasValidSection) {
       Alert.alert(
-        'Validation',
-        'Please enter at least one valid section and lecture.',
+        t('Validation'),
+        t('Please enter at least one valid section and lecture.'),
       );
       return;
     }
@@ -133,7 +133,7 @@ const AddSubjectManually = ({navigation}) => {
       section.lectures.some(lecture => lecture.day === 'Day'),
     );
     if (hasInvalidDay) {
-      Alert.alert('Validation', 'Please select a day for all lectures.');
+      Alert.alert(t('Validation'), t('Please select a day for all lectures.'));
       return;
     }
 
@@ -142,7 +142,7 @@ const AddSubjectManually = ({navigation}) => {
     for (const section of allSectionData) {
       const num = section.sectionNumber.trim();
       if (seen.has(num)) {
-        Alert.alert('Validation', `Section number "${num}" is duplicated.`);
+        Alert.alert(t('Validation'), t(`Section number "${num}" is duplicated.`));
         return;
       }
       seen.add(num);
@@ -162,7 +162,7 @@ const AddSubjectManually = ({navigation}) => {
 
     const user = auth().currentUser;
     if (!user) {
-      Alert.alert('Error', 'User not logged in.');
+      Alert.alert(t('Error'), t('User not logged in.'));
       return;
     }
 
@@ -178,14 +178,14 @@ const AddSubjectManually = ({navigation}) => {
     try {
       if (editingSubject?.id) {
         await updateSubject(editingSubject.id, subjectData);
-        Alert.alert('Success', 'Subject updated');
+        Alert.alert(t('Success'), t('Subject updated'));
       } else {
         await addSubject(subjectData);
       }
       navigation.goBack();
     } catch (err) {
       console.error('Error saving subject:', err);
-      Alert.alert('Error', 'Failed to save subject');
+      Alert.alert(t('Error'), t('Failed to save subject'));
     }
   };
 
@@ -193,21 +193,21 @@ const AddSubjectManually = ({navigation}) => {
     if (!editingSubject?.id) return;
 
     Alert.alert(
-      'Delete Subject',
-      'Are you sure you want to delete this subject?',
+      t('Delete Subject'),
+      t('Are you sure you want to delete this subject?'),
       [
-        {text: 'Cancel', style: 'cancel'},
+        {text: t('Cancel'), style: 'cancel'},
         {
-          text: 'Delete',
+          text: t('Delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteSubject(editingSubject.id);
-              Alert.alert('Deleted', 'Subject has been removed.');
+              Alert.alert(t('Deleted'), t('Subject has been removed.'));
               navigation.goBack();
             } catch (err) {
               console.error('Delete error:', err);
-              Alert.alert('Error', 'Failed to delete subject.');
+              Alert.alert(t('Error'), t('Failed to delete subject.'));
             }
           },
         },
@@ -226,7 +226,7 @@ const AddSubjectManually = ({navigation}) => {
 
       <TextInput
         style={styles.input}
-        placeholder="Subject name"
+        placeholder={t('Subject name')}
         placeholderTextColor="#AAA"
         value={subjectName}
         onChangeText={setSubjectName}
@@ -234,7 +234,7 @@ const AddSubjectManually = ({navigation}) => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Subject code"
+        placeholder={t('Subject code')}
         placeholderTextColor="#AAA"
         value={subjectCode}
         onChangeText={setSubjectCode}
@@ -246,7 +246,7 @@ const AddSubjectManually = ({navigation}) => {
           style={styles.actionButton}
           onPress={() => setIsModalVisible(true)}>
           <FontAwesome6 name="pen" color="white" size={20} />
-          <Text style={styles.buttonText}>Final</Text>
+          <Text style={styles.buttonText}>{t('Final')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.actionButton}
@@ -257,11 +257,11 @@ const AddSubjectManually = ({navigation}) => {
             size={22}
             style={{marginLeft: 5}}
           />
-          <Text style={styles.buttonText}>Add section</Text>
+          <Text style={styles.buttonText}>{t('Add section')}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton} onPress={handleSave}>
           <FontAwesome5 name="save" color="white" size={22} solid />
-          <Text style={styles.buttonText}>Save</Text>
+          <Text style={styles.buttonText}>{t('Save')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -288,7 +288,7 @@ const AddSubjectManually = ({navigation}) => {
 
       {editingSubject?.id && (
         <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-          <Text style={styles.deleteButtonText}>Delete Subject</Text>
+          <Text style={styles.deleteButtonText}>{t('Delete Subject')}</Text>
         </TouchableOpacity>
       )}
 

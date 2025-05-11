@@ -23,6 +23,13 @@ const HomeScreen = ({navigation}) => {
   const {schedule} = useSchedule();
   const iconColor = isDarkMode ? 'white' : 'black';
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return t('Good morning');
+    if (hour < 18) return t('Good afternoon');
+    return t('Good evening');
+  };
+
   return (
     <SafeAreaView
       style={[
@@ -35,7 +42,7 @@ const HomeScreen = ({navigation}) => {
         showsVerticalScrollIndicator={false}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>
-            Good morning, {userData.username}
+            {getGreeting()}, {userData.username}
           </Text>
         </View>
         <View style={styles.weekContainer}>
@@ -59,20 +66,22 @@ const HomeScreen = ({navigation}) => {
         </View>
         <View style={styles.wisdomContainer}>
           <Text style={styles.wisdomText}>
-            Hi {userData.username}, don't forget to check your tasks for today.
-            Keep making progress!
+            {t('Hi')} {userData.username},{' '}
+            {t(
+              "don't forget to check your tasks for today. Keep making progress!",
+            )}
           </Text>
         </View>
         <TouchableOpacity
           style={styles.createTaskContainer}
           onPress={() => navigation.navigate('CreateTask')}>
-          <Text style={styles.createTaskText}>Create Task</Text>
+          <Text style={styles.createTaskText}>{t('Create Task')}</Text>
           <View style={styles.circle}>
             <Icon name="arrowright" size={22} color="white" />
           </View>
         </TouchableOpacity>
         <View style={styles.classesContainer}>
-          <Text style={styles.classesHeader}>Up Coming Classes</Text>
+          <Text style={styles.classesHeader}>{t('Up Coming Classes')}</Text>
         </View>
         <View style={styles.classesContainer}>
           {schedule && schedule.length > 0 ? (
@@ -87,12 +96,12 @@ const HomeScreen = ({navigation}) => {
                 marginLeft: '24%',
                 textAlign: 'center',
               }}>
-              No schedule found.
+              {t('No schedule found.')}
             </Text>
           )}
         </View>
         <View>
-          <Text style={styles.classesHeader}>To Do</Text>
+          <Text style={styles.classesHeader}>{t('To Do')}</Text>
           <HomeToDoSection />
         </View>
       </ScrollView>

@@ -20,8 +20,10 @@ import HamburgerMenu from '../components/HamburgerMenu';
 import {AuthContext} from '../context/AuthContext';
 import {getChatbotResponse} from '../services/openaiService'; // ✅ Add this
 import uuid from 'react-native-uuid';
+import {useTranslation} from 'react-i18next';
 
 const UserChatScreen = ({navigation}) => {
+  const {t} = useTranslation();
   // No old messages are loaded by default
   const [messages, setMessages] = useState([]);
   const [firstInteraction, setFirstInteraction] = useState(true);
@@ -276,8 +278,9 @@ const UserChatScreen = ({navigation}) => {
               resizeMode="contain"
             />
             <Text style={styles.infoText}>
-              Hello! I'm here to help. Ask me anything and I'll do my best to
-              assist you.
+              {t(
+                "Hello! I'm here to help. Ask me anything and I'll do my best to assist you.",
+              )}
             </Text>
           </View>
         ) : (

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, {useContext} from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -8,9 +8,9 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import LoginButton from '../components/LoginButton';
-import { ThemeContext } from '../context/ThemeContext'; // Import Theme Context
+import {ThemeContext} from '../context/ThemeContext'; // Import Theme Context
 
 const WelcomeScreen = ({navigation}) => {
   const {isDarkMode} = useContext(ThemeContext); // Get theme state
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     textAlign: 'center',
     height: 100,
-    fontWeight: "500",
+    fontWeight: '500',
   },
 
   buttonsSection: {

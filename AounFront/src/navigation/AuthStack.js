@@ -9,6 +9,7 @@ import WelcomeScreen from '../screens/WelcomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import ForgetPass from '../screens/ForgetPass';
+import GuestChatScreen from '../screens/GuestChatScreen';
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,7 @@ export default function AuthStack() {
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
       <Stack.Screen name="ForgetPass" component={ForgetPass} />
+      <Stack.Screen name="GuestChatScreen" component={GuestChatScreen} />
     </Stack.Navigator>
   );
 }

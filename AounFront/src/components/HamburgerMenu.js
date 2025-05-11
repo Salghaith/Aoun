@@ -9,8 +9,10 @@ import {
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useTranslation} from 'react-i18next';
 
 const HamburgerMenu = ({onClose, sessions, onSelectSession}) => {
+  const {t} = useTranslation();
   const slideAnim = useRef(new Animated.Value(-300)).current;
 
   useEffect(() => {
@@ -25,7 +27,7 @@ const HamburgerMenu = ({onClose, sessions, onSelectSession}) => {
     <SafeAreaView style={[{flex: 1}, styles.menuContainer]}>
       <Animated.View style={[{transform: [{translateX: slideAnim}]}]}>
         <View style={styles.headerContainer}>
-          <Text style={styles.header}>Previous Chats</Text>
+          <Text style={styles.header}>{t('Previous Chats')}</Text>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Ionicons name="close-circle-outline" size={28} color="#FFF" />
           </TouchableOpacity>
@@ -47,7 +49,7 @@ const HamburgerMenu = ({onClose, sessions, onSelectSession}) => {
           )}
           keyExtractor={item => item.id}
           ListEmptyComponent={
-            <Text style={styles.emptyMessage}>No saved chats yet.</Text>
+            <Text style={styles.emptyMessage}>{t('No saved chats yet.')}</Text>
           }
         />
       </Animated.View>
