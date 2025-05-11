@@ -17,7 +17,6 @@ const configureNotifications = () => {
 // 🔹 Schedule Local Notification
 const scheduleNotification = task => {
   const dueDate = new Date(task.date + ' ' + task.startTime);
-
   PushNotification.localNotificationSchedule({
     channelId: 'task-reminders',
     title: 'Task Reminder',

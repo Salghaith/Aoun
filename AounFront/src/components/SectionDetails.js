@@ -5,8 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Text,
+  Animated,
 } from 'react-native';
-
+import {Swipeable} from 'react-native-gesture-handler';
 import TimeInfoOfSection from './TimeInfoOfSection';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -47,6 +48,12 @@ const SectionDetails = forwardRef(
       ]);
     };
 
+    const handleDeleteLecture = lectureId => {
+      if (lectures.length > 1) {
+        setLectures(prev => prev.filter(lecture => lecture.id !== lectureId));
+      }
+    };
+
     const toggleDropdown = id => {
       setLectures(prev =>
         prev.map(lecture =>
@@ -85,6 +92,30 @@ const SectionDetails = forwardRef(
 
     const validateDays = () => {
       return !lectures.some(lecture => lecture.day === 'Day');
+    };
+
+    const renderRightActions = (progress, dragX, lectureId) => {
+      const trans = dragX.interpolate({
+        inputRange: [-60, 0],
+        outputRange: [0, 60],
+      });
+
+      return (
+        <TouchableOpacity
+          style={styles.deleteAction}
+          onPress={() => handleDeleteLecture(lectureId)}>
+          <Animated.View
+            style={[
+              styles.deleteActionContent,
+              {
+                transform: [{translateX: trans}],
+              },
+            ]}>
+            <Icon name="trash-alt" size={16} color="#E53835" />
+            <Text style={styles.deleteActionText}>Delete</Text>
+          </Animated.View>
+        </TouchableOpacity>
+      );
     };
 
     useImperativeHandle(ref, () => ({
@@ -161,19 +192,33 @@ const SectionDetails = forwardRef(
           <View style={styles.divider} />
 
           {lectures.map(lecture => (
-            <TimeInfoOfSection
+            <Swipeable
               key={lecture.id}
-              day={lecture.day}
-              startTime={lecture.startTime}
-              endTime={lecture.endTime}
-              isDropdownOpen={lecture.isDropdownOpen}
-              onToggleDropdown={() => toggleDropdown(lecture.id)}
-              onSelectDay={day => handleSelectDay(lecture.id, day)}
-              onSelectStartTime={time =>
-                handleSelectStartTime(lecture.id, time)
+              renderRightActions={(progress, dragX) =>
+                lectures.length > 1
+                  ? renderRightActions(progress, dragX, lecture.id)
+                  : null
               }
-              onSelectEndTime={time => handleSelectEndTime(lecture.id, time)}
-            />
+              rightThreshold={30}
+              friction={2}
+              enabled={!lecture.isDropdownOpen}>
+              <View style={styles.lectureContainer}>
+                <TimeInfoOfSection
+                  day={lecture.day}
+                  startTime={lecture.startTime}
+                  endTime={lecture.endTime}
+                  isDropdownOpen={lecture.isDropdownOpen}
+                  onToggleDropdown={() => toggleDropdown(lecture.id)}
+                  onSelectDay={day => handleSelectDay(lecture.id, day)}
+                  onSelectStartTime={time =>
+                    handleSelectStartTime(lecture.id, time)
+                  }
+                  onSelectEndTime={time =>
+                    handleSelectEndTime(lecture.id, time)
+                  }
+                />
+              </View>
+            </Swipeable>
           ))}
         </View>
 
@@ -223,6 +268,32 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#AAA',
     marginBottom: 12,
+  },
+  lectureContainer: {
+    backgroundColor: '#FFF',
+    marginBottom: 12,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  deleteAction: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 60,
+    height: '100%',
+    paddingLeft: 12,
+  },
+  deleteActionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 2,
+    marginTop: -24,
+  },
+  deleteActionText: {
+    color: '#E53835',
+    fontWeight: '600',
+    fontSize: 12,
+    marginLeft: 4,
   },
   addLectureButton: {
     backgroundColor: '#131417',

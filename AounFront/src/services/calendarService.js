@@ -43,7 +43,6 @@ export const importCalendarTasks = async (userId, username, password) => {
 const baseURL =
   Platform.OS == 'ios' ? 'http://localhost:3000' : 'http://10.0.2.2:3000';
 export const fetchBlackboardCalendarEvents = async (username, password) => {
-  //Need to encrypt the password before sending it to the server.
   const response = await axios.post(`${baseURL}/api/calendar-events`, {
     username,
     password,
@@ -52,13 +51,7 @@ export const fetchBlackboardCalendarEvents = async (username, password) => {
   return response.data.events;
 };
 
-
-
-
-
-
 export const fetchSchedule = async (username, password) => {
-  //Need to encrypt the password before sending it to the server.
   try {
     const response = await axios.post(`${baseURL}/api/fetch-schedule`, {
       username,
@@ -73,20 +66,34 @@ export const fetchSchedule = async (username, password) => {
     throw error;
   }
 };
+
 export const importSchedule = async (userId, username, password) => {
   try {
-    // Fetch the schedule
+    const existingSchedule = await AsyncStorage.getItem('savedSchedule');
+    if (existingSchedule) {
+      throw new Error(
+        'Please delete your existing schedule before importing a new one.',
+      );
+    }
+
     const schedule = await fetchSchedule(username, password);
 
-    // Save the schedule to local storage
-    await AsyncStorage.setItem('schedule', JSON.stringify(schedule));
+    await AsyncStorage.setItem(
+      'savedSchedule',
+      JSON.stringify({
+        schedule,
+        createdAt: new Date().toISOString(),
+        userId: userId,
+      }),
+    );
 
-    // Save the schedule to Firestore
     await firestore().collection('schedules').add({
       schedule,
       createdAt: new Date().toISOString(),
       userId: userId,
     });
+
+    return schedule;
   } catch (error) {
     console.error('❌ Failed to import schedule:', error);
     throw error;

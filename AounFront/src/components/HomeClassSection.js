@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: 'white',
     fontSize: 22,
+    marginLeft: "24%",
   },
   container: {
     width: '100%',

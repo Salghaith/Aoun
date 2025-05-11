@@ -9,19 +9,19 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import BackButton from '../components/BackButton';
 import LectureBlock from '../components/resultedSchedule/LectureBlock';
 import ScheduleHeader from '../components/resultedSchedule/ScheduleHeader';
 
-const HOURS = Array.from({ length: 13 }, (_, i) => `${8 + i}:00`);
+const HOURS = Array.from({length: 13}, (_, i) => `${8 + i}:00`);
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
 const COLUMN_WIDTH = 60;
 
-const SchedulePreviewScreen = ({ route, navigation }) => {
-  const { schedule, index } = route.params;
+const SchedulePreviewScreen = ({route, navigation}) => {
+  const {schedule, index} = route.params;
 
   const handleSaveSchedule = async () => {
     const user = auth().currentUser;
@@ -31,12 +31,25 @@ const SchedulePreviewScreen = ({ route, navigation }) => {
     }
 
     try {
-      await firestore().collection('schedules').add({
+      // Check if there's already a saved schedule
+      const savedSchedule = await AsyncStorage.getItem('savedSchedule');
+      if (savedSchedule) {
+        Alert.alert(
+          'Warning',
+          'You already have a saved schedule. Please delete it first before saving a new one.',
+        );
+        return;
+      }
+
+      // Save the new schedule
+      const newSchedule = {
         schedule,
         createdAt: new Date().toISOString(),
         userId: user.uid,
-      });
-      Alert.alert('Success', 'Schedule saved.');
+      };
+
+      await AsyncStorage.setItem('savedSchedule', JSON.stringify(newSchedule));
+      Alert.alert('Success', 'Schedule saved successfully.');
     } catch (err) {
       console.error('Error saving schedule:', err);
       Alert.alert('Error', 'Failed to save schedule.');
@@ -79,7 +92,7 @@ const SchedulePreviewScreen = ({ route, navigation }) => {
                 key={i}
                 style={[
                   styles.hourLine,
-                  i === 0 && { borderTopColor: '#888', borderTopWidth: 0.5 },
+                  i === 0 && {borderTopColor: '#888', borderTopWidth: 0.5},
                 ]}
               />
             ))}
@@ -91,7 +104,7 @@ const SchedulePreviewScreen = ({ route, navigation }) => {
                   sectionNumber={section.sectionNum}
                   subjectCode={section.subjectCode}
                 />
-              ))
+              )),
             )}
           </View>
         </View>
@@ -110,13 +123,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
     justifyContent: 'space-between',
-    marginRight : 30,
+    marginRight: 30,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    marginTop: 15, 
+    marginTop: 15,
     marginRight: 15,
   },
   saveIcon: {

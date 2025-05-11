@@ -10,7 +10,8 @@ export const useLogout = () => {
     try {
       await removeData('userData');
       await removeData('tasks');
-      await removeData('schedule');
+      await removeData('savedSchedule');
+      await removeData('subjects');
       await auth().signOut();
       await updateUserData(null);
     } catch (error) {

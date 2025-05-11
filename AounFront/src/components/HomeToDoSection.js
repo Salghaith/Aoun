@@ -11,9 +11,7 @@ const HomeToDoSection = ({style}) => {
 
   const filteredTasks = tasks.filter(task => {
     if (task.completed) return false;
-
-    const taskDateTime = new Date(`${task.date}T${task.startTime}`);
-    return taskDateTime > new Date();
+    return true;
   });
 
   return (

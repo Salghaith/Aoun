@@ -11,31 +11,19 @@ import {
 
 import BackButton from '../components/BackButton';
 import ScheduleCard from '../components/ScheduleCard';
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
+import {useSubjects} from '../context/SubjectContext';
 
 const MatchingSchedules = ({route, navigation}) => {
   const {filters} = route.params;
   const [validSchedules, setValidSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
+  const {subjects} = useSubjects();
 
   useEffect(() => {
     const generateSchedules = async () => {
       setLoading(true);
-      const user = auth().currentUser;
-      if (!user) return;
 
-      const snapshot = await firestore()
-        .collection('subjects')
-        .where('userId', '==', user.uid)
-        .get();
-
-      const allSubjects = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      const selectedSubjects = allSubjects.filter(subj => subj.isSelected);
+      const selectedSubjects = subjects.filter(subj => subj.isSelected);
 
       // Filter and map subjects to include subjectCode with each section
       const filteredSectionLists = selectedSubjects
@@ -75,7 +63,7 @@ const MatchingSchedules = ({route, navigation}) => {
     };
 
     generateSchedules();
-  }, [filters]);
+  }, [filters, subjects]);
 
   const getCombinations = sectionLists => {
     if (sectionLists.length === 0) return [[]];

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,54 +7,28 @@ import {
   SafeAreaView,
   FlatList,
 } from 'react-native';
-
-import auth from '@react-native-firebase/auth';
+import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import firestore from '@react-native-firebase/firestore';
 import SubjectCard from '../components/SubjectCard';
+import {useSubjects} from '../context/SubjectContext';
 
 const GenerateSchedule = ({navigation}) => {
-  const [subjects, setSubjects] = useState([]);
+  const {t} = useTranslation();
+  const {subjects, loading, fetchSubjectsFromFirebase, toggleSubjectSelection} =
+    useSubjects();
+
   const hasSelectedSubject = subjects.some(sub => sub.isSelected);
 
-  const fetchSubjects = async () => {
-    const user = auth().currentUser;
-    if (!user) return;
-
-    try {
-      const snapshot = await firestore()
-        .collection('subjects')
-        .where('userId', '==', user.uid)
-        .orderBy('createdAt', 'asc')
-        .get();
-
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        isSelected: doc.data().isSelected || false,
-      }));
-
-      setSubjects(data);
-    } catch (error) {
-      console.error('Error fetching subjects:', error);
-    }
-  };
-
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', fetchSubjects);
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchSubjectsFromFirebase();
+    });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, fetchSubjectsFromFirebase]);
 
   const handleToggle = async (id, currentState) => {
     try {
-      await firestore().collection('subjects').doc(id).update({
-        isSelected: !currentState,
-      });
-      setSubjects(prev =>
-        prev.map(sub =>
-          sub.id === id ? {...sub, isSelected: !currentState} : sub,
-        ),
-      );
+      await toggleSubjectSelection(id, currentState);
     } catch (error) {
       console.error('Error updating subject toggle:', error);
     }
@@ -62,11 +36,13 @@ const GenerateSchedule = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Schedule Generation</Text>
+      <Text style={styles.title}>{t('Schedule Generation')}</Text>
 
       <View style={styles.buttonView}>
-        <TouchableOpacity style={styles.ButtonTouchOpa} onPress={fetchSubjects}>
-          <Text style={styles.buttonText}>Retrieve subject</Text>
+        <TouchableOpacity
+          style={styles.ButtonTouchOpa}
+          onPress={() => navigation.navigate('MyScheduleScreen')}>
+          <Text style={styles.buttonText}>{t('My Schedule')}</Text>
           <Icon
             name="cloud-download-alt"
             size={16}
@@ -78,7 +54,7 @@ const GenerateSchedule = ({navigation}) => {
         <TouchableOpacity
           style={styles.ButtonTouchOpa}
           onPress={() => navigation.navigate('AddSubjectManually')}>
-          <Text style={styles.buttonText}>Add subject manually</Text>
+          <Text style={styles.buttonText}>{t('Add subject manually')}</Text>
           <Icon
             name="plus-circle"
             size={16}
@@ -91,7 +67,7 @@ const GenerateSchedule = ({navigation}) => {
       {subjects.length === 0 ? (
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>
-            No subjects added yet. Please add one to begin.
+            {t('No subjects added yet. Please add one to begin.')}
           </Text>
         </View>
       ) : (
@@ -126,7 +102,7 @@ const GenerateSchedule = ({navigation}) => {
           }
         }}
         disabled={!hasSelectedSubject}>
-        <Text style={styles.generateButtonText}>Generate Schedule</Text>
+        <Text style={styles.generateButtonText}>{t('Generate Schedule')}</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

@@ -38,16 +38,7 @@ const Tasks = ({navigation}) => {
   const [completedTasks, setCompletedTasks] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [editTask, setEditTask] = useState(null);
-
-  // const [tasks, setTasks] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchTasks = async () => {
-  //     const userTasks = await getTasks(userData.userId);
-  //     setTasks(userTasks);
-  //   };
-  //   fetchTasks();
-  // }, []);
+  const [deletingTask, setDeletingTask] = useState(false);
 
   // Filter tasks by selected date
   const filteredTasks = tasks.filter(task => task.date === selectedDate);
@@ -90,10 +81,15 @@ const Tasks = ({navigation}) => {
   };
 
   const handleDeleteTask = async taskId => {
-    cancelNotification(taskId);
-    await deleteTask(taskId);
-    setTasks(prevTasks => prevTasks.filter(t => t.id !== taskId));
-    setEditTask(null);
+    setDeletingTask(true);
+    try {
+      cancelNotification(taskId);
+      await deleteTask(taskId);
+      setTasks(prevTasks => prevTasks.filter(t => t.id !== taskId));
+      setEditTask(null);
+    } finally {
+      setDeletingTask(false);
+    }
   };
 
   const backgroundColor = isDarkMode ? '#1C2128' : '#F5F5F5';
@@ -198,6 +194,7 @@ const Tasks = ({navigation}) => {
           onClose={() => setEditTask(null)}
           onSave={handleSaveTask}
           onDelete={handleDeleteTask}
+          deletingTask={deletingTask}
         />
       )}
     </SafeAreaView>

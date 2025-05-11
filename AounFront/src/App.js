@@ -4,16 +4,26 @@ import {NavigationContainer} from '@react-navigation/native';
 import AppNavigator from './navigation/AppNavigator';
 import {AuthProvider} from './context/AuthContext';
 import {ThemeProvider} from './context/ThemeContext';
+import {TaskProvider} from './context/TaskContext';
+import {SubjectProvider} from './context/SubjectContext';
+import {ScheduleProvider} from './context/ScheduleContext';
+import {NotificationProvider} from './context/NotificationContext';
 
 const App = () => {
   return (
-    <AuthProvider>
-      <ThemeProvider>
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
-      </ThemeProvider>
-    </AuthProvider>
+    <NavigationContainer>
+      <AuthProvider>
+        <ThemeProvider>
+          <NotificationProvider>
+            <SubjectProvider>
+              <ScheduleProvider>
+                <AppNavigator />
+              </ScheduleProvider>
+            </SubjectProvider>
+          </NotificationProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </NavigationContainer>
   );
 };
 

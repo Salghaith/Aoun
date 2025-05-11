@@ -10,6 +10,7 @@ import {
 import {useTranslation} from 'react-i18next';
 import {AuthContext} from '../context/AuthContext';
 import {ThemeContext} from '../context/ThemeContext';
+import {useSchedule} from '../context/ScheduleContext';
 import Icon from 'react-native-vector-icons/AntDesign';
 import HomeClassSection from '../components/HomeClassSection';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -19,40 +20,8 @@ const HomeScreen = ({navigation}) => {
   const {t} = useTranslation();
   const {userData} = useContext(AuthContext);
   const {isDarkMode, toggleTheme} = useContext(ThemeContext);
+  const {schedule} = useSchedule();
   const iconColor = isDarkMode ? 'white' : 'black';
-  const schedule = [
-    //DUMMY DATA
-    {
-      code: 'SWE444',
-      name: 'Software development lab',
-      section: '1212',
-      lectures: [
-        {day: '1', start: '23:57', end: '23:50'},
-        {day: '3', start: '08:01', end: '09:50'},
-        {day: '4', start: '08:00', end: '09:50'},
-      ],
-    },
-    {
-      code: 'SWE485',
-      name: 'Software Development & AI',
-      section: '1111',
-      lectures: [
-        {day: '1', start: '23:59', end: '23:50'},
-        {day: '3', start: '00:12', end: '09:50'},
-        {day: '4', start: '23:40', end: '23:50'},
-      ],
-    },
-    {
-      code: 'SWE486',
-      name: 'Cloud',
-      section: '3333',
-      lectures: [
-        {day: '1', start: '23:34', end: '23:50'},
-        {day: '3', start: '02:57', end: '03:50'},
-        {day: '5', start: '10:00', end: '11:50'},
-      ],
-    },
-  ];
 
   return (
     <SafeAreaView
@@ -90,7 +59,7 @@ const HomeScreen = ({navigation}) => {
         </View>
         <View style={styles.wisdomContainer}>
           <Text style={styles.wisdomText}>
-            Hi {userData.username}, don’t forget to check your tasks for today.
+            Hi {userData.username}, don't forget to check your tasks for today.
             Keep making progress!
           </Text>
         </View>
@@ -106,7 +75,21 @@ const HomeScreen = ({navigation}) => {
           <Text style={styles.classesHeader}>Up Coming Classes</Text>
         </View>
         <View style={styles.classesContainer}>
-          <HomeClassSection  schedule={schedule} />
+          {schedule && schedule.length > 0 ? (
+            <HomeClassSection schedule={schedule} />
+          ) : (
+            <Text
+              style={{
+                color: 'white',
+                fontSize: 20,
+                marginTop: 20,
+                marginBottom: 20,
+                marginLeft: '24%',
+                textAlign: 'center',
+              }}>
+              No schedule found.
+            </Text>
+          )}
         </View>
         <View>
           <Text style={styles.classesHeader}>To Do</Text>

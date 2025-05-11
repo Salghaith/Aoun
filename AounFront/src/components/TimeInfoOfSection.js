@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Modal,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -24,6 +25,7 @@ const TimeInfoOfSection = ({
 }) => {
   const [isStartPickerVisible, setStartPickerVisible] = useState(false);
   const [isEndPickerVisible, setEndPickerVisible] = useState(false);
+  const [isDayModalVisible, setDayModalVisible] = useState(false);
 
   const parseTimeTo24 = t => {
     const match = t.match(/^(\d{1,2}):(\d{2})(AM|PM)$/);
@@ -79,7 +81,7 @@ const TimeInfoOfSection = ({
     <View style={styles.lectureRow}>
       {/* Day Section */}
       <View style={styles.dayContainer}>
-        <TouchableOpacity onPress={onToggleDropdown}>
+        <TouchableOpacity onPress={() => setDayModalVisible(true)}>
           <View style={styles.Icon}>
             <Icon
               name="calendar-day"
@@ -90,18 +92,30 @@ const TimeInfoOfSection = ({
           </View>
         </TouchableOpacity>
         <View style={styles.underline} />
-
-        {isDropdownOpen && (
-          <View style={styles.dropdown}>
-            <ScrollView>
+        <Modal
+          visible={isDayModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setDayModalVisible(false)}>
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPressOut={() => setDayModalVisible(false)}>
+            <View style={styles.dayModalContent}>
               {days.map((d, index) => (
-                <TouchableOpacity key={index} onPress={() => onSelectDay(d)}>
-                  <Text style={styles.dropdownItem}>{d}</Text>
+                <TouchableOpacity
+                  key={index}
+                  style={styles.dayModalItem}
+                  onPress={() => {
+                    onSelectDay(d);
+                    setDayModalVisible(false);
+                  }}>
+                  <Text style={styles.dayModalText}>{d}</Text>
                 </TouchableOpacity>
               ))}
-            </ScrollView>
-          </View>
-        )}
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </View>
 
       {/* Start Time */}
@@ -140,7 +154,7 @@ const TimeInfoOfSection = ({
             return;
           }
 
-          // Auto-fix end time if it’s invalid
+          // Auto-fix end time if it's invalid
           const [endHour, endMin] = parseTimeTo24(endTime);
           const endTotal = endHour * 60 + endMin;
           const startTotal = startHour * 60 + startMinute;
@@ -220,22 +234,26 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginLeft: 8,
   },
-  dropdown: {
-    position: 'absolute',
-    top: 30,
-    left: 0,
-    backgroundColor: '#FFF',
-    borderRadius: 8,
-    elevation: 5,
-    zIndex: 100,
-    width: '110%',
-    maxHeight: 180, // 🟢 adjust height to fit screen and scrolling
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-
-  dropdownItem: {
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    fontSize: 14,
+  dayModalContent: {
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    padding: 16,
+    minWidth: 180,
+    elevation: 10,
+  },
+  dayModalItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+  },
+  dayModalText: {
+    fontSize: 16,
     color: '#000',
+    textAlign: 'center',
   },
 });

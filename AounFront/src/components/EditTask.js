@@ -8,6 +8,7 @@ import {
   Pressable,
   Alert,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -15,7 +16,7 @@ import {useTranslation} from 'react-i18next';
 
 import {ThemeContext} from '../context/ThemeContext';
 
-const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
+const EditTask = ({visible, onClose, task, onSave, onDelete, deletingTask}) => {
   const {t} = useTranslation();
   const {isDarkMode} = useContext(ThemeContext);
 
@@ -30,12 +31,12 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
   const [priority, setPriority] = useState(task.priority);
   const [date, setDate] = useState(task.date);
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const convertToRiyadhTime = (dateObj) => {
+  const convertToRiyadhTime = dateObj => {
     return new Date(dateObj.getTime() + 3 * 60 * 60 * 1000);
   };
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [timeType, setTimeType] = useState(null);
-  
+
   const backgroundColor = isDarkMode ? '#131417' : '#F5F5F5';
   const containerColor = isDarkMode ? '#1C2128' : '#EAEAEA';
   const textColor = isDarkMode ? '#FFFFFF' : '#1C2128';
@@ -48,7 +49,7 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
     return now;
   };
 
-  const parseDateStringToDate = (dateStr) => {
+  const parseDateStringToDate = dateStr => {
     if (!dateStr) return new Date();
     const [year, month, day] = dateStr.split('-').map(Number);
     return new Date(year, month - 1, day);
@@ -62,7 +63,7 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
     });
   };
 
-  const formatDate = (dateObj) => {
+  const formatDate = dateObj => {
     return dateObj.toISOString().split('T')[0]; // Formats as YYYY-MM-DD
   };
 
@@ -138,35 +139,44 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
           onPress={stopPress}>
           <View style={styles.header}>
             <Pressable
-  onPress={() => {
-    if (isEditing) {
-      setIsEditing(false);
-    } else {
-      setIsEditing(true);
-    }
-  }}
-  style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
-  <Feather
-    name={isEditing ? 'x' : 'edit-2'} 
-    size={24}
-    color={textColor}
-  />
-</Pressable>
+              onPress={() => {
+                if (isEditing) {
+                  setIsEditing(false);
+                } else {
+                  setIsEditing(true);
+                }
+              }}
+              style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
+              <Feather
+                name={isEditing ? 'x' : 'edit-2'}
+                size={24}
+                color={textColor}
+              />
+            </Pressable>
 
             <Pressable
               onPress={() =>
-              Alert.alert(
-              t('Delete Task?'),
-              t('Are you sure you want to delete this task? This action cannot be undone.'),
-            [
-        { text: t('Cancel'), style: 'cancel' },
-        { text: t('Delete'), style: 'destructive', onPress: () => onDelete(task.id) },
-      ]
-    )
-  }
-  style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
-  <Feather name="trash-2" size={24} color={textColor} />
-</Pressable>
+                !deletingTask &&
+                Alert.alert(
+                  t('Delete Task?'),
+                  t(
+                    'Are you sure you want to delete this task? This action cannot be undone.',
+                  ),
+                  [
+                    {text: t('Cancel'), style: 'cancel'},
+                    {
+                      text: t('Delete'),
+                      style: 'destructive',
+                      onPress: () => onDelete(task.id),
+                    },
+                  ],
+                )
+              }
+              style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}
+              disabled={deletingTask}>
+              <Feather name="trash-2" size={24} color={textColor} />
+            </Pressable>
+            {deletingTask && null}
           </View>
 
           <Text style={[styles.label, {color: textColor}]}>{t('Title')}</Text>
@@ -201,30 +211,32 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
             editable={isEditing}
           />
 
-<Text style={[styles.label, { color: textColor }]}>{t('Date')}</Text>
-<Pressable 
-  disabled={!isEditing} 
-  onPress={() => setShowDatePicker(true)}
-  style={[
-    styles.input,
-    { backgroundColor: containerColor, color: textColor, justifyContent: 'center' },
-    !isEditing && styles.disabledInput,
-  ]}>
-  <Text style={{ color: textColor, fontSize: 16 }}>
-    {date || t('Select Date')}
-  </Text>
-</Pressable>
+          <Text style={[styles.label, {color: textColor}]}>{t('Date')}</Text>
+          <Pressable
+            disabled={!isEditing}
+            onPress={() => setShowDatePicker(true)}
+            style={[
+              styles.input,
+              {
+                backgroundColor: containerColor,
+                color: textColor,
+                justifyContent: 'center',
+              },
+              !isEditing && styles.disabledInput,
+            ]}>
+            <Text style={{color: textColor, fontSize: 16}}>
+              {date || t('Select Date')}
+            </Text>
+          </Pressable>
 
-{showDatePicker && (
-  <DateTimePicker
-    value={parseDateStringToDate(date)}
-    mode="date"
-    display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
-    onChange={handleDateChange}
-  />
-)}
-
-
+          {showDatePicker && (
+            <DateTimePicker
+              value={parseDateStringToDate(date)}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'calendar'}
+              onChange={handleDateChange}
+            />
+          )}
 
           <View style={styles.timeContainer}>
             <View style={styles.timeColumn}>
@@ -323,6 +335,11 @@ const EditTask = ({visible, onClose, task, onSave, onDelete}) => {
           </View>
         </Modal>
       )}
+      {deletingTask && (
+        <View style={styles.fullscreenLoaderOverlay} pointerEvents="auto">
+          <ActivityIndicator size="large" color="#E53835" />
+        </View>
+      )}
     </Modal>
   );
 };
@@ -420,6 +437,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#000000AA',
     padding: 10,
+  },
+  fullscreenLoaderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
   },
 });
 

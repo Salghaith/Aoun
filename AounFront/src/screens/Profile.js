@@ -11,10 +11,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Dialog from 'react-native-dialog';
 import {useTranslation} from 'react-i18next';
-import BackButton from '../components/BackButton';
 import Icon from 'react-native-vector-icons/Feather';
 import CalendarIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -23,6 +23,7 @@ import i18n, {switchLanguage} from '../i18n';
 import {useLogout} from '../hooks/useLogout';
 import {AuthContext} from '../context/AuthContext';
 import {ThemeContext} from '../context/ThemeContext';
+import {useNotifications} from '../context/NotificationContext';
 import {importCalendarTasks} from '../services/calendarService';
 
 const ProfileScreen = ({navigation}) => {
@@ -30,9 +31,10 @@ const ProfileScreen = ({navigation}) => {
   const {handleLogout} = useLogout();
   const {userData} = useContext(AuthContext);
   const {isDarkMode, toggleTheme} = useContext(ThemeContext);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const {notificationsEnabled, toggleNotifications} = useNotifications();
   const [visible, setVisible] = useState(false);
   const [LMSPass, setLMSPass] = useState('');
+  const [loading, setLoading] = useState(false);
 
   return (
     <SafeAreaView
@@ -126,14 +128,13 @@ const ProfileScreen = ({navigation}) => {
           </Text>
           <Switch
             value={notificationsEnabled}
-            onValueChange={() => setNotificationsEnabled(prev => !prev)}
+            onValueChange={toggleNotifications}
             trackColor={{false: '#B0B0B0', true: '#0084FF'}}
             thumbColor={notificationsEnabled ? '#FFFFFF' : '#B0B0B0'}
             style={styles.switch}
           />
         </View>
 
-        {/* DARK MODE TOGGLE */}
         {userData.isKSU && (
           <TouchableOpacity onPress={() => setVisible(true)}>
             <View
@@ -158,30 +159,48 @@ const ProfileScreen = ({navigation}) => {
           </TouchableOpacity>
         )}
         <Dialog.Container visible={visible}>
-          <Dialog.Title>Enter Your LMS Password</Dialog.Title>
+          <Dialog.Title>{t('Enter Your LMS Password')}</Dialog.Title>
           <Dialog.Input
             onChangeText={setLMSPass}
             value={LMSPass}
             secureTextEntry
+            editable={!loading}
           />
-          <Dialog.Button label="Cancel" onPress={() => setVisible(false)} />
+          {loading && (
+            <View style={{alignItems: 'center', marginVertical: 10}}>
+              <ActivityIndicator size="small" color="#007AFF" />
+            </View>
+          )}
           <Dialog.Button
-            label="Import"
+            label={t('Cancel')}
+            onPress={() => {
+              if (!loading) setVisible(false);
+            }}
+            disabled={loading}
+          />
+          <Dialog.Button
+            label={t('Import')}
             onPress={async () => {
+              setLoading(true);
               try {
                 await importCalendarTasks(
                   userData.userId,
                   userData.email.split('@')[0],
                   LMSPass,
                 );
-                Alert.alert('✅ Success', 'Calendar tasks synced.');
+                Alert.alert(t('Success'), t('Calendar tasks synced.'));
               } catch (error) {
-                console.error('❌ Sync error:', error);
-                Alert.alert('❌ Error', 'Failed to sync calendar tasks.');
+                const message =
+                  error.response?.data?.error ||
+                  error.message ||
+                  'An unexpected error occurred. Please try again.';
+                Alert.alert('❌ Error', message);
               } finally {
+                setLoading(false);
                 setVisible(false);
               }
             }}
+            disabled={loading}
           />
         </Dialog.Container>
 

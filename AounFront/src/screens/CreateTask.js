@@ -20,9 +20,11 @@ import {saveTask} from '../services/taskService';
 import {AuthContext} from '../context/AuthContext';
 import {scheduleNotification} from '../services/notificationService';
 import {TaskContext} from '../context/TaskContext';
+import {useNotifications} from '../context/NotificationContext';
 
 const CreateTask = ({navigation}) => {
   const {userData} = useContext(AuthContext);
+  const {notificationsEnabled} = useNotifications();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [weekStartDate, setWeekStartDate] = useState(new Date());
   const [taskName, setTaskName] = useState('');
@@ -102,7 +104,9 @@ const CreateTask = ({navigation}) => {
     await saveTask(newTask, userData.userId);
     setTasks(prevTasks => [...prevTasks, newTask]);
     // await refreshTasks();
-    scheduleNotification(newTask);
+    if (notificationsEnabled) {
+      scheduleNotification(newTask);
+    }
     navigation.navigate('Tasks');
   };
 

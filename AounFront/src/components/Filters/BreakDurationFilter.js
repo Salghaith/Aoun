@@ -2,17 +2,19 @@ import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {useTranslation} from 'react-i18next';
 
 const BreakDurationFilter = ({maxBreak, setMaxBreak}) => {
-  const formatLabel = value => `${value} Hour${value === 1 ? '' : 's'}`;
+  const {t} = useTranslation();
+  const formatLabel = value => `${value} ${t('Hour')}${value === 1 ? '' : t('s')}`;
 
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.sectionTitle}>Maximum Break Duration</Text>
+      <Text style={styles.sectionTitle}>{t('Maximum Break Duration')}</Text>
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Icon name="clock" solid size={14} color="black" />
-          <Text style={styles.cardHeaderText}> Longest break duration</Text>
+          <Text style={styles.cardHeaderText}>{t('Longest break duration')}</Text>
         </View>
 
         <View style={styles.sliderRow}>

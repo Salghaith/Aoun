@@ -19,11 +19,12 @@ import SectionDetails from '../components/SectionDetails';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import FinalDetailsModal from '../components/FinalDetailsModal';
-import firestore from '@react-native-firebase/firestore';
+import {useSubjects} from '../context/SubjectContext';
 
 const AddSubjectManually = ({navigation}) => {
   const {t} = useTranslation();
   const {isDarkMode} = useContext(ThemeContext);
+  const {addSubject, updateSubject, deleteSubject} = useSubjects();
   const textColor = isDarkMode ? '#F9FAFB' : '#1C2128';
 
   const route = useRoute();
@@ -171,17 +172,15 @@ const AddSubjectManually = ({navigation}) => {
       final: finalDetails || null,
       sections: structuredSections,
       createdAt: new Date().toISOString(),
-      userId: user.uid, // ✅ Save the subject under the current user
+      userId: user.uid,
     };
 
     try {
-      const subjectRef = firestore().collection('subjects');
       if (editingSubject?.id) {
-        await subjectRef.doc(editingSubject.id).update(subjectData);
+        await updateSubject(editingSubject.id, subjectData);
         Alert.alert('Success', 'Subject updated');
       } else {
-        await subjectRef.add(subjectData);
-        Alert.alert('Success', 'Subject saved');
+        await addSubject(subjectData);
       }
       navigation.goBack();
     } catch (err) {
@@ -203,10 +202,7 @@ const AddSubjectManually = ({navigation}) => {
           style: 'destructive',
           onPress: async () => {
             try {
-              await firestore()
-                .collection('subjects')
-                .doc(editingSubject.id)
-                .delete();
+              await deleteSubject(editingSubject.id);
               Alert.alert('Deleted', 'Subject has been removed.');
               navigation.goBack();
             } catch (err) {
