@@ -81,7 +81,7 @@ const MyScheduleScreen = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerRow}>
         <BackButton onPress={() => navigation.goBack()} />
-        <Text style={styles.title}>My Schedule</Text>
+        <Text style={styles.title}>{t('My Schedule')}</Text>
         <TouchableOpacity
           style={styles.saveIcon}
           onPress={handleImportSchedule}

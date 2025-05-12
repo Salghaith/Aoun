@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import {initReactI18next} from 'react-i18next';
 import {NativeModules, Platform, I18nManager} from 'react-native';
 import {storeData, getData} from './utils/storageUtils';
+import RNRestart from 'react-native-restart';
 
 const getDeviceLanguage = () => {
   let deviceLanguage = 'en'; // Default to English
@@ -239,6 +240,10 @@ const resources = {
       'Schedule saved successfully.': 'تم حفظ الجدول بنجاح.',
       "Hello! I'm here to help. Ask me anything and I'll do my best to assist you.":
         'مرحبًا! أنا هنا للمساعدة. اسألني أي شيء وسأبذل قصارى جهدي لمساعدتك.',
+      'Delete Schedule': 'حذف الجدول',
+      Import: 'استيراد',
+      'My Schedule': 'جدولي',
+      'Import LMS Calendar': 'استيراد المهام من LMS',
     },
   },
 };
@@ -285,8 +290,10 @@ export const switchLanguage = async navigation => {
     I18nManager.allowRTL(shouldBeRTL);
   }
 
-  // If needed, you can forcibly reload the app or reset navigation
-  // navigation.reset({ ... }) or a prompt to restart
+  // Force a full app restart for RTL/LTR and language changes to take effect
+  setTimeout(() => {
+    RNRestart.Restart();
+  }, 300);
 };
 
 export default i18n;

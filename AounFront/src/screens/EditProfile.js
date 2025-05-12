@@ -38,11 +38,7 @@ const EditProfileScreen = ({navigation}) => {
     } else setIsEditable(!isEditable);
   };
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        {backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5'},
-      ]}>
+    <SafeAreaView style={[styles.container, {backgroundColor: '#1C2128'}]}>
       <View style={styles.headerContainer}>
         <BackButton onPress={() => navigation.goBack()} />
         <Text
