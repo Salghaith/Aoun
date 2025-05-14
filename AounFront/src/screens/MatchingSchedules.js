@@ -20,7 +20,7 @@ const MatchingSchedules = ({route, navigation}) => {
   const [validSchedules, setValidSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const {subjects} = useSubjects();
-
+  console.log(subjects[0]);
   useEffect(() => {
     const generateSchedules = async () => {
       setLoading(true);
@@ -31,11 +31,13 @@ const MatchingSchedules = ({route, navigation}) => {
       const filteredSectionLists = selectedSubjects
         .map(subject => {
           const subjectCode = subject.code || 'No code';
+          const subjectName = subject.name || 'Subject';
           const entries = Object.entries(subject.sections || {});
           return entries.map(([sectionNum, data]) => ({
             sectionNum,
             ...data,
             subjectCode,
+            subjectName,
           }));
         })
         .filter(sectionList => sectionList.length > 0);

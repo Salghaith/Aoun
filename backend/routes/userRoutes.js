@@ -8,5 +8,7 @@ const router = express.Router();
 router.put("/update-profile", updateUserProfile);
 router.post("/calendar-events", fetchCalendarEvents);
 router.post("/fetch-schedule", fetchSchedule);
-
+router.get("/test", (req, res) => {
+  res.send("Hello World");
+});
 export default router;

@@ -8,6 +8,8 @@ import {
   Image,
   ActivityIndicator,
   I18nManager,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
@@ -28,6 +30,8 @@ const SignupScreen = ({navigation}) => {
   const [rememberMe, setRememberMe] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{flex: 1}}>
       <BackButton onPress={() => navigation.navigate('Welcome')} />
       <View style={{flexDirection: 'row'}}>
         <Text style={styles.title}>{t('Create Your Account')}</Text>
@@ -106,8 +110,10 @@ const SignupScreen = ({navigation}) => {
             style={styles.KSUButton}
             fontSize={16}
           />
-        )}
-      </View>
+          )}
+        </View>
+        </View>
+        </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };

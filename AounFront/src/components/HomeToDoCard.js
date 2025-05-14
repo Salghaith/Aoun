@@ -40,11 +40,12 @@ const HomeToDoCard = ({ task }) => {
 };
 const styles = StyleSheet.create({
   card: {
-    width: 160,
-    height: 140,
+    width: 180,
+    height: 150,
     borderRadius: 18,
     backgroundColor: '#131417',
     padding: 15,
+    marginBottom: "7%",
   },
   importanceCircle: {
     width: 12,

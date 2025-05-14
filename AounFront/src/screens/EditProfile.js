@@ -7,6 +7,8 @@ import {
   Image,
   ActivityIndicator,
   I18nManager,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
@@ -39,83 +41,90 @@ const EditProfileScreen = ({navigation}) => {
   };
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: '#1C2128'}]}>
-      <View style={styles.headerContainer}>
-        <BackButton onPress={() => navigation.goBack()} />
-        <Text
-          style={[styles.title, {color: isDarkMode ? '#F9FAFB' : '#1C2128'}]}>
-          {t('Edit Information')}
-        </Text>
-      </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{flex: 1}}>
+          <View style={styles.headerContainer}>
+            <BackButton onPress={() => navigation.goBack()} />
+            <Text
+              style={[
+                styles.title,
+                {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
+              ]}>
+              {t('Edit Information')}
+            </Text>
+          </View>
 
-      <View style={styles.ProfileContainer}>
-        <Image
-          style={styles.image}
-          source={require('../assets/images/ProfilePng.png')}
-        />
-      </View>
-      <View style={styles.errorMessage}>
-        {error && <AlertCard type="error" message={error} />}
-        {success && <AlertCard type="success" message={success} />}
-      </View>
-
-      <View style={styles.EditContainer}>
-        <InputField
-          type="text"
-          title={t('Full Name')}
-          placeholder={newUsername}
-          value={isEditable ? newUsername : ''}
-          editable={isEditable}
-          onChangeText={setNewUsername}
-          icon="user"
-          style={[
-            styles.inputField,
-            isDarkMode
-              ? null
-              : {
-                  backgroundColor: '#F0F0F0',
-                  borderColor: '#C0C0C0',
-                  color: '#1C2128',
-                },
-          ]}
-        />
-        <InputField
-          type="email"
-          title={t('Enter Your Email')}
-          placeholder={newEmail}
-          value={isEditable ? newEmail : ''}
-          editable={isEditable}
-          onChangeText={setNewEmail}
-          icon="mail"
-          style={[
-            styles.inputField,
-            isDarkMode
-              ? null
-              : {
-                  backgroundColor: '#F0F0F0',
-                  borderColor: '#C0C0C0',
-                  color: '#1C2128',
-                },
-          ]}
-        />
-        <View style={styles.loginButton}>
-          {loading ? (
-            <ActivityIndicator size="large" color={'white'} />
-          ) : (
-            <LoginButton
-              title={isEditable ? t('Save') : t('Edit')}
-              onPress={handleEditSave}
-            />
-          )}
-        </View>
-        {isEditable && (
-          <View style={styles.loginButton}>
-            <LoginButton
-              title={t('Reset')}
-              onPress={() => navigation.replace('EditProfile')}
+          <View style={styles.ProfileContainer}>
+            <Image
+              style={styles.image}
+              source={require('../assets/images/ProfilePng.png')}
             />
           </View>
-        )}
-      </View>
+          <View style={styles.errorMessage}>
+            {error && <AlertCard type="error" message={error} />}
+            {success && <AlertCard type="success" message={success} />}
+          </View>
+
+          <View style={styles.EditContainer}>
+            <InputField
+              type="text"
+              title={t('Full Name')}
+              placeholder={newUsername}
+              value={isEditable ? newUsername : ''}
+              editable={isEditable}
+              onChangeText={setNewUsername}
+              icon="user"
+              style={[
+                styles.inputField,
+                isDarkMode
+                  ? null
+                  : {
+                      backgroundColor: '#F0F0F0',
+                      borderColor: '#C0C0C0',
+                      color: '#1C2128',
+                    },
+              ]}
+            />
+            <InputField
+              type="email"
+              title={t('Enter Your Email')}
+              placeholder={newEmail}
+              value={isEditable ? newEmail : ''}
+              editable={isEditable}
+              onChangeText={setNewEmail}
+              icon="mail"
+              style={[
+                styles.inputField,
+                isDarkMode
+                  ? null
+                  : {
+                      backgroundColor: '#F0F0F0',
+                      borderColor: '#C0C0C0',
+                      color: '#1C2128',
+                    },
+              ]}
+            />
+            <View style={styles.loginButton}>
+              {loading ? (
+                <ActivityIndicator size="large" color={'white'} />
+              ) : (
+                <LoginButton
+                  title={isEditable ? t('Save') : t('Edit')}
+                  onPress={handleEditSave}
+                />
+              )}
+            </View>
+            {isEditable && (
+              <View style={styles.loginButton}>
+                <LoginButton
+                  title={t('Reset')}
+                  onPress={() => navigation.replace('EditProfile')}
+                />
+              </View>
+            )}
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };

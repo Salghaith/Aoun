@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, StyleSheet, I18nManager} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -8,6 +8,7 @@ const BottomNav = ({activeTab}) => {
   const navigation = useNavigation();
   const iconColor = tab => (activeTab === tab ? 'white' : '#A0A0A0');
   const iconSize = 30;
+  console.log('I18nManager.isRTL', I18nManager.isRTL);
 
   return (
     <View style={styles.container}>
@@ -61,9 +62,9 @@ const BottomNav = ({activeTab}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     backgroundColor: '#131417',
-    paddingVertical: 20,//previous value was 15
+    paddingVertical: 20,
     paddingHorizontal: 30,
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -72,6 +73,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    height: 80,
   },
 });
 

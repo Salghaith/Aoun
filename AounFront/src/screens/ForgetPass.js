@@ -6,6 +6,8 @@ import {
   SafeAreaView,
   Alert,
   I18nManager,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
@@ -24,7 +26,10 @@ const ForgetPassScreen = ({navigation}) => {
 
     sendPasswordResetEmail(auth, email)
       .then(() => {
-        Alert.alert(t('Password reset email sent!'), t('Please check your inbox.'));
+        Alert.alert(
+          t('Password reset email sent!'),
+          t('Please check your inbox.'),
+        );
         navigation.goBack();
       })
       .catch(error => {
@@ -35,24 +40,28 @@ const ForgetPassScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
-        <BackButton onPress={() => navigation.goBack()} />
-      </View>
-      <Text style={styles.title}>{t('Reset Your Password')}</Text>
-      <View style={styles.inputContainer}>
-        <InputField
-          title={t('Enter Your Email')}
-          icon="mail"
-          onChangeText={setEmail}
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <LoginButton
-          title={t('Send Reset Link')}
-          onPress={() => handlePasswordReset()}
-          style={{marginTop: 30}}
-        />
-      </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{flex: 1}}>
+          <View>
+            <BackButton onPress={() => navigation.goBack()} />
+          </View>
+          <Text style={styles.title}>{t('Reset Your Password')}</Text>
+          <View style={styles.inputContainer}>
+            <InputField
+              title={t('Enter Your Email')}
+              icon="mail"
+              onChangeText={setEmail}
+            />
+          </View>
+          <View style={styles.buttonContainer}>
+            <LoginButton
+              title={t('Send Reset Link')}
+              onPress={() => handlePasswordReset()}
+              style={{marginTop: 30}}
+            />
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };

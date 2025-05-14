@@ -22,8 +22,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#131417',
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: I18nManager.isRTL ? 0 : 34,
-    marginRight: I18nManager.isRTL ? 34 : 0,
+    // marginLeft: I18nManager.isRTL ? 0 : 34,
+    // marginRight: I18nManager.isRTL ? 34 : 0,
+    marginHorizontal: 34,
     marginTop: 14,
   },
 });

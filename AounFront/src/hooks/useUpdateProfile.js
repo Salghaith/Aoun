@@ -20,8 +20,9 @@ export const useUpdateProfile = () => {
     }
 
     setLoading(true);
-    const baseURL =
-      Platform.OS == 'ios' ? 'http://localhost:3000' : 'http://10.0.2.2:3000';
+    // const baseURL =    //For local testing
+    //   Platform.OS == 'ios' ? 'http://localhost:3000' : 'http://10.0.2.2:3000';
+    const baseURL = 'https://salghaith.online'; //For production
 
     try {
       const user = await getData('userData');

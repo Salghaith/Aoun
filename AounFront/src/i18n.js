@@ -244,6 +244,11 @@ const resources = {
       Import: 'استيراد',
       'My Schedule': 'جدولي',
       'Import LMS Calendar': 'استيراد المهام من LMS',
+      Reset: 'تراجع',
+      Date: 'التاريخ',
+      'No classes today': 'لا يوجد محاضرات اليوم',
+      'Search Task Here': 'ابحث عن مهمة',
+      'Choose your off days': 'اختر أيام الراحة',
     },
   },
 };
@@ -294,6 +299,7 @@ export const switchLanguage = async navigation => {
   setTimeout(() => {
     RNRestart.Restart();
   }, 300);
+  
 };
 
 export default i18n;

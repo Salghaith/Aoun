@@ -1,8 +1,6 @@
 import React, {useContext} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, I18nManager} from 'react-native';
 import {useTranslation} from 'react-i18next';
-import {AuthContext} from '../context/AuthContext';
-import {ThemeContext} from '../context/ThemeContext';
 import {TaskContext} from '../context/TaskContext';
 import HomeToDoCard from './HomeToDoCard';
 
@@ -16,7 +14,13 @@ const HomeToDoSection = ({style}) => {
   });
 
   return (
-    <View style={[styles.cardContainer]}>
+    <View
+      style={[
+        styles.cardContainer,
+        filteredTasks.length <= 1
+          ? styles.justifyContentStartProp
+          : styles.justifyContentSpaceProp,
+      ]}>
       {filteredTasks.length > 0 ? (
         filteredTasks.map(task => <HomeToDoCard key={task.id} task={task} />)
       ) : (
@@ -29,8 +33,8 @@ const styles = StyleSheet.create({
   cardContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 30,
-    width: '100%',
+    // gap: '8%',
+    // width: '100%',
     marginTop: 15,
   },
   noTaskText: {
@@ -38,7 +42,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
     marginTop: 10,
-    marginLeft: '27%',
+    marginLeft: I18nManager.isRTL ? 0 : '27%',
+    marginRight: I18nManager.isRTL ? '30%' : 0,
+  },
+  justifyContentStartProp: {
+    justifyContent: 'flex-start',
+  },
+  justifyContentSpaceProp: {
+    justifyContent: 'space-evenly',
   },
 });
 export default HomeToDoSection;

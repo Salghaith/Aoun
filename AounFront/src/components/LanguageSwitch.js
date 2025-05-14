@@ -6,7 +6,11 @@ const LanguageSwitch = ({onPress, language}) => {
     <TouchableOpacity onPress={onPress} style={styles.switchContainer}>
       <View style={styles.switchContent}>
         <Image
-          source={language === 'en' ? require('../assets/images/arabic-flag.png') : require('../assets/images/english-flag.png')}
+          source={
+            language === 'en'
+              ? require('../assets/images/arabic-flag.png')
+              : require('../assets/images/english-flag.png')
+          }
           style={styles.flagIcon}
         />
       </View>

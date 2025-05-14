@@ -2,16 +2,32 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useTranslation} from 'react-i18next';
 
-export default function HomeClassCard({style, subject, today}) {
+export default function HomeClassCard({style, subject, today, setNoClasses}) {
   const {t} = useTranslation();
 
   const [status, setStatus] = useState('green');
   const [showCard, setShowCard] = useState(true);
   const [timeLeft, setTimeLeft] = useState(null);
 
-  const lectureToday = subject.lectures.find(
-    lecture => Number(lecture.day) === today,
-  );
+  const lectureToday = subject.lectures.find(lecture => lecture.day === today);
+  const parseTime = timeStr => {
+    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!match) {
+      throw new Error(`Invalid time format: ${timeStr}`);
+    }
+
+    let [_, hourStr, minuteStr, period] = match;
+    let hours = parseInt(hourStr, 10);
+    const minutes = parseInt(minuteStr, 10);
+
+    if (period.toUpperCase() === 'PM' && hours !== 12) {
+      hours += 12;
+    } else if (period.toUpperCase() === 'AM' && hours === 12) {
+      hours = 0;
+    }
+
+    return {hours, minutes};
+  };
 
   useEffect(() => {
     if (!lectureToday) {
@@ -22,10 +38,12 @@ export default function HomeClassCard({style, subject, today}) {
     let timeoutId;
 
     const checkTime = () => {
-      const [startHour, startMinute] = lectureToday.start
-        .split(':')
-        .map(Number);
-      const [endHour, endMinute] = lectureToday.end.split(':').map(Number);
+      const {hours: startHour, minutes: startMinute} = parseTime(
+        lectureToday.startTime,
+      );
+      const {hours: endHour, minutes: endMinute} = parseTime(
+        lectureToday.endTime,
+      );
 
       const now = new Date();
       const startTime = new Date();
@@ -67,20 +85,27 @@ export default function HomeClassCard({style, subject, today}) {
     };
   }, []);
 
-  if (!showCard) return null;
+  // if (!showCard) {
+  //   return null;
+  // }
+  useEffect(() => {
+    if (!showCard && typeof setNoClasses === 'function') {
+      setNoClasses(true);
+    }
+  }, [showCard]);
 
   const infoSectionWidth =
     status === 'red' ? '71%' : status === 'green' ? '84%' : '71%';
-
+  console.log('subject', subject.subjectName);
   return (
     <View style={[styles.container, style]}>
       <View style={[styles.infoSection, {width: infoSectionWidth}]}>
-        <Text style={styles.courseName}>{subject.name}</Text>
+        <Text style={styles.courseName}>{subject.subjectName}</Text>
         <View style={styles.detailsSection}>
-          <Text style={styles.courseDetails}>{subject.code}</Text>
-          <Text style={styles.courseDetails}>{subject.section}</Text>
+          <Text style={styles.courseDetails}>{subject.subjectCode}</Text>
+          <Text style={styles.courseDetails}>{subject.sectionNum}</Text>
           <Text style={styles.courseDetails}>
-            {lectureToday.start} - {lectureToday.end}
+            {lectureToday.startTime} - {lectureToday.endTime}
           </Text>
         </View>
       </View>
@@ -124,7 +149,7 @@ const styles = StyleSheet.create({
     width: '5%',
   },
   courseName: {
-    fontSize: 17,
+    fontSize: 14,
     color: 'white',
     fontWeight: 'bold',
   },
@@ -135,7 +160,7 @@ const styles = StyleSheet.create({
     width: 220,
   },
   courseDetails: {
-    fontSize: 13,
+    fontSize: 11,
     color: 'white',
     fontWeight: 'bold',
   },

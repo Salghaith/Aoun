@@ -65,9 +65,9 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     width: '75%',
-    height: '90%', // Stops above BottomNav
+    height: '90%',
     backgroundColor: '#1F262E',
-    padding: 20,
+    paddingHorizontal: 20,
     zIndex: 10,
     shadowColor: '#000',
     shadowOffset: {width: -2, height: 0},

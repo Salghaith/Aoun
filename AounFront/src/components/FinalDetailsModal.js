@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {Modal, View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {useTranslation} from 'react-i18next';
 
-const FinalDetailsModal = ({ isVisible, onClose = () => {}, onSave = () => {} }) => {
+const FinalDetailsModal = ({
+  isVisible,
+  onClose = () => {},
+  onSave = () => {},
+}) => {
   const [datePickerVisible, setDatePickerVisible] = useState(false);
   const [startTimePickerVisible, setStartTimePickerVisible] = useState(false);
   const [endTimePickerVisible, setEndTimePickerVisible] = useState(false);
@@ -13,7 +17,7 @@ const FinalDetailsModal = ({ isVisible, onClose = () => {}, onSave = () => {} })
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
 
-  const formatTime = (date) => {
+  const formatTime = date => {
     const hours = date.getHours();
     const minutes = date.getMinutes();
     const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -22,7 +26,7 @@ const FinalDetailsModal = ({ isVisible, onClose = () => {}, onSave = () => {} })
     return `${formattedHours}:${formattedMinutes} ${ampm}`;
   };
 
-  const formatDate = (date) => {
+  const formatDate = date => {
     return date.toLocaleDateString('en-GB');
   };
 
@@ -42,34 +46,44 @@ const FinalDetailsModal = ({ isVisible, onClose = () => {}, onSave = () => {} })
           <Text style={styles.title}>{t('Final Exam Details')}</Text>
 
           {/* Date Picker */}
-          <TouchableOpacity onPress={() => setDatePickerVisible(true)} style={styles.inputBox}>
-            <Text style={styles.inputText}>{date ? formatDate(date) : t('Pick a date')}</Text>
+          <TouchableOpacity
+            onPress={() => setDatePickerVisible(true)}
+            style={styles.inputBox}>
+            <Text style={styles.inputText}>
+              {date ? formatDate(date) : t('Pick a date')}
+            </Text>
           </TouchableOpacity>
 
           {/* Time Row */}
           <View style={styles.row}>
             <TouchableOpacity
               onPress={() => setStartTimePickerVisible(true)}
-              style={[styles.halfInputBox, { marginRight: 8 }]}
-            >
-              <Text style={styles.inputText}>{startTime ? formatTime(startTime) : t('Start time')}</Text>
+              style={[styles.halfInputBox, {marginRight: 8}]}>
+              <Text style={styles.inputText}>
+                {startTime ? formatTime(startTime) : t('Start time')}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => setEndTimePickerVisible(true)}
-              style={styles.halfInputBox}
-            >
-              <Text style={styles.inputText}>{endTime ? formatTime(endTime) : t('End time')}</Text>
+              style={styles.halfInputBox}>
+              <Text style={styles.inputText}>
+                {endTime ? formatTime(endTime) : t('End time')}
+              </Text>
             </TouchableOpacity>
           </View>
 
           {/* Buttons */}
           <View style={styles.buttonRow}>
-            <TouchableOpacity onPress={onClose} style={[styles.button, styles.cancelButton]}>
-              <Text style={styles.buttonText}>Cancel</Text>
+            <TouchableOpacity
+              onPress={onClose}
+              style={[styles.button, styles.cancelButton]}>
+              <Text style={styles.buttonText}>{t('Cancel')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleSave} style={[styles.button, styles.saveButton]}>
-              <Text style={styles.buttonText}>Save</Text>
+            <TouchableOpacity
+              onPress={handleSave}
+              style={[styles.button, styles.saveButton]}>
+              <Text style={styles.buttonText}>{t('Save')}</Text>
             </TouchableOpacity>
           </View>
 
@@ -77,7 +91,7 @@ const FinalDetailsModal = ({ isVisible, onClose = () => {}, onSave = () => {} })
           <DateTimePickerModal
             isVisible={datePickerVisible}
             mode="date"
-            onConfirm={(val) => {
+            onConfirm={val => {
               setDate(val);
               setDatePickerVisible(false);
             }}
@@ -87,7 +101,7 @@ const FinalDetailsModal = ({ isVisible, onClose = () => {}, onSave = () => {} })
           <DateTimePickerModal
             isVisible={startTimePickerVisible}
             mode="time"
-            onConfirm={(val) => {
+            onConfirm={val => {
               setStartTime(val);
               setStartTimePickerVisible(false);
             }}
@@ -97,7 +111,7 @@ const FinalDetailsModal = ({ isVisible, onClose = () => {}, onSave = () => {} })
           <DateTimePickerModal
             isVisible={endTimePickerVisible}
             mode="time"
-            onConfirm={(val) => {
+            onConfirm={val => {
               setEndTime(val);
               setEndTimePickerVisible(false);
             }}

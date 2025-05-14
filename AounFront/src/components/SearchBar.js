@@ -1,13 +1,15 @@
 import React from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import {useTranslation} from 'react-i18next';
 
 const SearchBar = ({ value, onChangeText }) => {
+  const {t} = useTranslation();
   return (
     <View style={styles.searchContainer}>
       <Feather name="search" size={20} color="#FFFFFF" style={styles.icon} />
       <TextInput
-        placeholder="Search Task Here"
+        placeholder={t('Search Task Here')}
         placeholderTextColor="#888888"
         style={styles.input}
         value={value} // Bind value from props

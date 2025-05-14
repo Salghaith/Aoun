@@ -11,7 +11,10 @@ export const fetchSchedule = async (req, res) => {
         .json({ error: "Username and password are required." });
     }
 
-    const browser = await puppeteer.launch({ headless: "new" });
+    const browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
     const page = await browser.newPage();
 
     await page.goto("https://edugate.ksu.edu.sa/ksu/init");
@@ -93,7 +96,7 @@ export const fetchSchedule = async (req, res) => {
           schedule.push({
             sectionNum,
             subjectCode: code,
-            // subjectName: name,
+            subjectName: name,
             lectures,
           });
         }
@@ -108,6 +111,6 @@ export const fetchSchedule = async (req, res) => {
     return res.status(200).json(schedule);
   } catch (err) {
     console.error("❌ Scraper error:", err);
-    return res.status(500).json({ error: "Failed to fetch schedule" });
+    return res.status(500).json({ error: `Failed to fetch schedule ${err}` });
   }
 };

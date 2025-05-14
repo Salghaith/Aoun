@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   I18nManager,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
@@ -27,70 +29,78 @@ const LoginScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <BackButton onPress={() => navigation.navigate('Welcome')} />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{flex: 1}}>
+          <BackButton onPress={() => navigation.navigate('Welcome')} />
 
-      <Text style={styles.title}>{t('Login Your Account')}</Text>
-      <View style={styles.errorMessage}>
-        {error && <AlertCard type="error" message={error} />}
-      </View>
-      <View style={styles.formContainer}>
-        <InputField
-          type="email"
-          title={t('Enter Your Email or KSU ID')}
-          icon="mail"
-          style={styles.InputField}
-          onChangeText={setEmail}
-        />
-
-        <InputField
-          type="password"
-          title={t('Enter Your Password')}
-          icon="lock"
-          onChangeText={setPassword}
-        />
-        <View style={styles.rememberSection}>
-          <TouchableOpacity
-            onPress={() => setRememberMe(!rememberMe)}
-            style={{flexDirection: 'row', alignItems: 'center', padding: 10}}>
-            <Text style={styles.rememberText}>{t('Remember me')}</Text>
-            <Icon
-              name={rememberMe ? 'check-box' : 'check-box-outline-blank'}
-              size={20}
-              color="white"
+          <Text style={styles.title}>{t('Login Your Account')}</Text>
+          <View style={styles.errorMessage}>
+            {error && <AlertCard type="error" message={error} />}
+          </View>
+          <View style={styles.formContainer}>
+            <InputField
+              type="email"
+              title={t('Enter Your Email or KSU ID')}
+              icon="mail"
+              style={styles.InputField}
+              onChangeText={setEmail}
             />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ForgetPass')}
-            style={styles.forgotPassword}>
-            <Text style={styles.forgotPasswordText}>
-              {t('Forgot Password?')}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.loginButton}>
-          {loading ? (
-            <ActivityIndicator size="large" color={'white'} />
-          ) : (
-            <LoginButton
-              title={t('Login')}
-              onPress={() => {
-                handleLogin(email, password, rememberMe);
-              }}
-            />
-          )}
-        </View>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Signup')}
-          style={styles.signupContainer}>
-          <Text style={styles.signupText}>
-            <Text style={styles.signupTextDim}>
-              {t('Create New Account?')}{' '}
-            </Text>
-            <Text style={styles.signupLink}>{t('Sign up')}</Text>
-          </Text>
-        </TouchableOpacity>
-      </View>
+            <InputField
+              type="password"
+              title={t('Enter Your Password')}
+              icon="lock"
+              onChangeText={setPassword}
+            />
+            <View style={styles.rememberSection}>
+              <TouchableOpacity
+                onPress={() => setRememberMe(!rememberMe)}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  padding: 10,
+                }}>
+                <Text style={styles.rememberText}>{t('Remember me')}</Text>
+                <Icon
+                  name={rememberMe ? 'check-box' : 'check-box-outline-blank'}
+                  size={20}
+                  color="white"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ForgetPass')}
+                style={styles.forgotPassword}>
+                <Text style={styles.forgotPasswordText}>
+                  {t('Forgot Password?')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.loginButton}>
+              {loading ? (
+                <ActivityIndicator size="large" color={'white'} />
+              ) : (
+                <LoginButton
+                  title={t('Login')}
+                  onPress={() => {
+                    handleLogin(email, password, rememberMe);
+                  }}
+                />
+              )}
+            </View>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Signup')}
+              style={styles.signupContainer}>
+              <Text style={styles.signupText}>
+                <Text style={styles.signupTextDim}>
+                  {t('Create New Account?')}{' '}
+                </Text>
+                <Text style={styles.signupLink}>{t('Sign up')}</Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };

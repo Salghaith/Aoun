@@ -230,7 +230,7 @@ const UserChatScreen = ({navigation}) => {
         .collection('sessions')
         .doc(sessionId)
         .collection('messages')
-        .orderBy('createdAt', 'asc') // 🟢 use 'createdAt' instead of 'timestamp'
+        .orderBy('createdAt', 'asc')
         .get();
 
       const chatMessages = messagesSnapshot.docs.map(doc => doc.data());

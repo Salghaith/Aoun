@@ -21,7 +21,7 @@ import SchedulePreviewScreen from '../screens/SchedulePreviewScreen';
 import MyScheduleScreen from '../screens/MyScheduleScreen';
 
 const Stack = createStackNavigator();
-
+//
 export default function AppStack() {
   return (
     <View style={styles.container}>
@@ -38,22 +38,58 @@ export default function AppStack() {
         }}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="EditProfile" component={EditProfile} />
-        <Stack.Screen name="CreateTask" component={CreateTask} />
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
+          options={{
+            gestureEnabled: true,
+          }}
+        />
+        <Stack.Screen
+          name="CreateTask"
+          component={CreateTask}
+          options={{
+            gestureEnabled: true,
+          }}
+        />
         <Stack.Screen name="Tasks" component={Tasks} />
         <Stack.Screen name="UserChat" component={UserChatScreen} />
         <Stack.Screen name="GenerateSchedule" component={GenerateSchedule} />
         <Stack.Screen
           name="AddSubjectManually"
           component={AddSubjectManually}
+          options={{
+            gestureEnabled: true,
+          }}
         />
-        <Stack.Screen name="ScheduleFilter" component={ScheduleFilter} />
-        <Stack.Screen name="MatchingSchedules" component={MatchingSchedules} />
+        <Stack.Screen
+          name="ScheduleFilter"
+          component={ScheduleFilter}
+          options={{
+            gestureEnabled: true,
+          }}
+        />
+        <Stack.Screen
+          name="MatchingSchedules"
+          component={MatchingSchedules}
+          options={{
+            gestureEnabled: true,
+          }}
+        />
         <Stack.Screen
           name="SchedulePreviewScreen"
           component={SchedulePreviewScreen}
+          options={{
+            gestureEnabled: true,
+          }}
         />
-        <Stack.Screen name="MyScheduleScreen" component={MyScheduleScreen} />
+        <Stack.Screen
+          name="MyScheduleScreen"
+          component={MyScheduleScreen}
+          options={{
+            gestureEnabled: true,
+          }}
+        />
       </Stack.Navigator>
       <BottomNavWrapper />
     </View>

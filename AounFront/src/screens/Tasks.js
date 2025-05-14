@@ -17,6 +17,7 @@ import TaskItem from '../components/TaskItem';
 import EditTask from '../components/EditTask';
 import {AuthContext} from '../context/AuthContext';
 import {TaskContext} from '../context/TaskContext';
+import {I18nManager} from 'react-native';
 
 import {updateTask, deleteTask} from '../services/taskService';
 import {
@@ -92,8 +93,8 @@ const Tasks = ({navigation}) => {
     }
   };
 
-  const backgroundColor = isDarkMode ? '#1C2128' : '#F5F5F5';
-  const textColor = isDarkMode ? '#FFFFFF' : '#1C2128';
+  const backgroundColor = '#1C2128';
+  const textColor = '#FFFFFF';
 
   const tasksCountText = t('You have got {{count}} tasks today to complete', {
     count: filteredTasks.length,
@@ -108,7 +109,8 @@ const Tasks = ({navigation}) => {
     <SafeAreaView style={[styles.container, {backgroundColor}]}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled">
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag">
         <View style={styles.titleContainer}>
           <Text style={[styles.titleText, {color: textColor}]}>
             {tasksCountText}
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 25,
     fontWeight: 'bold',
-    maxWidth: '80%',
+    maxWidth: '90%',
   },
   searchResultsContainer: {
     marginHorizontal: 37,

@@ -8,8 +8,10 @@ import {
   SafeAreaView,
   ScrollView,
   Alert,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
-
+import {I18nManager} from 'react-native';
 import {useRoute} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import BackButton from '../components/BackButton';
@@ -142,7 +144,10 @@ const AddSubjectManually = ({navigation}) => {
     for (const section of allSectionData) {
       const num = section.sectionNumber.trim();
       if (seen.has(num)) {
-        Alert.alert(t('Validation'), t(`Section number "${num}" is duplicated.`));
+        Alert.alert(
+          t('Validation'),
+          t(`Section number "${num}" is duplicated.`),
+        );
         return;
       }
       seen.add(num);
@@ -217,86 +222,96 @@ const AddSubjectManually = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.headerContainer}>
-        <BackButton onPress={() => navigation.goBack()} />
-        <Text style={[styles.headerTitle, {color: textColor}]}>
-          {editingSubject ? t('Edit subject') : t('Add subject manually')}
-        </Text>
-      </View>
-
-      <TextInput
-        style={styles.input}
-        placeholder={t('Subject name')}
-        placeholderTextColor="#AAA"
-        value={subjectName}
-        onChangeText={setSubjectName}
-        maxLength={40}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder={t('Subject code')}
-        placeholderTextColor="#AAA"
-        value={subjectCode}
-        onChangeText={setSubjectCode}
-        maxLength={7}
-      />
-
-      <View style={styles.buttonRow}>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => setIsModalVisible(true)}>
-          <FontAwesome6 name="pen" color="white" size={20} />
-          <Text style={styles.buttonText}>{t('Final')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={handleAddSection}>
-          <FontAwesome6
-            name="user-plus"
-            color="white"
-            size={22}
-            style={{marginLeft: 5}}
-          />
-          <Text style={styles.buttonText}>{t('Add section')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton} onPress={handleSave}>
-          <FontAwesome5 name="save" color="white" size={22} solid />
-          <Text style={styles.buttonText}>{t('Save')}</Text>
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{flex: 1}}
-        contentContainerStyle={{paddingBottom: 120}}>
-        {sections.map(section => (
-          <View key={section.id} style={{marginBottom: 20}}>
-            <SectionDetails
-              ref={ref => (sectionRefs.current[section.id] = ref)}
-              onDelete={() => {
-                setSections(prev =>
-                  prev.filter(item => item.id !== section.id),
-                );
-                delete sectionRefs.current[section.id];
-              }}
-              isDeletable={sections.length > 1}
-              initialData={section}
-            />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{flex: 1}}>
+          <View style={styles.headerContainer}>
+            <BackButton onPress={() => navigation.goBack()} />
+            <Text
+              style={[
+                editingSubject ? styles.editTitle : styles.headerTitle,
+                {color: textColor},
+              ]}>
+              {editingSubject ? t('Edit subject') : t('Add subject manually')}
+            </Text>
           </View>
-        ))}
-      </ScrollView>
 
-      {editingSubject?.id && (
-        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
-          <Text style={styles.deleteButtonText}>{t('Delete Subject')}</Text>
-        </TouchableOpacity>
-      )}
+          <TextInput
+            style={styles.input}
+            placeholder={t('Subject name')}
+            placeholderTextColor="#AAA"
+            value={subjectName}
+            onChangeText={setSubjectName}
+            maxLength={40}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder={t('Subject code')}
+            placeholderTextColor="#AAA"
+            value={subjectCode}
+            onChangeText={setSubjectCode}
+            maxLength={7}
+          />
 
-      <FinalDetailsModal
-        isVisible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        onSave={handleSaveFinalDetails}
-      />
+          <View style={styles.buttonRow}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => setIsModalVisible(true)}>
+              <FontAwesome6 name="pen" color="white" size={20} />
+              <Text style={styles.buttonText}>{t('Final')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleAddSection}>
+              <FontAwesome6
+                name="user-plus"
+                color="white"
+                size={22}
+                style={{marginLeft: 5}}
+              />
+              <Text style={styles.buttonText}>{t('Add section')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.actionButton} onPress={handleSave}>
+              <FontAwesome5 name="save" color="white" size={22} solid />
+              <Text style={styles.buttonText}>{t('Save')}</Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{flex: 1}}
+            contentContainerStyle={{paddingBottom: 120}}>
+            {sections.map(section => (
+              <View key={section.id} style={{marginBottom: 20}}>
+                <SectionDetails
+                  ref={ref => (sectionRefs.current[section.id] = ref)}
+                  onDelete={() => {
+                    setSections(prev =>
+                      prev.filter(item => item.id !== section.id),
+                    );
+                    delete sectionRefs.current[section.id];
+                  }}
+                  isDeletable={sections.length > 1}
+                  initialData={section}
+                />
+              </View>
+            ))}
+          </ScrollView>
+
+          {editingSubject?.id && (
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={handleDelete}>
+              <Text style={styles.deleteButtonText}>{t('Delete Subject')}</Text>
+            </TouchableOpacity>
+          )}
+
+          <FinalDetailsModal
+            isVisible={isModalVisible}
+            onClose={() => setIsModalVisible(false)}
+            onSave={handleSaveFinalDetails}
+          />
+        </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };
@@ -312,12 +327,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    // gap: 10,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginLeft: 47,
-    marginRight: 'auto',
+    marginLeft: I18nManager.isRTL ? 0 : '-3%',
+    marginRight: I18nManager.isRTL ? '3%' : 0,
+    marginTop: 15,
+  },
+  editTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginLeft: I18nManager.isRTL ? 0 : '9%',
+    marginRight: I18nManager.isRTL ? '14%' : 0,
     marginTop: 15,
   },
   input: {

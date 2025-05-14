@@ -22,7 +22,6 @@ import LanguageSwitch from '../components/LanguageSwitch';
 import i18n, {switchLanguage} from '../i18n';
 import {useLogout} from '../hooks/useLogout';
 import {AuthContext} from '../context/AuthContext';
-import {ThemeContext} from '../context/ThemeContext';
 import {useNotifications} from '../context/NotificationContext';
 import {importCalendarTasks} from '../services/calendarService';
 
@@ -30,24 +29,16 @@ const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
   const {handleLogout} = useLogout();
   const {userData} = useContext(AuthContext);
-  const {isDarkMode, toggleTheme} = useContext(ThemeContext);
   const {notificationsEnabled, toggleNotifications} = useNotifications();
   const [visible, setVisible] = useState(false);
   const [LMSPass, setLMSPass] = useState('');
   const [loading, setLoading] = useState(false);
 
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        {backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5'},
-      ]}>
+    <SafeAreaView style={[styles.container, {backgroundColor: '#1C2128'}]}>
       {/* HEADER */}
       <View style={styles.headerContainer}>
-        <Text
-          style={[styles.title, {color: isDarkMode ? '#F9FAFB' : '#1C2128'}]}>
-          {t('Profile')}
-        </Text>
+        <Text style={[styles.title, {color: '#F9FAFB'}]}>{t('Profile')}</Text>
       </View>
 
       {/* MAIN CONTENT */}
@@ -61,22 +52,18 @@ const ProfileScreen = ({navigation}) => {
           style={styles.usernameContainer}
           onPress={() => navigation.navigate('EditProfile')}>
           <Text
-            style={[
-              styles.username,
-              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
-            ]}>
+            style={[styles.username, {color: '#F9FAFB'}]}>
             {userData.username}
           </Text>
           <Icon
             name={I18nManager.isRTL ? 'chevron-left' : 'chevron-right'}
             size={24}
-            color={isDarkMode ? '#B0B0B0' : '#4A4F55'}
+            color={'#B0B0B0'}
             style={styles.arrowIcon}
           />
         </TouchableOpacity>
 
-        <Text
-          style={[styles.email, {color: isDarkMode ? '#B1B1B1' : '#4A4F55'}]}>
+        <Text style={[styles.email, {color: '#B1B1B1'}]}>
           {userData.email}
         </Text>
 
@@ -84,21 +71,20 @@ const ProfileScreen = ({navigation}) => {
         <View
           style={[
             styles.switchContainer,
-            {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
+            {backgroundColor: '#4A4F55'},
           ]}>
-          <Icon
-            name="globe"
-            size={24}
-            color={isDarkMode ? '#B0B0B0' : '#4A4F55'}
-            style={styles.sectionIcon}
-          />
-          <Text
-            style={[
-              styles.sectionText,
-              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
-            ]}>
-            {t('Language')}
-          </Text>
+          <View style={{flexDirection: 'row', gap: 10}}>
+            <Icon
+              name="globe"
+              size={24}
+              color={'#B0B0B0'}
+              style={styles.sectionIcon}
+            />
+            <Text
+              style={[styles.sectionText, {color: '#F9FAFB'}]}>
+              {t('Language')}
+            </Text>
+          </View>
           <View style={styles.languageSwitcherWrapper}>
             <LanguageSwitch
               onPress={() => switchLanguage(navigation)}
@@ -109,23 +95,18 @@ const ProfileScreen = ({navigation}) => {
 
         {/* NOTIFICATIONS TOGGLE */}
         <View
-          style={[
-            styles.switchContainer,
-            {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
-          ]}>
-          <Icon
-            name="bell"
-            size={24}
-            color={isDarkMode ? '#B0B0B0' : '#4A4F55'}
-            style={styles.sectionIcon}
-          />
-          <Text
-            style={[
-              styles.sectionText,
-              {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
-            ]}>
-            {t('Notifications')}
-          </Text>
+          style={[styles.switchContainer, {backgroundColor: '#4A4F55'}]}>
+          <View style={{flexDirection: 'row', gap: 10}}>
+            <Icon
+              name="bell"
+              size={24}
+              color={'#B0B0B0'}
+              style={styles.sectionIcon}
+            />
+            <Text style={[styles.sectionText, {color: '#F9FAFB'}]}>
+              {t('Notifications')}
+            </Text>
+          </View>
           <Switch
             value={notificationsEnabled}
             onValueChange={toggleNotifications}
@@ -138,23 +119,18 @@ const ProfileScreen = ({navigation}) => {
         {userData.isKSU && (
           <TouchableOpacity onPress={() => setVisible(true)}>
             <View
-              style={[
-                styles.switchContainer,
-                {backgroundColor: isDarkMode ? '#4A4F55' : '#E0E0E0'},
-              ]}>
-              <CalendarIcon
-                name="calendar-import"
-                size={24}
-                color={isDarkMode ? '#B0B0B0' : '#4A4F55'}
-                style={styles.sectionIcon}
-              />
-              <Text
-                style={[
-                  styles.sectionText,
-                  {color: isDarkMode ? '#F9FAFB' : '#1C2128'},
-                ]}>
-                {t('Import LMS Calendar')}
-              </Text>
+              style={[styles.switchContainer, {backgroundColor: '#4A4F55'}]}>
+              <View style={{flexDirection: 'row', gap: 10, width: '100%'}}>
+                <CalendarIcon
+                  name="calendar-import"
+                  size={24}
+                  color={'#B0B0B0'}
+                  style={styles.sectionIcon}
+                />
+                <Text style={[styles.sectionText, {color: '#F9FAFB'}]}>
+                  {t('Import LMS Calendar')}
+                </Text>
+              </View>
             </View>
           </TouchableOpacity>
         )}
@@ -268,12 +244,13 @@ const styles = StyleSheet.create({
     width: '85%',
   },
   sectionIcon: {
-    marginRight: 14,
+    // marginRight: 14,
   },
   sectionText: {
     fontSize: 20,
     fontWeight: '500',
-    flex: 1,
+    // flex: 1,
+    // textAlign: I18nManager.isRTL ? 'right' : 'left',
   },
   switch: {
     transform: [{scaleX: 1.3}, {scaleY: 1.3}],

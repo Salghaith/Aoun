@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ActivityIndicator,
+  I18nManager,
 } from 'react-native';
 import BackButton from '../components/BackButton';
 import OffDaysFilter from '../components/Filters/OffDaysFilter';
@@ -78,8 +79,8 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginLeft: 87,
-    marginRight: 'auto',
+    marginLeft: I18nManager.isRTL ? 0 : '15%',
+    marginRight: I18nManager.isRTL ? '15%' : 0,
     marginTop: 15,
     color: '#FFF',
   },

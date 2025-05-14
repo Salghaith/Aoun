@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,10 @@ import {
   SafeAreaView,
   I18nManager,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {AuthContext} from '../context/AuthContext';
-import {ThemeContext} from '../context/ThemeContext';
 import {useSchedule} from '../context/ScheduleContext';
 import Icon from 'react-native-vector-icons/AntDesign';
 import HomeClassSection from '../components/HomeClassSection';
@@ -19,23 +19,59 @@ import HomeToDoSection from '../components/HomeToDoSection';
 const HomeScreen = ({navigation}) => {
   const {t} = useTranslation();
   const {userData} = useContext(AuthContext);
-  const {isDarkMode, toggleTheme} = useContext(ThemeContext);
   const {schedule} = useSchedule();
-  const iconColor = isDarkMode ? 'white' : 'black';
+  const iconColor = 'white';
+  const [currentWisdomIndex, setCurrentWisdomIndex] = useState(0);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Fade out
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        // After fade out, update text and fade in
+        setCurrentWisdomIndex(prev => (prev + 1) % wisdoms.length);
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      });
+    }, 20000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const wisdoms = [
+    "Don't forget to check your tasks for today. Keep making progress!",
+    'One step at a time is still progress.',
+    'Stay consistent, not perfect.',
+    'Focus on what you can control.',
+    'Done is better than perfect.',
+    'Small actions compound into big results.',
+    'Discipline beats motivation.',
+    'Start now. Fix later.',
+    'If it’s important, schedule it.',
+    'You won’t always be motivated — be consistent.',
+    'Progress over perfection. Always.',
+    'You can’t improve what you don’t measure.',
+    'Success is just structured repetition.',
+    'Do something today your future self will thank you for.',
+    "Excuses don't get results.",
+    'You’re not behind. You’re just getting started.',
+  ];
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return t('Good morning');
     if (hour < 18) return t('Good afternoon');
     return t('Good evening');
   };
-
+  console.log(schedule);
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        {backgroundColor: isDarkMode ? '#1C2128' : '#F5F5F5'},
-      ]}>
+    <SafeAreaView style={[styles.container, {backgroundColor: '#1C2128'}]}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
@@ -45,39 +81,45 @@ const HomeScreen = ({navigation}) => {
             {getGreeting()}, {userData.username}
           </Text>
         </View>
-        <View style={styles.weekContainer}>
-          {Array.from({length: 7}, (_, i) => {
-            const day = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
-            day.setDate(day.getDate() + i);
+        <TouchableOpacity
+          style={{width: I18nManager.isRTL ? null : '100%'}}
+          onPress={() => navigation.navigate('Tasks')}>
+          <View style={styles.weekContainer}>
+            {Array.from({length: 7}, (_, i) => {
+              const day = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+              day.setDate(day.getDate() + i);
 
-            return (
-              <View
-                style={[styles.dayBox, i == 3 && styles.selectedDay]}
-                key={i}>
-                <Text style={[styles.dayText, {color: iconColor}]}>
-                  {day.toDateString().split(' ')[0]}
-                </Text>
-                <Text style={[styles.dayText, {color: iconColor}]}>
-                  {day.getDate()}
-                </Text>
-              </View>
-            );
-          })}
-        </View>
+              return (
+                <View
+                  style={[styles.dayBox, i == 3 && styles.selectedDay]}
+                  key={i}>
+                  <Text style={[styles.dayText, {color: iconColor}]}>
+                    {day.toDateString().split(' ')[0]}
+                  </Text>
+                  <Text style={[styles.dayText, {color: iconColor}]}>
+                    {day.getDate()}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
+        </TouchableOpacity>
         <View style={styles.wisdomContainer}>
-          <Text style={styles.wisdomText}>
-            {t('Hi')} {userData.username},{' '}
-            {t(
-              "don't forget to check your tasks for today. Keep making progress!",
-            )}
-          </Text>
+          <Animated.Text style={[styles.wisdomText, {opacity: fadeAnim}]}>
+            {t('Hi')} {userData.username}, {t(wisdoms[currentWisdomIndex])}
+          </Animated.Text>
         </View>
+
         <TouchableOpacity
           style={styles.createTaskContainer}
           onPress={() => navigation.navigate('CreateTask')}>
           <Text style={styles.createTaskText}>{t('Create Task')}</Text>
           <View style={styles.circle}>
-            <Icon name="arrowright" size={22} color="white" />
+            <Icon
+              name={I18nManager.isRTL ? 'arrowleft' : 'arrowright'}
+              size={22}
+              color="white"
+            />
           </View>
         </TouchableOpacity>
         <View style={styles.classesContainer}>
@@ -133,11 +175,11 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   weekContainer: {
-    flexDirection: 'row',
+    flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     justifyContent: 'space-around',
     marginTop: 32,
-    alignSelf: 'stretch',
-    // paddingHorizontal: 20,
+    alignSelf: 'center',
+    width: '89%',
   },
   dayBox: {
     alignItems: 'center',
@@ -150,11 +192,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   wisdomContainer: {
-    width: '89%',
+    minWidth: '89%',
+    maxWidth: '89%',
     marginTop: 13,
     backgroundColor: '#131417',
     padding: 16,
     borderRadius: 12,
+    alignSelf: 'center',
   },
   wisdomText: {
     fontSize: 16,
@@ -177,7 +221,8 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 24,
     fontWeight: 'bold',
-    marginRight: 95,
+    marginRight: I18nManager.isRTL ? 0 : 95,
+    marginLeft: I18nManager.isRTL ? 95 : 0,
   },
   circle: {
     alignItems: 'center',

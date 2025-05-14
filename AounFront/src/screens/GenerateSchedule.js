@@ -120,13 +120,15 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 35,
-    marginLeft: 25,
+    marginHorizontal: '10%',
+    marginTop: 15,
+    alignSelf: 'flex-start',
   },
   IconCloud: {
-    marginLeft: 30,
+    // marginLeft: 30,
   },
   IconAddSub: {
-    marginLeft: 10,
+    // marginLeft: 10,
   },
   buttonView: {
     flexDirection: 'row',
@@ -141,12 +143,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 30,
+    justifyContent: 'space-between',
+    paddingHorizontal: 5,
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: 'bold',
-    paddingLeft: 12,
+    paddingHorizontal: 7,
   },
   cardContainer: {
     paddingHorizontal: 6,

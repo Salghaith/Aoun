@@ -15,6 +15,7 @@ import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import LectureBlock from '../components/resultedSchedule/LectureBlock';
 import ScheduleHeader from '../components/resultedSchedule/ScheduleHeader';
+import {useSchedule} from '../context/ScheduleContext';
 
 const HOURS = Array.from({length: 13}, (_, i) => `${8 + i}:00`);
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
@@ -23,7 +24,7 @@ const COLUMN_WIDTH = 60;
 const SchedulePreviewScreen = ({route, navigation}) => {
   const {t} = useTranslation();
   const {schedule, index} = route.params;
-
+  const {saveSchedule} = useSchedule();
   const handleSaveSchedule = async () => {
     const user = auth().currentUser;
     if (!user) {
@@ -51,7 +52,7 @@ const SchedulePreviewScreen = ({route, navigation}) => {
         userId: user.uid,
       };
 
-      await AsyncStorage.setItem('savedSchedule', JSON.stringify(newSchedule));
+      await saveSchedule(schedule);
       Alert.alert(t('Success'), t('Schedule saved successfully.'));
     } catch (err) {
       console.error('Error saving schedule:', err);

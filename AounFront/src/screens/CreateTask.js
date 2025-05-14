@@ -8,6 +8,9 @@ import {
   Pressable,
   SafeAreaView,
   Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Button,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import Icon from 'react-native-vector-icons/Feather';
@@ -21,7 +24,7 @@ import {AuthContext} from '../context/AuthContext';
 import {scheduleNotification} from '../services/notificationService';
 import {TaskContext} from '../context/TaskContext';
 import {useNotifications} from '../context/NotificationContext';
-
+import {I18nManager} from 'react-native';
 const CreateTask = ({navigation}) => {
   const {userData} = useContext(AuthContext);
   const {notificationsEnabled} = useNotifications();
@@ -34,9 +37,9 @@ const CreateTask = ({navigation}) => {
   const [showPicker, setShowPicker] = useState(false);
   const [timeType, setTimeType] = useState('start');
   const [priority, setPriority] = useState('Medium'); //Default is Medium
+  const [tempTime, setTempTime] = useState(new Date());
 
   const {t} = useTranslation();
-  const {isDarkMode} = useContext(ThemeContext);
   const {setTasks, refreshTasks} = useContext(TaskContext);
 
   const isBefore = (d1, d2) => d1.getTime() < d2.getTime();
@@ -110,207 +113,286 @@ const CreateTask = ({navigation}) => {
     navigation.navigate('Tasks');
   };
 
-  const bgColor = isDarkMode ? '#1C2128' : '#F5F5F5';
-  const textColor = isDarkMode ? '#F9FAFB' : '#1C2128';
-  const iconColor = isDarkMode ? 'white' : 'black';
+  const bgColor = '#1C2128';
+  const textColor = '#F9FAFB';
+  const iconColor = 'white';
 
   return (
-    <SafeAreaView style={[styles.container, {backgroundColor: bgColor}]}>
-      <View style={styles.headerContainer}>
-        <BackButton onPress={() => navigation.goBack()} />
-        <Text style={[styles.headerTitle, {color: textColor}]}>
-          {t('Create New Task')}
-        </Text>
-      </View>
+    <SafeAreaView style={[styles.container, {backgroundColor: bgColor, flex:1}]}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{flex: 1}}>
+          <View style={styles.headerContainer}>
+            <BackButton onPress={() => navigation.goBack()} />
+            <Text style={[styles.headerTitle, {color: textColor}]}>
+              {t('Create New Task')}
+            </Text>
+          </View>
 
-      <View style={styles.calendarContainer}>
-        <Pressable
-          onPress={() => handleWeekChange(-7)}
-          style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
-          <Icon name="chevron-left" size={24} color={iconColor} />
-        </Pressable>
-        <Text
-          style={[
-            styles.calendarTitle,
-            {fontSize: 18, fontWeight: '500', color: iconColor},
-          ]}>
-          {selectedDate.toDateString()}
-        </Text>
-        <Pressable
-          onPress={() => handleWeekChange(7)}
-          style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
-          <Icon name="chevron-right" size={24} color={iconColor} />
-        </Pressable>
-      </View>
-
-      <View style={styles.weekContainer}>
-        {Array.from({length: 7}, (_, i) => {
-          const day = new Date(weekStartDate);
-          day.setDate(day.getDate() + i);
-
-          const isSelected = selectedDate.toDateString() === day.toDateString();
-
-          return (
+          <View style={styles.calendarContainer}>
             <Pressable
-              key={i}
-              onPress={() => handleDaySelect(day)}
-              style={({pressed}) => [
-                styles.dayBox,
-                isSelected && styles.selectedDay,
-                pressed && {transform: [{scale: 0.95}]},
-              ]}>
-              <Text style={[styles.dayText, {color: iconColor}]}>
-                {day.toDateString().split(' ')[0]}
-              </Text>
-              <Text style={[styles.dateText, {color: iconColor}]}>
-                {day.getDate()}
-              </Text>
+              onPress={() => handleWeekChange(-7)}
+              style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
+              <Icon
+                name={I18nManager.isRTL ? 'chevron-right' : 'chevron-left'}
+                size={24}
+                color={iconColor}
+              />
             </Pressable>
-          );
-        })}
-      </View>
-
-      <View style={styles.taskFieldsContainer}>
-        <Text style={[styles.sectionTitle, {color: textColor}]}>
-          {t('Task')}
-        </Text>
-        <TaskField
-          placeholder={t('Name')}
-          value={taskName}
-          onChangeText={setTaskName}
-        />
-        <TaskField
-          placeholder={t('Description')}
-          value={taskDescription}
-          onChangeText={setTaskDescription}
-          multiline
-        />
-      </View>
-
-      <View style={styles.timeContainer}>
-        <View>
-          <Text style={[styles.timeLabel, {color: textColor}]}>
-            {t('Start Time')}
-          </Text>
-          <Pressable
-            onPress={() => {
-              setTimeType('start');
-              setShowPicker(true);
-            }}
-            style={({pressed}) => [
-              styles.timeBox,
-              pressed && {transform: [{scale: 0.95}]},
-            ]}>
-            <Icon
-              name="clock"
-              size={26}
-              color="#FFF"
-              style={styles.clockIcon}
-            />
-            <Text style={styles.timeText}>
-              {startTime.toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-              })}
+            <Text
+              style={[
+                styles.calendarTitle,
+                {fontSize: 18, fontWeight: '500', color: iconColor},
+              ]}>
+              {selectedDate.toDateString()}
             </Text>
-          </Pressable>
-        </View>
+            <Pressable
+              onPress={() => handleWeekChange(7)}
+              style={({pressed}) => [pressed && {transform: [{scale: 0.95}]}]}>
+              <Icon
+                name={I18nManager.isRTL ? 'chevron-left' : 'chevron-right'}
+                size={24}
+                color={iconColor}
+              />
+            </Pressable>
+          </View>
 
-        <View>
-          <Text style={[styles.timeLabel, {color: textColor}]}>
-            {t('End Time')}
-          </Text>
-          <Pressable
-            onPress={() => {
-              setTimeType('end');
-              setShowPicker(true);
-            }}
-            style={({pressed}) => [
-              styles.timeBox,
-              pressed && {transform: [{scale: 0.95}]},
-            ]}>
-            <Icon
-              name="clock"
-              size={26}
-              color="#FFF"
-              style={styles.clockIcon}
-            />
-            <Text style={styles.timeText}>
-              {endTime.toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-              })}
+          <View style={styles.weekContainer}>
+            {Array.from({length: 7}, (_, i) => {
+              const day = new Date(weekStartDate);
+              day.setDate(day.getDate() + i);
+
+              const isSelected =
+                selectedDate.toDateString() === day.toDateString();
+
+              return (
+                <Pressable
+                  key={i}
+                  onPress={() => handleDaySelect(day)}
+                  style={({pressed}) => [
+                    styles.dayBox,
+                    isSelected && styles.selectedDay,
+                    pressed && {transform: [{scale: 0.95}]},
+                  ]}>
+                  <Text style={[styles.dayText, {color: iconColor}]}>
+                    {day.toDateString().split(' ')[0]}
+                  </Text>
+                  <Text style={[styles.dateText, {color: iconColor}]}>
+                    {day.getDate()}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          <View style={styles.taskFieldsContainer}>
+            <Text style={[styles.sectionTitle, {color: textColor}]}>
+              {t('Task')}
             </Text>
-          </Pressable>
-        </View>
-      </View>
-
-      <View style={styles.priorityContainer}>
-        <Text style={[styles.priorityLabel, {color: textColor}]}>
-          {t('Priority')}
-        </Text>
-        <View style={styles.priorityButtonsRow}>
-          <Pressable
-            onPress={() => setPriority('High')}
-            style={({pressed}) => [
-              styles.priorityButton,
-              {borderColor: '#E53835'},
-              priority === 'High' && styles.prioritySelectedRed,
-              pressed && {transform: [{scale: 0.95}]},
-            ]}>
-            <Text style={styles.priorityButtonText}>{t('High')}</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => setPriority('Medium')}
-            style={({pressed}) => [
-              styles.priorityButton,
-              {borderColor: '#007AFF'},
-              priority === 'Medium' && styles.prioritySelectedBlue,
-              pressed && {transform: [{scale: 0.95}]},
-            ]}>
-            <Text style={styles.priorityButtonText}>{t('Medium')}</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => setPriority('Low')}
-            style={({pressed}) => [
-              styles.priorityButton,
-              {borderColor: '#0AB161'},
-              priority === 'Low' && styles.prioritySelectedGreen,
-              pressed && {transform: [{scale: 0.95}]},
-            ]}>
-            <Text style={styles.priorityButtonText}>{t('Low')}</Text>
-          </Pressable>
-        </View>
-      </View>
-
-      <View style={styles.createButtonContainer}>
-        <Pressable
-          onPress={handleCreateTask}
-          style={({pressed}) => [
-            styles.createButton,
-            pressed && {transform: [{scale: 0.95}]},
-          ]}>
-          <Text style={styles.createButtonText}>{t('Create Task')}</Text>
-        </Pressable>
-      </View>
-
-      {showPicker && (
-        <Modal transparent animationType="slide" visible={showPicker}>
-          <View style={styles.modalContainer}>
-            <DateTimePicker
-              value={timeType === 'start' ? startTime : endTime}
-              mode="time"
-              display={Platform.OS === 'ios' ? 'spinner' : 'clock'}
-              is24Hour={true}
-              onChange={handleTimeChange}
+            <TaskField
+              placeholder={t('Name')}
+              value={taskName}
+              onChangeText={setTaskName}
+            />
+            <TaskField
+              placeholder={t('Description')}
+              value={taskDescription}
+              onChangeText={setTaskDescription}
+              multiline
             />
           </View>
-        </Modal>
-      )}
+
+          <View style={styles.timeContainer}>
+            <View>
+              <Text style={[styles.timeLabel, {color: textColor}]}>
+                {t('Start Time')}
+              </Text>
+              <Pressable
+                onPress={() => {
+                  setTimeType('start');
+                  setShowPicker(true);
+                }}
+                style={({pressed}) => [
+                  styles.timeBox,
+                  pressed && {transform: [{scale: 0.95}]},
+                ]}>
+                <Icon
+                  name="clock"
+                  size={26}
+                  color="#FFF"
+                  style={styles.clockIcon}
+                />
+                <Text style={styles.timeText}>
+                  {startTime.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                  })}
+                </Text>
+              </Pressable>
+            </View>
+
+            <View>
+              <Text style={[styles.timeLabel, {color: textColor}]}>
+                {t('End Time')}
+              </Text>
+              <Pressable
+                onPress={() => {
+                  setTimeType('end');
+                  setShowPicker(true);
+                }}
+                style={({pressed}) => [
+                  styles.timeBox,
+                  pressed && {transform: [{scale: 0.95}]},
+                ]}>
+                <Icon
+                  name="clock"
+                  size={26}
+                  color="#FFF"
+                  style={styles.clockIcon}
+                />
+                <Text style={styles.timeText}>
+                  {endTime.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                  })}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+
+          <View style={styles.priorityContainer}>
+            <Text style={[styles.priorityLabel, {color: textColor}]}>
+              {t('Priority')}
+            </Text>
+            <View style={styles.priorityButtonsRow}>
+              <Pressable
+                onPress={() => setPriority('High')}
+                style={({pressed}) => [
+                  styles.priorityButton,
+                  {borderColor: '#E53835'},
+                  priority === 'High' && styles.prioritySelectedRed,
+                  pressed && {transform: [{scale: 0.95}]},
+                ]}>
+                <Text style={styles.priorityButtonText}>{t('High')}</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() => setPriority('Medium')}
+                style={({pressed}) => [
+                  styles.priorityButton,
+                  {borderColor: '#007AFF'},
+                  priority === 'Medium' && styles.prioritySelectedBlue,
+                  pressed && {transform: [{scale: 0.95}]},
+                ]}>
+                <Text style={styles.priorityButtonText}>{t('Medium')}</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() => setPriority('Low')}
+                style={({pressed}) => [
+                  styles.priorityButton,
+                  {borderColor: '#0AB161'},
+                  priority === 'Low' && styles.prioritySelectedGreen,
+                  pressed && {transform: [{scale: 0.95}]},
+                ]}>
+                <Text style={styles.priorityButtonText}>{t('Low')}</Text>
+              </Pressable>
+            </View>
+          </View>
+
+          <View style={styles.createButtonContainer}>
+            <Pressable
+              onPress={handleCreateTask}
+              style={({pressed}) => [
+                styles.createButton,
+                pressed && {transform: [{scale: 0.95}]},
+              ]}>
+              <Text style={styles.createButtonText}>{t('Create Task')}</Text>
+            </Pressable>
+          </View>
+
+          {showPicker && (
+            <Modal transparent animationType="slide" visible={showPicker}>
+              <View style={styles.modalContainer}>
+                {Platform.OS === 'ios' ? (
+                  <>
+                    <DateTimePicker
+                      value={tempTime}
+                      mode="time"
+                      display="spinner"
+                      is24Hour={true}
+                      onChange={(event, selectedDate) => {
+                        if (selectedDate) {
+                          setTempTime(selectedDate); // save temp value
+                        }
+                      }}
+                      
+                    />
+                    <Button
+                      title="Confirm"
+                      onPress={() => {
+                        if (timeType === 'start') {
+                          setStartTime(tempTime);
+                          if (isBefore(endTime, tempTime)) setEndTime(tempTime);
+                        } else {
+                          if (isBefore(tempTime, startTime)) {
+                            Alert.alert(
+                              t('Invalid Time'),
+                              t(
+                                'End time cannot be before start time. It has been adjusted.',
+                              ),
+                              [{text: 'OK'}],
+                            );
+                            setEndTime(startTime);
+                          } else {
+                            setEndTime(tempTime);
+                          }
+                        }
+                        setShowPicker(false);
+                      }}
+                    />
+                    <Button
+                      title="Cancel"
+                      onPress={() => setShowPicker(false)}
+                    />
+                  </>
+                ) : (
+                  <DateTimePicker
+                    value={timeType === 'start' ? startTime : endTime}
+                    mode="time"
+                    display="clock"
+                    is24Hour={true}
+                    onChange={(event, selectedDate) => {
+                      if (event.type === 'set' && selectedDate) {
+                        if (timeType === 'start') {
+                          setStartTime(selectedDate);
+                          if (isBefore(endTime, selectedDate))
+                            setEndTime(selectedDate);
+                        } else {
+                          if (isBefore(selectedDate, startTime)) {
+                            Alert.alert(
+                              t('Invalid Time'),
+                              t(
+                                'End time cannot be before start time. It has been adjusted.',
+                              ),
+                              [{text: 'OK'}],
+                            );
+                            setEndTime(startTime);
+                          } else {
+                            setEndTime(selectedDate);
+                          }
+                        }
+                      }
+                      setShowPicker(false);
+                    }}
+                  />
+                )}
+              </View>
+            </Modal>
+          )}
+        </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };
@@ -324,8 +406,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginLeft: 38,
-    marginRight: 'auto',
+    marginLeft: 10,
     marginTop: 15,
   },
   calendarContainer: {

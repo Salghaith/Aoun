@@ -40,8 +40,9 @@ export const importCalendarTasks = async (userId, username, password) => {
   }
 };
 
-const baseURL =
-  Platform.OS == 'ios' ? 'http://localhost:3000' : 'http://10.0.2.2:3000';
+// const baseURL =  //For local testing
+//   Platform.OS == 'ios' ? 'http://localhost:3000' : 'http://10.0.2.2:3000';
+const baseURL = 'https://salghaith.online'; //For production
 export const fetchBlackboardCalendarEvents = async (username, password) => {
   const response = await axios.post(`${baseURL}/api/calendar-events`, {
     username,

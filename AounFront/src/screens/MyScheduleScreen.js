@@ -82,6 +82,15 @@ const MyScheduleScreen = ({navigation}) => {
       <View style={styles.headerRow}>
         <BackButton onPress={() => navigation.goBack()} />
         <Text style={styles.title}>{t('My Schedule')}</Text>
+        {schedule ? (
+          <TouchableOpacity
+            style={styles.saveIcon}
+            onPress={handleDeleteSchedule}>
+            <Icon name="calendar-times" size={20} color="#FFF" solid />
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.saveIcon} />
+        )}
         <TouchableOpacity
           style={styles.saveIcon}
           onPress={handleImportSchedule}
@@ -93,13 +102,6 @@ const MyScheduleScreen = ({navigation}) => {
             solid
           />
         </TouchableOpacity>
-        {schedule && (
-          <TouchableOpacity
-            style={styles.saveIcon}
-            onPress={handleDeleteSchedule}>
-            <Icon name="calendar-times" size={20} color="#FFF" solid />
-          </TouchableOpacity>
-        )}
       </View>
 
       {schedule ? (
@@ -153,7 +155,9 @@ const MyScheduleScreen = ({navigation}) => {
       ) : (
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>
-            {t('No schedule saved yet. Generate a schedule or import one from LMS.')}
+            {t(
+              'No schedule saved yet. Generate a schedule or import one from LMS.',
+            )}
           </Text>
         </View>
       )}
