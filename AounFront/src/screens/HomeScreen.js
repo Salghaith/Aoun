@@ -69,7 +69,7 @@ const HomeScreen = ({navigation}) => {
     if (hour < 18) return t('Good afternoon');
     return t('Good evening');
   };
-  console.log(schedule);
+  // console.log(schedule);
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: '#1C2128'}]}>
       <ScrollView
