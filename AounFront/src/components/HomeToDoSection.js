@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     // gap: '8%',
-    // width: '100%',
+    width: '100%',
     marginTop: 15,
   },
   noTaskText: {

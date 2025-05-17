@@ -68,7 +68,12 @@ export const fetchSchedule = async (username, password) => {
   }
 };
 
-export const importSchedule = async (userId, username, password) => {
+export const importSchedule = async (
+  userId,
+  username,
+  password,
+  addSubject,
+) => {
   try {
     const existingSchedule = await AsyncStorage.getItem('savedSchedule');
     if (existingSchedule) {
@@ -79,6 +84,33 @@ export const importSchedule = async (userId, username, password) => {
 
     const schedule = await fetchSchedule(username, password);
 
+    // Transform and save each subject
+    for (const subject of schedule) {
+      const {sectionNum, subjectCode, subjectName, lectures} = subject;
+
+      // Create the subject data structure
+      const subjectData = {
+        name: subjectName.trim(),
+        code: subjectCode.trim() || null,
+        final: null, // No final details in the imported schedule
+        sections: {
+          [sectionNum]: {
+            lectures: lectures.map(lecture => ({
+              day: lecture.day,
+              startTime: lecture.startTime,
+              endTime: lecture.endTime,
+            })),
+          },
+        },
+        createdAt: new Date().toISOString(),
+        userId: userId,
+      };
+
+      // Save the subject using addSubject
+      await addSubject(subjectData);
+    }
+
+    // Save the complete schedule in AsyncStorage
     await AsyncStorage.setItem(
       'savedSchedule',
       JSON.stringify({
@@ -88,6 +120,7 @@ export const importSchedule = async (userId, username, password) => {
       }),
     );
 
+    // Save the complete schedule in Firestore
     await firestore().collection('schedules').add({
       schedule,
       createdAt: new Date().toISOString(),

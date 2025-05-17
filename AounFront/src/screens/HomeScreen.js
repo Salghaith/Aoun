@@ -46,22 +46,22 @@ const HomeScreen = ({navigation}) => {
   }, []);
 
   const wisdoms = [
-    "Don't forget to check your tasks for today. Keep making progress!",
-    'One step at a time is still progress.',
-    'Stay consistent, not perfect.',
-    'Focus on what you can control.',
-    'Done is better than perfect.',
-    'Small actions compound into big results.',
-    'Discipline beats motivation.',
-    'Start now. Fix later.',
-    'If it’s important, schedule it.',
-    'You won’t always be motivated — be consistent.',
-    'Progress over perfection. Always.',
-    'You can’t improve what you don’t measure.',
-    'Success is just structured repetition.',
-    'Do something today your future self will thank you for.',
-    "Excuses don't get results.",
-    'You’re not behind. You’re just getting started.',
+    t("Don't forget to check your tasks for today. Keep making progress!"),
+    t('One step at a time is still progress.'),
+    t('Stay consistent, not perfect.'),
+    t('Focus on what you can control.'),
+    t('Done is better than perfect.'),
+    t('Small actions compound into big results.'),
+    t('Discipline beats motivation.'),
+    t('Start now. Fix later.'),
+    t('If it’s important, schedule it.'),
+    t('You won’t always be motivated — be consistent.'),
+    t('Progress over perfection. Always.'),
+    t('You can’t improve what you don’t measure.'),
+    t('Success is just structured repetition.'),
+    t('Do something today your future self will thank you for.'),
+    t("Excuses don't get results."),
+    t('You’re not behind. You’re just getting started.'),
   ];
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -122,7 +122,7 @@ const HomeScreen = ({navigation}) => {
             />
           </View>
         </TouchableOpacity>
-        <View style={styles.classesContainer}>
+        <View>
           <Text style={styles.classesHeader}>{t('Up Coming Classes')}</Text>
         </View>
         <View style={styles.classesContainer}>
@@ -216,6 +216,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 24,
     alignSelf: 'center',
+    marginBottom: 20,
   },
   createTaskText: {
     color: 'white',
@@ -236,6 +237,7 @@ const styles = StyleSheet.create({
     marginTop: 25,
     width: '100%',
     alignItems: 'center',
+    alignSelf: 'center',
   },
   classesHeader: {
     alignSelf: 'flex-start',

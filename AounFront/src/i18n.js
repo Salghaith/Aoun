@@ -249,6 +249,29 @@ const resources = {
       'No classes today': 'لا يوجد محاضرات اليوم',
       'Search Task Here': 'ابحث عن مهمة',
       'Choose your off days': 'اختر أيام الراحة',
+      "Don't forget to check your tasks for today. Keep making progress!":
+        'لا تنسَ مراجعة مهامك لليوم. استمر في التقدم!',
+      'One step at a time is still progress.':
+        'خطوة واحدة في كل مرة ما زالت تقدماً.',
+      'Stay consistent, not perfect.': 'كن ثابتاً، لا مثالياً.',
+      'Focus on what you can control.': 'ركّز على ما يمكنك التحكم فيه.',
+      'Done is better than perfect.': 'المنجز أفضل من المثالي.',
+      'Small actions compound into big results.':
+        'الأفعال الصغيرة تتراكم لتصنع نتائج كبيرة.',
+      'Discipline beats motivation.': 'الانضباط يتفوق على الدافع.',
+      'Start now. Fix later.': 'ابدأ الآن. صحّح لاحقاً.',
+      'If it’s important, schedule it.': 'إذا كان الأمر مهماً، حدده في جدولك.',
+      'You won’t always be motivated — be consistent.':
+        'لن تكون دائماً متحمساً — كن ثابتاً.',
+      'Progress over perfection. Always.': 'التقدم أهم من الكمال. دائماً.',
+      'You can’t improve what you don’t measure.':
+        'لا يمكنك تحسين ما لا تقيسه.',
+      'Success is just structured repetition.': 'النجاح هو مجرد تكرار منظّم.',
+      'Do something today your future self will thank you for.':
+        'افعل شيئاً اليوم سيشكرك عليه نفسك في المستقبل.',
+      "Excuses don't get results.": 'الأعذار لا تجلب النتائج.',
+      'You’re not behind. You’re just getting started.':
+        'أنت لست متأخراً. أنت فقط في البداية.',
     },
   },
 };
@@ -299,7 +322,6 @@ export const switchLanguage = async navigation => {
   setTimeout(() => {
     RNRestart.Restart();
   }, 300);
-  
 };
 
 export default i18n;
