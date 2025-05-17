@@ -1,4 +1,4 @@
-package aoun.app.devteam
+package com.aoun
 
 import android.app.Application
 import com.facebook.react.PackageList
