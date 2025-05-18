@@ -13,29 +13,32 @@ import {useTranslation} from 'react-i18next';
 import BackButton from '../components/BackButton';
 import InputField from '../components/InputField';
 import LoginButton from '../components/LoginButton';
-import {auth} from '../config/firebaseConfig';
-import {sendPasswordResetEmail} from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
+
 import {validateInputs} from '../utils/validationUtils';
 
 const ForgetPassScreen = ({navigation}) => {
   const {t} = useTranslation();
   const [email, setEmail] = useState('');
 
-  const handlePasswordReset = () => {
-    if (!validateInputs({email})) return;
+  const handlePasswordReset = async () => {
+    // if (!validateInputs({email})) return;
 
-    sendPasswordResetEmail(auth, email)
-      .then(() => {
-        Alert.alert(
-          t('Password reset email sent!'),
-          t('Please check your inbox.'),
-        );
-        navigation.goBack();
-      })
-      .catch(error => {
-        console.error('Password reset error: ', error);
-        Alert.alert(t('Error'), error.message);
-      });
+    try {
+      auth()
+        .sendPasswordResetEmail(email)
+        .then(() => {
+          Alert.alert('Password reset email sent!', 'Please check your inbox.');
+          navigation.goBack();
+        })
+        .catch(error => {
+          console.error('Password reset error:', error);
+          Alert.alert('Error', error.message);
+        });
+    } catch (error) {
+      console.error('Reset error:', error.code, error.message);
+      Alert.alert('Error', error.message);
+    }
   };
 
   return (

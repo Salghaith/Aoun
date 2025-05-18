@@ -86,7 +86,7 @@ export const importSchedule = async (
 
     // Transform and save each subject
     for (const subject of schedule) {
-      console.log('Subject:', subject);
+      // console.log('Subject:', subject);
       const {sectionNum, subjectCode, subjectName, lectures} = subject;
       if (!Array.isArray(lectures) || !lectures[0]?.startTime) continue;
 

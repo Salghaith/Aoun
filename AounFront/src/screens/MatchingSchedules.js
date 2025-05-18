@@ -20,7 +20,6 @@ const MatchingSchedules = ({route, navigation}) => {
   const [validSchedules, setValidSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const {subjects} = useSubjects();
-  console.log(subjects[0]);
   useEffect(() => {
     const generateSchedules = async () => {
       setLoading(true);

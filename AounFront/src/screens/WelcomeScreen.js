@@ -47,16 +47,13 @@ const WelcomeScreen = ({navigation}) => {
         />
 
         {/* ✅ Updated "Continue as Guest" to navigate to the Tasks Page */}
-        <TouchableOpacity
-          onPress={() => navigation.navigate('GuestChatScreen')}>
+        <View onPress={() => navigation.navigate('GuestChatScreen')}>
           <Text
             style={[
               styles.guestButton,
               {color: isDarkMode ? '#FFFFFF' : '#1C2128'}, // Adjust text color
-            ]}>
-            {t('Continue as Guest')}
-          </Text>
-        </TouchableOpacity>
+            ]}></Text>
+        </View>
       </View>
     </SafeAreaView>
   );

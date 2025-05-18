@@ -96,7 +96,6 @@ export default function HomeClassCard({style, subject, today, setNoClasses}) {
 
   const infoSectionWidth =
     status === 'red' ? '71%' : status === 'green' ? '84%' : '71%';
-  console.log('subject', subject.subjectName);
   return (
     <View style={[styles.container, style]}>
       <View style={[styles.infoSection, {width: infoSectionWidth}]}>

@@ -23,7 +23,8 @@ import i18n, {switchLanguage} from '../i18n';
 import {useLogout} from '../hooks/useLogout';
 import {AuthContext} from '../context/AuthContext';
 import {useNotifications} from '../context/NotificationContext';
-import {importCalendarTasks} from '../services/calendarService';
+import { importCalendarTasks } from '../services/calendarService';
+import {TaskContext} from '../context/TaskContext';
 
 const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
@@ -33,6 +34,7 @@ const ProfileScreen = ({navigation}) => {
   const [visible, setVisible] = useState(false);
   const [LMSPass, setLMSPass] = useState('');
   const [loading, setLoading] = useState(false);
+  const {refreshTasks} = useContext(TaskContext);
 
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: '#1C2128'}]}>
@@ -172,6 +174,7 @@ const ProfileScreen = ({navigation}) => {
                   'An unexpected error occurred. Please try again.';
                 Alert.alert('❌ Error', message);
               } finally {
+                refreshTasks();
                 setLoading(false);
                 setVisible(false);
               }
