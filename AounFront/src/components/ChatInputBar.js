@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,7 @@ import {
   PermissionsAndroid,
   Platform,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DocumentPicker from 'react-native-document-picker';
@@ -18,81 +18,68 @@ import {useTranslation} from 'react-i18next';
 
 const MAX_FILE_SIZE_MB = 50;
 
-const ChatInputBar = ({ onSend, isLoggedIn, loading, setLoading }) => {
+const ChatInputBar = ({onSend, isLoggedIn, loading, setLoading}) => {
   const {t} = useTranslation();
   const [message, setMessage] = useState('');
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(null);
 
-  const getFileIcon = (filename) => {
+  const getFileIcon = filename => {
     const ext = filename.split('.').pop().toLowerCase();
     switch (ext) {
-      case 'pdf': return '📄';
+      case 'pdf':
+        return '📄';
       case 'doc':
-      case 'docx': return '📝';
+      case 'docx':
+        return '📝';
       case 'ppt':
-      case 'pptx': return '📊';
+      case 'pptx':
+        return '📊';
       case 'jpg':
       case 'jpeg':
-      case 'png': return '🖼️';
-      case 'txt': return '📃';
-      default: return '📎';
+      case 'png':
+        return '🖼️';
+      case 'txt':
+        return '📃';
+      default:
+        return '📎';
     }
   };
   // ✅ Sends the typed message when user presses "Send"
   const handleSendPress = async () => {
     if (!message.trim() && selectedFiles.length === 0) return;
-  
+
     setLoading(true);
 
     let uploadedFiles = [];
     let uploadFailed = false;
-  
+
     for (const file of selectedFiles) {
       try {
         const cleanFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-        const tempPath = `${RNBlobUtil.fs.dirs.CacheDir}/${cleanFileName}`;
-  
-        console.log(`📤 Uploading ${file.name}...`);
-  
-        // Read from content:// and write to a temp file path
-        const fileData = await RNBlobUtil.fs.readStream(
-          file.uri,
-          'base64',
-          4095
-        );
-  
-        let base64Data = '';
-        await new Promise((resolve, reject) => {
-          fileData.open();
-          fileData.onData((chunk) => {
-            base64Data += chunk;
-          });
-          fileData.onError((err) => reject(err));
-          fileData.onEnd(() => resolve());
-        });
-  
-        await RNBlobUtil.fs.writeFile(tempPath, base64Data, 'base64');
-  
-        // Upload to Firebase
+
+        let actualPath = file.uri;
+        if (Platform.OS === 'android' && file.uri.startsWith('content://')) {
+          actualPath = await RNBlobUtil.android.contentUriToFilePath(file.uri);
+        }
+
         const reference = storage().ref(`uploads/${cleanFileName}`);
-        await reference.putFile(`file://${tempPath}`);
+        await reference.putFile(actualPath);
         const fileURL = await reference.getDownloadURL();
-  
+
         console.log(`✅ Uploaded ${file.name} to Firebase`);
-  
+
         uploadedFiles.push({
           name: file.name,
           url: fileURL,
           type: file.type || 'unknown',
         });
-  
       } catch (error) {
         console.error('❌ File upload error:', error);
         uploadFailed = true;
       }
     }
-  
+
     // Send only if there's something to send
     if (uploadedFiles.length > 0 || message.trim()) {
       onSend({
@@ -100,13 +87,16 @@ const ChatInputBar = ({ onSend, isLoggedIn, loading, setLoading }) => {
         text: message.trim(),
         files: uploadedFiles,
       });
-  
+
       setMessage('');
       setSelectedFiles([]);
       setUploadProgress(null);
       setLoading(false);
     } else if (uploadFailed) {
-      Alert.alert(t("Upload Failed"), t("We couldn't upload your files. Please try again."));
+      Alert.alert(
+        t('Upload Failed'),
+        t("We couldn't upload your files. Please try again."),
+      );
     }
   };
 
@@ -116,31 +106,37 @@ const ChatInputBar = ({ onSend, isLoggedIn, loading, setLoading }) => {
       if (Platform.OS === 'android') {
         if (Platform.Version >= 33) {
           const readImages = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
           );
           const readVideos = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
           );
           const readAudio = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.READ_MEDIA_AUDIO
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_AUDIO,
           );
-  
+
           const granted =
             readImages === PermissionsAndroid.RESULTS.GRANTED ||
             readVideos === PermissionsAndroid.RESULTS.GRANTED ||
             readAudio === PermissionsAndroid.RESULTS.GRANTED;
-  
+
           if (!granted) {
-            Alert.alert(t('Permission Denied'), t('Storage access is required to upload files.'));
+            Alert.alert(
+              t('Permission Denied'),
+              t('Storage access is required to upload files.'),
+            );
             return false;
           }
         } else {
           const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
+            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
           );
-  
+
           if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-            Alert.alert(t('Permission Denied'), t('Storage access is required to upload files.'));
+            Alert.alert(
+              t('Permission Denied'),
+              t('Storage access is required to upload files.'),
+            );
             return false;
           }
         }
@@ -167,47 +163,51 @@ const ChatInputBar = ({ onSend, isLoggedIn, loading, setLoading }) => {
 
       console.log('📂 Files selected:', res);
 
-    // 🔒 Check size (in bytes)
-    const oversized = res.find(file => file.size > MAX_FILE_SIZE_MB * 1024 * 1024);
-    if (oversized) {
-      Alert.alert(t('File too large'), `Limit: ${MAX_FILE_SIZE_MB}MB`);
-      return;
-    }
+      // 🔒 Check size (in bytes)
+      const oversized = res.find(
+        file => file.size > MAX_FILE_SIZE_MB * 1024 * 1024,
+      );
+      if (oversized) {
+        Alert.alert(t('File too large'), `Limit: ${MAX_FILE_SIZE_MB}MB`);
+        return;
+      }
 
-    setSelectedFiles(res);
-  } catch (err) {
-    if (DocumentPicker.isCancel(err)) {
-      console.log('User canceled picker');
-    } else {
-      console.error('❌ Picker error:', err);
-    }
+      setSelectedFiles(res);
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log('User canceled picker');
+      } else {
+        console.error('❌ Picker error:', err);
+      }
     }
   };
 
-  const handleRemoveFile = (indexToRemove) => {
+  const handleRemoveFile = indexToRemove => {
     setSelectedFiles(prev => prev.filter((_, i) => i !== indexToRemove));
   };
 
   return (
     <View style={styles.container}>
       {selectedFiles.length > 0 && (
-      <View style={styles.filePreview}>
-        {selectedFiles.map((file, index) => (
-        <View key={index} style={styles.fileItem}>
-        <Text style={styles.fileText}>
-          {getFileIcon(file.name)} {file.name || 'Unnamed File'}
-        </Text>
-        <TouchableOpacity onPress={() => handleRemoveFile(index)}>
-          <Text style={styles.removeIcon}>❌</Text>
-        </TouchableOpacity>
+        <View style={styles.filePreview}>
+          {selectedFiles.map((file, index) => (
+            <View key={index} style={styles.fileItem}>
+              <Text style={styles.fileText}>
+                {getFileIcon(file.name)} {file.name || 'Unnamed File'}
+              </Text>
+              <TouchableOpacity onPress={() => handleRemoveFile(index)}>
+                <Text style={styles.removeIcon}>❌</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
         </View>
-       ))}
-    </View>
-    )}
-      
+      )}
+
       {/* 📎 File Upload Button (Only for Logged-in Users) */}
       {isLoggedIn && (
-        <TouchableOpacity style={styles.uploadButton} onPress={handleFileUpload}>
+        <TouchableOpacity
+          style={styles.uploadButton}
+          onPress={handleFileUpload}>
           <Ionicons name="attach-outline" size={22} color="#1C2128" />
         </TouchableOpacity>
       )}
@@ -224,8 +224,7 @@ const ChatInputBar = ({ onSend, isLoggedIn, loading, setLoading }) => {
       <TouchableOpacity
         style={styles.sendButton}
         onPress={handleSendPress}
-        disabled={loading}
-      >
+        disabled={loading}>
         {loading ? (
           <ActivityIndicator size="small" color="#000" />
         ) : (
@@ -237,8 +236,6 @@ const ChatInputBar = ({ onSend, isLoggedIn, loading, setLoading }) => {
       {uploadProgress !== null && (
         <Text style={styles.progressText}>{uploadProgress}%</Text>
       )}
-  
-
     </View>
   );
 };
@@ -251,7 +248,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F2F2F2',
     marginHorizontal: 16,
-    marginBottom: "15%",
+    marginBottom: '15%',
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -278,41 +275,41 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   filePreview: {
-  position: 'absolute',
-  bottom: 55,
-  left: 20,
-  right: 20,
-  backgroundColor: '#F2F2F2',
-  borderRadius: 10,
-  padding: 8,
-  elevation: 3,
-  flexDirection: "column",
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 1 },
-  shadowOpacity: 0.2,
-  shadowRadius: 2,
-  zIndex: 10,
-},
-fileItem: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginBottom: 6,
-},
-fileText: {
-  fontSize: 13,
-  color: '#000',
-  flex: 1,
-},
-removeIcon: {
-  fontSize: 16,
-  marginLeft: 10,
-},
-progressText: {
-  position: 'absolute',
-  right: 10,
-  top: -20,
-  fontSize: 12,
-  color: '#888',
-},
+    position: 'absolute',
+    bottom: 55,
+    left: 20,
+    right: 20,
+    backgroundColor: '#F2F2F2',
+    borderRadius: 10,
+    padding: 8,
+    elevation: 3,
+    flexDirection: 'column',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    zIndex: 10,
+  },
+  fileItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6,
+  },
+  fileText: {
+    fontSize: 13,
+    color: '#000',
+    flex: 1,
+  },
+  removeIcon: {
+    fontSize: 16,
+    marginLeft: 10,
+  },
+  progressText: {
+    position: 'absolute',
+    right: 10,
+    top: -20,
+    fontSize: 12,
+    color: '#888',
+  },
 });
