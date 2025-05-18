@@ -18,14 +18,14 @@ import {AuthContext} from '../context/AuthContext';
 import {useSchedule} from '../context/ScheduleContext';
 import {importSchedule} from '../services/calendarService';
 import {useTranslation} from 'react-i18next';
-import {useSubject} from '../context/SubjectContext';
+import {useSubjects} from '../context/SubjectContext';
 
 const HOURS = Array.from({length: 13}, (_, i) => `${8 + i}:00`);
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'];
 const COLUMN_WIDTH = 60;
 
 const MyScheduleScreen = ({navigation}) => {
-  const {addSubject} = useSubject();
+  const {addSubject} = useSubjects();
   const {t} = useTranslation();
   const {userData} = useContext(AuthContext);
   const {schedule, saveSchedule, deleteSchedule} = useSchedule();

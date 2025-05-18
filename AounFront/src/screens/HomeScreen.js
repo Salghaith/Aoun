@@ -135,7 +135,6 @@ const HomeScreen = ({navigation}) => {
                 fontSize: 20,
                 marginTop: 20,
                 marginBottom: 20,
-                marginLeft: '24%',
                 textAlign: 'center',
               }}>
               {t('No schedule found.')}
