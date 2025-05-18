@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingBottom: 70,
-    width: '100%',
+    // width: '100%',
   },
   headerContainer: {
     width: 256,
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginTop: 32,
     alignSelf: 'center',
-    width: '89%',
+    width: '93%',
   },
   dayBox: {
     alignItems: 'center',
@@ -191,8 +191,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   wisdomContainer: {
-    minWidth: '89%',
-    maxWidth: '89%',
+    minWidth: '93%',
+    maxWidth: '93%',
     marginTop: 13,
     backgroundColor: '#131417',
     padding: 16,
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
   createTaskContainer: {
     height: 63,
-    width: '89%',
+    width: '93%',
     backgroundColor: '#131417',
     borderRadius: 20,
     marginTop: 25,
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
   },
   classesContainer: {
     marginTop: 25,
-    width: '100%',
+    // width: '100%',
     alignItems: 'center',
     alignSelf: 'center',
   },

@@ -95,7 +95,7 @@ export default function HomeClassCard({style, subject, today, setNoClasses}) {
   }, [showCard]);
 
   const infoSectionWidth =
-    status === 'red' ? '71%' : status === 'green' ? '84%' : '71%';
+    status === 'red' ? '74%' : status === 'green' ? '87%' : '74%';
   return (
     <View style={[styles.container, style]}>
       <View style={[styles.infoSection, {width: infoSectionWidth}]}>
@@ -141,11 +141,11 @@ const styles = StyleSheet.create({
   },
   redStatus: {
     backgroundColor: '#E53835',
-    width: '18%',
+    width: '19%',
   },
   greenStatus: {
     backgroundColor: '#4CAF50',
-    width: '5%',
+    width: '6%',
   },
   courseName: {
     fontSize: 14,

@@ -23,12 +23,12 @@ import i18n, {switchLanguage} from '../i18n';
 import {useLogout} from '../hooks/useLogout';
 import {AuthContext} from '../context/AuthContext';
 import {useNotifications} from '../context/NotificationContext';
-import { importCalendarTasks } from '../services/calendarService';
+import {importCalendarTasks} from '../services/calendarService';
 import {TaskContext} from '../context/TaskContext';
 
 const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
-  const {handleLogout} = useLogout();
+  const {handleLogout, LogoutLoading} = useLogout();
   const {userData} = useContext(AuthContext);
   const {notificationsEnabled, toggleNotifications} = useNotifications();
   const [visible, setVisible] = useState(false);
@@ -53,8 +53,7 @@ const ProfileScreen = ({navigation}) => {
         <TouchableOpacity
           style={styles.usernameContainer}
           onPress={() => navigation.navigate('EditProfile')}>
-          <Text
-            style={[styles.username, {color: '#F9FAFB'}]}>
+          <Text style={[styles.username, {color: '#F9FAFB'}]}>
             {userData.username}
           </Text>
           <Icon
@@ -65,16 +64,10 @@ const ProfileScreen = ({navigation}) => {
           />
         </TouchableOpacity>
 
-        <Text style={[styles.email, {color: '#B1B1B1'}]}>
-          {userData.email}
-        </Text>
+        <Text style={[styles.email, {color: '#B1B1B1'}]}>{userData.email}</Text>
 
         {/* LANGUAGE SWITCH */}
-        <View
-          style={[
-            styles.switchContainer,
-            {backgroundColor: '#4A4F55'},
-          ]}>
+        <View style={[styles.switchContainer, {backgroundColor: '#4A4F55'}]}>
           <View style={{flexDirection: 'row', gap: 10}}>
             <Icon
               name="globe"
@@ -82,8 +75,7 @@ const ProfileScreen = ({navigation}) => {
               color={'#B0B0B0'}
               style={styles.sectionIcon}
             />
-            <Text
-              style={[styles.sectionText, {color: '#F9FAFB'}]}>
+            <Text style={[styles.sectionText, {color: '#F9FAFB'}]}>
               {t('Language')}
             </Text>
           </View>
@@ -96,8 +88,7 @@ const ProfileScreen = ({navigation}) => {
         </View>
 
         {/* NOTIFICATIONS TOGGLE */}
-        <View
-          style={[styles.switchContainer, {backgroundColor: '#4A4F55'}]}>
+        <View style={[styles.switchContainer, {backgroundColor: '#4A4F55'}]}>
           <View style={{flexDirection: 'row', gap: 10}}>
             <Icon
               name="bell"
@@ -185,7 +176,11 @@ const ProfileScreen = ({navigation}) => {
 
         {/* LOGOUT BUTTON */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>{t('Logout')}</Text>
+          {LogoutLoading ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Text style={styles.logoutText}>{t('Logout')}</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
