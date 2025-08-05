@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4C8797C22DDBAC9C00CF8FAD /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4C8797C12DDBAC9C00CF8FAD /* Images.xcassets */; };
 		4CDD54C72D71A6520090FEC1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4CDD54C62D71A6520090FEC1 /* GoogleService-Info.plist */; };
 		5A103D5F0C63E4E080011915 /* Pods_Aoun.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E444A9F5FCBE4CCC89D3A57 /* Pods_Aoun.framework */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
@@ -20,6 +21,7 @@
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Aoun/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2E444A9F5FCBE4CCC89D3A57 /* Pods_Aoun.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Aoun.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		34EE5FB38BF1803F01F5B7B4 /* Pods-Aoun.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Aoun.release.xcconfig"; path = "Target Support Files/Pods-Aoun/Pods-Aoun.release.xcconfig"; sourceTree = "<group>"; };
+		4C8797C12DDBAC9C00CF8FAD /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		4CDD54C62D71A6520090FEC1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4CF778352D4E967A00D58852 /* AntDesign.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = AntDesign.ttf; sourceTree = "<group>"; };
 		4CF778362D4E967A00D58852 /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Entypo.ttf; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				4C8797C12DDBAC9C00CF8FAD /* Images.xcassets */,
 			);
 			name = Aoun;
 			sourceTree = "<group>";
@@ -206,6 +209,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C8797C22DDBAC9C00CF8FAD /* Images.xcassets in Resources */,
 				4CDD54C72D71A6520090FEC1 /* GoogleService-Info.plist in Resources */,
 				BB0F8BE1B86CB128D59B2C58 /* PrivacyInfo.xcprivacy in Resources */,
 			);
@@ -325,6 +329,7 @@
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				INFOPLIST_FILE = Aoun/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Aoun;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -338,8 +343,13 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = aoun.app.devteam;
 				PRODUCT_NAME = Aoun;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -354,6 +364,7 @@
 				DEVELOPMENT_TEAM = YJ5Y46MMZP;
 				INFOPLIST_FILE = Aoun/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Aoun;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -367,7 +378,12 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = aoun.app.devteam;
 				PRODUCT_NAME = Aoun;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

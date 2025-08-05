@@ -22,6 +22,28 @@ export const useLogout = () => {
       setLoading(false); // Set loading to false when logout completes
     }
   };
+  const handleDeleteAccount = async () => {
+    setLoading(true);
+    try {
+      await removeData('userData');
+      await removeData('tasks');
+      await removeData('savedSchedule');
+      await removeData('subjects');
+      auth()
+        .currentUser?.delete()
+        .then(() => {
+          console.log('User account deleted');
+        })
+        .catch(error => {
+          console.error('Account deletion error:', error);
+        });
+      await updateUserData(null);
+    } catch (error) {
+      console.error('Delete Account Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  return {handleLogout, LogoutLoading:loading}; // Return loading state
+  return {handleLogout, LogoutLoading: loading, handleDeleteAccount}; // Return loading state
 };

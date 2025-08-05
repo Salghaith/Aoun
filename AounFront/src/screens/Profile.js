@@ -28,13 +28,32 @@ import {TaskContext} from '../context/TaskContext';
 
 const ProfileScreen = ({navigation}) => {
   const {t} = useTranslation();
-  const {handleLogout, LogoutLoading} = useLogout();
+  const {handleLogout, LogoutLoading, handleDeleteAccount} = useLogout();
   const {userData} = useContext(AuthContext);
   const {notificationsEnabled, toggleNotifications} = useNotifications();
   const [visible, setVisible] = useState(false);
   const [LMSPass, setLMSPass] = useState('');
   const [loading, setLoading] = useState(false);
   const {refreshTasks} = useContext(TaskContext);
+  const deleteAccount = () => {
+    Alert.alert(
+      t('Delete Account'),
+      t(
+        'Are you sure you want to delete your account? This action cannot be undone and all your data will be deleted.',
+      ),
+      [
+        {
+          text: t('Cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('Delete'),
+          style: 'destructive',
+          onPress: handleDeleteAccount,
+        },
+      ],
+    );
+  };
 
   return (
     <SafeAreaView style={[styles.container, {backgroundColor: '#1C2128'}]}>
@@ -180,6 +199,13 @@ const ProfileScreen = ({navigation}) => {
             <ActivityIndicator size="small" color="#FFFFFF" />
           ) : (
             <Text style={styles.logoutText}>{t('Logout')}</Text>
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.logoutButton} onPress={deleteAccount}>
+          {LogoutLoading ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <Text style={styles.logoutText}>{t('Delete Account')}</Text>
           )}
         </TouchableOpacity>
       </View>
