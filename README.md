@@ -1,7 +1,7 @@
 # 🧠 Aoun – AI-Powered Student Assistant  
 > *King Saud University – Software Engineering Graduation Project*  
 
-[![Download on the App Store](https://img.shields.io/badge/App_Store-Available-blue?logo=apple)](https://apps.apple.com/app/example-link-here)
+[![Download on the App Store](https://img.shields.io/badge/App_Store-UnAvailable-blue?logo=apple)](https://apps.apple.com/app/example-link-here)
 
 
 ---
@@ -52,7 +52,7 @@ The project follows the **Model-View-Controller (MVC)** structure for modularity
 | Talal Alkahtani | System Designer / UI-UX Engineer | [@X4rel](https://github.com/X4rel) |
 | Khaled Alharbi | Frontend Developer / UI-UX Engineer | [@Khaledalharbi7](https://github.com/Khaledalharbi7) |
 | Saud Alkatheeri | Full Stack Developer | [@SaudV](https://github.com/SaudV) |
-| **Saleh Alghaith** | Full Stack Developer |
+| **Saleh Alghaith** | Full Stack Developer | [@Salghaith](https://github.com/Salghaith) |
 
 **Advisor:** Dr. Abdulaziz Alshayban  
 **College:** CCIS, King Saud University  
