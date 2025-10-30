@@ -2,8 +2,7 @@
 > *King Saud University – Software Engineering Graduation Project*  
 
 [![Download on the App Store](https://img.shields.io/badge/App_Store-Available-blue?logo=apple)](https://apps.apple.com/app/example-link-here)
-[![Platform](https://img.shields.io/badge/platform-Mobile%20App-green)](#)
-[![Status](https://img.shields.io/badge/status-Development-informational)](#)
+
 
 ---
 
@@ -27,11 +26,11 @@ It combines **AI-driven academic support**, **study-plan generation**, **lecture
 ## 🧩 System Architecture  
 
 The project follows the **Model-View-Controller (MVC)** structure for modularity and scalability.  
-- **Backend:** Python / Node.js  
-- **Frontend:** Flutter / React Native  
+- **Backend:** Node.js  
+- **Frontend:** React Native  
 - **Database:** MongoDB  
 - **AI Services:** OpenAI API  
-- **Integration:** KSU Edugate System  
+- **Integration:** KSU Edugate System / Blackboard
 - **Hosting:** AWS Cloud with Load Balancer and Auto-Scaling  
 
 ---
@@ -44,17 +43,16 @@ The project follows the **Model-View-Controller (MVC)** structure for modularity
 > Secure, scalable, and optimized for mobile use.
 
 ---
-[![Contributors](https://contrib.rocks/image?repo=Salghaith/Aoun)](https://github.com/Salghaith/Aoun/graphs/contributors)
 
 ## 👥 Team  
 
 | Name | Role |
 |------|------|
-| Talal Alothman | Backend Developer |
-| Talal Alkahtani | Frontend Developer |
-| Khaled Alharbi | Database Engineer |
-| Saud Alkatheeri | System Designer |
-| **Saleh Alghaith** | AI Engineer / Project Coordinator |
+| Talal Alothman | Frontend Developer / System Designer | [@talalsh20](https://github.com/talalsh20) |
+| Talal Alkahtani | System Designer / UI-UX Engineer | [@X4rel](https://github.com/X4rel) |
+| Khaled Alharbi | Frontend Developer / UI-UX Engineer | [@Khaledalharbi7](https://github.com/Khaledalharbi7) |
+| Saud Alkatheeri | Full Stack Developer | [@SaudV](https://github.com/SaudV) |
+| **Saleh Alghaith** | Full Stack Developer |
 
 **Advisor:** Dr. Abdulaziz Alshayban  
 **College:** CCIS, King Saud University  
